@@ -863,29 +863,29 @@
 
   let deferredPrompt;
 
-  // Listen for the 'beforeinstallprompt' event
   window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault(); // Prevent default browser prompt
-    deferredPrompt = event; // Store the event so we can trigger it later
+    event.preventDefault(); // Stop default behavior
+    deferredPrompt = event;
 
-    // Show the install button
+    // Show the install button when the event is available
     const installButton = document.getElementById("installPWA");
     installButton.style.display = "block";
 
-    // When the user clicks the button, show the prompt
-    installButton.addEventListener("click", () => {
+    installButton.addEventListener("click", async () => {
       if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === "accepted") {
-            console.log("User accepted the install");
-          } else {
-            console.log("User dismissed the install");
-          }
-          deferredPrompt = null; // Clear the deferred prompt
-        });
+        deferredPrompt.prompt(); // Show install prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(outcome === "accepted" ? "🎉 User installed the app!" : "❌ User dismissed the install");
+        deferredPrompt = null;
+        installButton.style.display = "none"; // Hide button after install
       }
     });
+  });
+
+  // Hide the button if the app is already installed
+  window.addEventListener("appinstalled", () => {
+    console.log("📱 PWA installed!");
+    document.getElementById("installPWA").style.display = "none";
   });
 
   </script>

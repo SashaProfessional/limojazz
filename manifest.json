@@ -4,7 +4,7 @@
   "start_url": "/limojazz/reservation.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "img/limojazz_192.png",

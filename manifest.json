@@ -1,7 +1,7 @@
 {
   "name": "LimoJazz",
   "short_name": "LimoJazz",
-  "start_url": "/reservation.html",
+  "start_url": "/limojazz/reservation.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",

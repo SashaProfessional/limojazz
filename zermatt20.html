@@ -39,6 +39,9 @@
       font-weight: normal;
       font-size: 16px;
     }
+    p {
+      margin: 0 0 15px;
+    }
     label {
       display: block;
       margin-bottom: 5px;
@@ -68,7 +71,7 @@
     .clear-button:focus {
       outline: none;
     }
-    /* Remove clear buttons from tab order */
+    /* Remove from tab order */
     .clear-button { tabindex: -1; }
     
     /* Input Container & Flex Row */
@@ -240,10 +243,10 @@
       margin-top: 20px;
     }
     
-    /* Promo Note */
+    /* Promo Note (below Promo Code) */
     .promo-note {
       font-size: 12px;
-      font-style: italic;
+	  font-style: italic;
       color: #ccc;
     }
     .promo-note a {
@@ -359,7 +362,7 @@
       if (params.promoCode) document.getElementById("promoCode").value = params.promoCode;
     }
     
-    /* Reverse Pickup & Destination using arrivalName-like strategy */
+    /* Reverse Pickup & Destination */
     function reverseLocations() {
       var pickupElem = document.getElementById("pickup");
       var destinationElem = document.getElementById("destination");
@@ -411,31 +414,6 @@
           alert("Geocode for origin failed due to: " + status);
         }
       });
-    }
-    
-    function showPromoError(errorType) {
-      var promoErrorBox = document.getElementById("promo-error-box");
-      promoErrorBox.style.display = "block";
-      if (errorType === "Invalid promo code") {
-        promoErrorBox.innerHTML = "<h3>Invalid Promo Code</h3><p>The promo code entered is not valid. It will be ignored.</p>";
-      } else if (errorType === "Promo code not applicable to the selected route") {
-        promoErrorBox.innerHTML = "<h3>Promo Code Not Applicable</h3><p>This promo code cannot be applied to the selected route and will be ignored.</p>";
-      }
-    }
-    
-    function showError(errorType) {
-      var errorBox = document.getElementById("error-box-minRate");
-      errorBox.style.display = "block";
-      if (errorType === "Ride outside our servicing area") {
-        errorBox.innerHTML = '<h3>Ride outside our servicing area</h3><p><i>Please describe your needs further via WhatsApp or call us and we’ll try to help.</i></p>' +
-          '<div class="button-group">' +
-          '<button style="width: 50%;" class="whatsapp-button" onclick="generateWhatsAppLink(event, true)">Contact us via WhatsApp</button>' +
-          '<a href="tel:+41788230803" target="_blank" style="width: 50%;">Call us +41 78 823 08 03</a>' +
-          "</div>";
-      } else if (errorType === "Quote below the Minimum Reservation fare") {
-        errorBox.innerHTML = "<h3>Quote below the Minimum Reservation fare</h3><p>Our minimum reservation rate is CHF 80. Please call us for urgent rides or note that the price will be adjusted to CHF 80.</p>";
-        document.querySelector(".reserve-button").innerText = "Reserve for CHF 80";
-      }
     }
     
     function calculateDistances(origin, destination) {
@@ -576,30 +554,33 @@
       return totalPrice.toFixed(2);
     }
     
-    function selectRideType(type) {
-      const singleRideButton = document.getElementById("singleRideButton");
-      const byTheHourButton = document.getElementById("byTheHourButton");
-      const byTheHourFields = document.getElementById("byTheHourFields");
-      const dropoffLocationContainer = document.getElementById("dropoffLocationContainer");
-      if (type === "singleRide") {
-        singleRideButton.classList.add("selected");
-        byTheHourButton.classList.remove("selected");
-        byTheHourFields.classList.add("hidden");
-        dropoffLocationContainer.classList.remove("hidden");
-        document.getElementById("map-canvas").style.display = "block";
-        document.getElementById("oneWayReturnButtons").classList.remove("hidden");
-      } else {
-        singleRideButton.classList.remove("selected");
-        byTheHourButton.classList.add("selected");
-        byTheHourFields.classList.remove("hidden");
-        dropoffLocationContainer.classList.add("hidden");
-        document.getElementById("map-canvas").style.display = "none";
-        document.getElementById("oneWayReturnButtons").classList.add("hidden");
+    function showPromoError(errorType) {
+      var promoErrorBox = document.getElementById("promo-error-box");
+      promoErrorBox.style.display = "block";
+      if (errorType === "Invalid promo code") {
+        promoErrorBox.innerHTML = "<h3>Invalid Promo Code</h3><p>The promo code entered is not valid. It will be ignored.</p>";
+      } else if (errorType === "Promo code not applicable to the selected route") {
+        promoErrorBox.innerHTML = "<h3>Promo Code Not Applicable</h3><p>This promo code cannot be applied to the selected route and will be ignored.</p>";
+      }
+    }
+    
+    function showError(errorType) {
+      var errorBox = document.getElementById("error-box-minRate");
+      errorBox.style.display = "block";
+      if (errorType === "Ride outside our servicing area") {
+        errorBox.innerHTML = '<h3>Ride outside our servicing area</h3><p><i>Please describe your needs further via WhatsApp or call us and we’ll try to help.</i></p>' +
+          '<div class="button-group">' +
+          '<button style="width: 50%;" class="whatsapp-button" onclick="generateWhatsAppLink(event, true)">Contact us via WhatsApp</button>' +
+          '<a href="tel:+41788230803" target="_blank" style="width: 50%;">Call us +41 78 823 08 03</a>' +
+          "</div>";
+      } else if (errorType === "Quote below the Minimum Reservation fare") {
+        errorBox.innerHTML = "<h3>Quote below the Minimum Reservation fare</h3><p>Our minimum reservation rate is CHF 80. Please call us for urgent rides or note that the price will be adjusted to CHF 80.</p>";
+        document.querySelector(".reserve-button").innerText = "Reserve for CHF 80";
       }
     }
     
     function calculateQuote() {
-      if (document.getElementById("byTheHourButton").classList.contains("selected")) {
+      if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
         calculateHourlyQuote();
       } else {
         calculateDistancesIfBothFilled();
@@ -630,7 +611,7 @@
           <li style="margin-bottom: 8px;">Quote subject to change based on service area or special events.</li>
           <li style="margin-bottom: 8px;">Includes ${kmIncludedPerHour} km per booked hour; extra charges may apply.</li>
           <li style="margin-bottom: 8px;">Comparison: Estimated Blacklane price: CHF ${blacklaneTotalPrice}</li>
-          <li style="margin-bottom: 8px;">Comparisons are provided for informational purposes only.</li>
+          <li style="margin-bottom: 8px;">Comparisons are for informational purposes only.</li>
         </ul>`;
     
       document.getElementById("quote").classList.remove("hidden");
@@ -638,6 +619,50 @@
       document.querySelector(".quote-button").classList.add("active");
       document.querySelector(".quote-button").innerText = "Update Quote";
       document.querySelector(".reserve-button").classList.remove("hidden");
+    }
+    
+    function selectTripType(type) {
+      const oneWayButton = document.getElementById("oneWayButton");
+      const returnButton = document.getElementById("returnButton");
+      const returnFields = document.getElementById("returnFields");
+      oneWayButton.classList.remove("selected");
+      returnButton.classList.remove("selected");
+      if (type === "oneWay") {
+        oneWayButton.classList.add("selected");
+        returnFields.classList.add("hidden");
+      } else {
+        returnButton.classList.add("selected");
+        returnFields.classList.remove("hidden");
+      }
+      toggleAirportFields();
+    }
+    
+    function toggleAirportFields() {
+      const airportFields = document.getElementById("airportFields");
+      const pickupValue = document.getElementById("pickup").value.toLowerCase();
+      const dropoffValue = document.getElementById("destination").value.toLowerCase();
+      const returnSelected = document.getElementById("returnButton")?.classList.contains("selected");
+      if (pickupValue.includes("gva") || (dropoffValue.includes("gva") && returnSelected)) {
+        airportFields.classList.remove("hidden");
+      } else {
+        airportFields.classList.add("hidden");
+      }
+    }
+    
+    function selectArrivalName(name) {
+      const buttons = document.getElementById("arrivalNameButtons").getElementsByTagName("button");
+      const arrivalNameInput = document.getElementById("arrivalName");
+      for (let button of buttons) { button.classList.remove("selected"); }
+      if (name === "Company Logo") {
+        arrivalNameInput.value = "Company Logo";
+        buttons[0].classList.add("selected");
+      } else if (name === "My Name") {
+        arrivalNameInput.value = document.getElementById("name").value;
+        buttons[1].classList.add("selected");
+      } else {
+        arrivalNameInput.value = "LimoJazz Logo";
+        buttons[2].classList.add("selected");
+      }
     }
     
     function selectPassengerCount(count) {
@@ -667,42 +692,52 @@
       }
     }
     
-    function toggleAirportFields() {
-      const airportFields = document.getElementById("airportFields");
-      const pickupValue = document.getElementById("pickup").value.toLowerCase();
-      const dropoffValue = document.getElementById("destination").value.toLowerCase();
-      const returnSelected = document.getElementById("returnButton").classList.contains("selected");
-      if (pickupValue.includes("gva") || (dropoffValue.includes("gva") && returnSelected)) {
-        airportFields.classList.remove("hidden");
-      } else {
-        airportFields.classList.add("hidden");
+    function validateFormFields() {
+      const requiredFields = [
+        { id: "name", message: "Full Name" },
+        { id: "pickup", message: "Pick-Up Location" },
+        { id: "date", message: "Date" },
+        { id: "pickupTime", message: "Time" },
+        { id: "passengerButtons", message: "Number of Passengers" },
+        { id: "suitcaseButtons", message: "Number of Large Suitcases" }
+      ];
+      const missingFields = requiredFields.filter(field => {
+        if (field.id === "passengerButtons" || field.id === "suitcaseButtons") {
+          return !document.querySelector(`#${field.id} .selected`);
+        } else {
+          return !document.getElementById(field.id).value;
+        }
+      });
+      const date = new Date(document.getElementById("date").value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const returnDate = new Date(document.getElementById("returnDate").value);
+      if (date < today) {
+        missingFields.push({ id: "date", message: "Date cannot be in the past" });
       }
-    }
-    
-    function selectArrivalName(name) {
-      const buttons = document.getElementById("arrivalNameButtons").getElementsByTagName("button");
-      const arrivalNameInput = document.getElementById("arrivalName");
-      for (let button of buttons) { button.classList.remove("selected"); }
-      if (name === "Company Logo") {
-        arrivalNameInput.value = "Company Logo";
-        buttons[0].classList.add("selected");
-      } else if (name === "My Name") {
-        arrivalNameInput.value = document.getElementById("name").value;
-        buttons[1].classList.add("selected");
-      } else {
-        arrivalNameInput.value = "LimoJazz Logo";
-        buttons[2].classList.add("selected");
+      if (document.getElementById("returnButton").classList.contains("selected") && !document.getElementById("returnDate").value) {
+        missingFields.push({ id: "returnDate", message: "Return Date" });
       }
-    }
-    
-    function customResetAllExcept() {
-      const pickupVal = document.getElementById("pickup").value;
-      const dropoffVal = document.getElementById("destination").value;
-      const promoVal = document.getElementById("promoCode").value;
-      document.getElementById("reservationForm").reset();
-      document.getElementById("pickup").value = pickupVal;
-      document.getElementById("destination").value = dropoffVal;
-      document.getElementById("promoCode").value = promoVal;
+      if (document.getElementById("returnButton").classList.contains("selected") && !document.getElementById("returnTime").value) {
+        missingFields.push({ id: "returnTime", message: "Return Time" });
+      }
+      if (document.getElementById("returnButton").classList.contains("selected") && returnDate < date) {
+        missingFields.push({ id: "returnDate", message: "Return date cannot be before the first date" });
+      }
+      if (!document.getElementById("airportFields").classList.contains("hidden") && !document.getElementById("flightNumber").value) {
+        missingFields.push({ id: "flightNumber", message: "Flight Number" });
+      }
+      var errorBox = document.getElementById("error-box-fieldCheck");
+      errorBox.style.display = "none";
+      errorBox.innerHTML = "";
+      if (missingFields.length > 0) {
+        errorBox.style.display = "block";
+        errorBox.innerHTML = "<h3>Please fill in the following fields:</h3><ul>" +
+          missingFields.map(field => `<li>${field.message}</li>`).join("") +
+          "</ul>";
+        return false;
+      }
+      return true;
     }
     
     function generateWhatsAppLink(event, isError = false, errorType = "") {
@@ -737,8 +772,8 @@
         const returnTime = document.getElementById("returnTime").value;
         const flightNumber = document.getElementById("flightNumber").value;
         const arrivalName = document.getElementById("arrivalName").value;
-        const passengers = document.querySelector("#passengerButtons .selected").innerText;
-        const suitcases = document.querySelector("#suitcaseButtons .selected").innerText;
+        const passengers = document.querySelector("#passengerButtons .selected")?.innerText;
+        const suitcases = document.querySelector("#suitcaseButtons .selected")?.innerText;
         const message = document.getElementById("message").value;
         const promoCode = document.getElementById("promoCode").value;
         let whatsappMessage = "*RESERVATION REQUEST:*\n\n";
@@ -782,8 +817,8 @@
       const returnTime = document.getElementById("returnTime").value;
       const flightNumber = document.getElementById("flightNumber").value;
       const arrivalName = document.getElementById("arrivalName").value;
-      const passengers = document.querySelector("#passengerButtons .selected").innerText;
-      const suitcases = document.querySelector("#suitcaseButtons .selected").innerText;
+      const passengers = document.querySelector("#passengerButtons .selected")?.innerText;
+      const suitcases = document.querySelector("#suitcaseButtons .selected")?.innerText;
       const message = document.getElementById("message").value;
       const promoCode = document.getElementById("promoCode").value;
       const quoteBox1 = document.getElementById("quoteBox1").innerText;
@@ -834,18 +869,6 @@
     });
     document.getElementById("pickup").addEventListener("input", toggleAirportFields);
     document.getElementById("destination").addEventListener("input", toggleAirportFields);
-    document.getElementById("oneWayButton").addEventListener("click", function () {
-      this.classList.add("selected");
-      document.getElementById("returnButton").classList.remove("selected");
-      document.getElementById("returnFields").classList.add("hidden");
-      toggleAirportFields();
-    });
-    document.getElementById("returnButton").addEventListener("click", function () {
-      this.classList.add("selected");
-      document.getElementById("oneWayButton").classList.remove("selected");
-      document.getElementById("returnFields").classList.remove("hidden");
-      toggleAirportFields();
-    });
     document.getElementById("date").addEventListener("input", function () {
       const date = new Date(this.value);
       const today = new Date();
@@ -871,17 +894,21 @@
     <div id="logo-container" style="display: flex; justify-content: center; align-items: center;">
       <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="Logo" style="width: 250px; height: auto;">
     </div>
-    <h2>LimoJazz Zermatt 20% Off: Meet the Matterhorn!</h2>
-    <h3>Quote & Book in Under a Minute – One-Way or Return, You Choose!</h3>
+    <h2>LimoJazz Zermatt Special 20% Off</h2>
+    <h3>Quote & Book this limited time offer</h3>
     <p style="font-size: smaller; font-style: italic;">
-      Not heading to Zermatt? No sweat—use code <strong>GVA5</strong> to snag a 5% discount on any reservation to or from Geneva airport.
+      If you're not headed to Zermatt, apply code <strong>GVA5</strong> for a 5% discount on any Geneva Airport reservation.
       We can't wait to welcome you on board!
     </p>
+    
     <form id="reservationForm" onsubmit="generateWhatsAppLink(event)">
+      <!-- Standard vs. Hourly Reservation Buttons -->
       <div class="button-group">
         <button type="button" id="singleRideButton" class="selected" onclick="selectRideType('singleRide')">Standard Reservation</button>
         <button type="button" id="byTheHourButton" onclick="selectRideType('byTheHour')">Hourly Reservation</button>
       </div>
+      
+      <!-- Hourly Fields -->
       <div id="byTheHourFields" class="hidden">
         <div class="row">
           <div class="input-container" style="flex: 1;">
@@ -894,18 +921,21 @@
           </div>
         </div>
       </div>
+      
+      <!-- Pick-Up Field -->
       <div class="input-container">
-        <label for="pickup" id="pickupLabel">Pick-Up Location</label>
+        <label for="pickup">Pick-Up Location</label>
         <input type="text" id="pickup" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" required value="Geneva Airport (GVA)">
-        <button type="button" class="clear-button" onclick="document.getElementById('pickup').value=''">&times;</button>
+        <button type="button" class="clear-button" tabindex="-1" onclick="document.getElementById('pickup').value=''">&times;</button>
       </div>
-      <div id="dropoffLocationContainer">
-        <div class="input-container">
-          <label for="destination" id="destinationLabel">Drop-off Location</label>
-          <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" required value="Zermatt">
-          <button type="button" class="clear-button" onclick="document.getElementById('destination').value=''">&times;</button>
-        </div>
+      
+      <!-- Drop-off Field -->
+      <div class="input-container">
+        <label for="destination">Drop-off Location</label>
+        <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" required value="Zermatt">
+        <button type="button" class="clear-button" tabindex="-1" onclick="document.getElementById('destination').value=''">&times;</button>
       </div>
+      
       <!-- Revised Promo Code + Reverse Button using arrivalName strategy -->
       <div class="input-container">
         <label for="promoCode">Promo Code</label>
@@ -922,9 +952,14 @@
           Follow us on <a href="https://www.instagram.com/limojazz.ch" target="_blank">Instagram</a> and <a href="https://www.facebook.com/limojazz" target="_blank">Facebook</a> for exclusive deals and insider promos!
         </small>
       </div>
+      
       <div id="promo-error-box"></div>
       <button type="button" class="quote-button inactive" onclick="calculateQuote()">Quote</button>
+      
+      <!-- Map -->
       <div id="map-canvas"></div>
+      
+      <!-- Quote Info -->
       <div class="quote-info hidden" id="quote">
         <h3 id="quoteTitle">Quote</h3>
         <h4 id="quoteSubtitle"></h4>
@@ -937,9 +972,12 @@
         <p id="quoteNote2"></p>
       </div>
       <div id="error-box-minRate"></div>
+      
+      <!-- Reserve Button -->
       <button type="button" class="reserve-button inactive hidden" onclick="toggleReserveFields()">Reserve</button>
+      
+      <!-- Reserve Fields -->
       <div id="reserveFields" class="hidden">
-        <div id="error-box-fieldCheck"></div>
         <div class="button-group" id="oneWayReturnButtons">
           <button type="button" style="width: 50%;" id="oneWayButton" onclick="selectTripType('oneWay')">One Way</button>
           <button type="button" style="width: 50%;" id="returnButton" onclick="selectTripType('return')">Return</button>

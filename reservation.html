@@ -4,14 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="/path/to/icon.png">
+  <link rel="manifest" href="/manifest.json">
   <title>Quote & Reserve</title>
   <style>
-	/* A universal reset for all elements (including inputs) */
-	*,
-	*::before,
-	*::after {
-	  box-sizing: border-box;
-	}
+    /* A universal reset for all elements (including inputs) */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
     /* Base Styles */
     body {
       font-family: Arial, sans-serif;
@@ -21,7 +26,7 @@
       padding: 0;
     }
     .container {
-	  box-sizing: content-box;
+      box-sizing: content-box;
       max-width: 600px;
       margin: auto;
       margin-bottom: 80px;
@@ -55,7 +60,6 @@
       background-color: #555;
       color: #fff;
     }
-    
     /* Clear Button (skip in tab navigation) */
     .clear-button {
       position: absolute;
@@ -73,7 +77,6 @@
     }
     /* Remove from tab order */
     .clear-button { tabindex: -1; }
-    
     /* Input Container & Flex Row */
     .input-container {
       position: relative;
@@ -84,7 +87,6 @@
       align-items: stretch;
       gap: 10px;
     }
-    
     /* Button Groups */
     .button-group {
       display: flex;
@@ -123,7 +125,6 @@
       background-color: #fff;
       color: black;
     }
-    
     /* Quote & Reserve Buttons */
     .quote-button, .reserve-button {
       width: 100%;
@@ -155,9 +156,7 @@
       background-color: #fff;
       color: black;
     }
-    
     /* Reverse Button – similar strategy to arrivalName buttons */
-    /* No explicit width is set on the button itself; its container will control it */
     .reverse-button {
       background-color: gray;
       color: white;
@@ -173,7 +172,6 @@
       background-color: #fff;
       color: black;
     }
-    
     /* Utility */
     .hidden {
       display: none;
@@ -182,7 +180,6 @@
       display: flex;
       gap: 10px;
     }
-    
     /* Info Boxes */
     #promo-error-box, #error-box-minRate, #error-box-fieldCheck {
       background-color: #f8d7da;
@@ -195,7 +192,6 @@
     #promo-error-box h3, #error-box-minRate h3, #error-box-fieldCheck h3 {
       margin: 0 0 5px;
     }
-    
     /* Quote Info */
     .quote-info {
       margin-top: 20px;
@@ -234,7 +230,6 @@
       font-size: 12px;
       font-style: italic;
     }
-    
     /* Map Canvas */
     #map-canvas {
       height: 400px;
@@ -242,11 +237,10 @@
       display: none;
       margin-top: 20px;
     }
-    
     /* Promo Note (below Promo Code) */
     .promo-note {
       font-size: 12px;
-	  font-style: italic;
+      font-style: italic;
       color: #ccc;
     }
     .promo-note a {
@@ -1053,5 +1047,18 @@
       </div>
     </form>
   </div>
+  
+  <!-- Service Worker Registration for PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(function(registration) {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+  </script>
 </body>
 </html>

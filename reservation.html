@@ -594,23 +594,31 @@
                 byTheHourButton.classList.remove('selected');
                 byTheHourFields.classList.add('hidden');
                 dropoffLocationContainer.classList.remove('hidden');
-				document.getElementById('map-canvas').style.display = 'block';
+                document.getElementById('map-canvas').style.display = 'none';
+                document.getElementById('quote').classList.add('hidden');
+				document.querySelector(".reserve-button").classList.add("hidden");
 				document.getElementById('oneWayReturnButtons').classList.remove('hidden');
+				document.getElementById('reserveFields').classList.add('hidden');
             } else {
                 singleRideButton.classList.remove('selected');
                 byTheHourButton.classList.add('selected');
                 byTheHourFields.classList.remove('hidden');
                 dropoffLocationContainer.classList.add('hidden');
 				document.getElementById('map-canvas').style.display = 'none';
-                document.getElementById('oneWayReturnButtons').classList.add('hidden');				
+				document.getElementById('quote').classList.add('hidden');
+				document.querySelector(".reserve-button").classList.add("hidden");
+                document.getElementById('oneWayReturnButtons').classList.add('hidden');
+				document.getElementById('reserveFields').classList.add('hidden');			
             }
         }
 		
     function calculateQuote() {
       if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
         calculateHourlyQuote();
+		document.getElementById('quote').classList.remove('hidden');
       } else {
         calculateDistancesIfBothFilled();
+		document.getElementById('quote').classList.remove('hidden');
       }
     }
     

@@ -247,7 +247,7 @@
       color: #ccc;
       text-decoration: underline;
     }
-	/* header-note */
+	  /* header-note */
     .header-note {
       font-size: 12px;
       font-style: italic;
@@ -366,6 +366,23 @@
       if (params.promoCode) document.getElementById("promoCode").value = params.promoCode;
     }
     
+    // New function: update logo based on URL parameter
+    function updateLogoFromURL() {
+      var params = getQueryParams();
+      var logoParam = params.logo; // e.g., ?logo=zermatt
+      var logoMapping = {
+        "zermatt": "https://limojazz.github.io/limojazz/img/limojazz_zernatt_promo_250.gif",
+        "main": "https://limojazz.github.io/limojazz/img/limojazz.svg"
+        // add more mappings as needed
+      };
+      if (logoParam && logoMapping[logoParam]) {
+        var logoImg = document.querySelector("#logo-container img");
+        if (logoImg) {
+          logoImg.src = logoMapping[logoParam];
+        }
+      }
+    }
+    
     /* Reverse Pickup & Destination */
     function reverseLocations() {
       var pickupElem = document.getElementById("pickup");
@@ -420,7 +437,7 @@
       });
     }
     
-    // Modified calculatePrice function
+    // Modified calculatePrice function with promo handling
     function calculatePrice(distanceValue, durationValue, type) {
       if (type === "myFare") {
         var baseRate = 6.00;
@@ -814,7 +831,6 @@
       const destination = document.getElementById("destination").value;
       const quoteBox1 = document.getElementById("quoteBox1").innerText;
       const quoteBox2 = document.getElementById("quoteBox2").innerText;
-      // Use the global currentFareObj to generate a plain-text quote
       var quoteBox3Text;
       if (window.currentFareObj && window.currentFareObj.promoApplied) {
         quoteBox3Text = "CHF " + window.currentFareObj.finalPrice + " (was CHF " + window.currentFareObj.normalPrice + ")";
@@ -941,6 +957,7 @@
     window.addEventListener("load", function () {
       initialize();
       prefillFieldsFromQuery();
+      updateLogoFromURL(); // update logo based on URL param
       document.getElementById("oneWayButton").click(); // default to one way
     });
     document.getElementById("pickup").addEventListener("input", toggleAirportFields);

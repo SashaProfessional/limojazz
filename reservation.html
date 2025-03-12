@@ -595,6 +595,7 @@
                 byTheHourFields.classList.add('hidden');
                 dropoffLocationContainer.classList.remove('hidden');
                 document.getElementById('map-canvas').style.display = 'none';
+				document.getElementById('reverseButtonId').classList.remove("hidden");
                 document.getElementById('quote').classList.add('hidden');
 				document.querySelector(".reserve-button").classList.add("hidden");
 				document.getElementById('oneWayReturnButtons').classList.remove('hidden');
@@ -605,10 +606,11 @@
                 byTheHourFields.classList.remove('hidden');
                 dropoffLocationContainer.classList.add('hidden');
 				document.getElementById('map-canvas').style.display = 'none';
+				document.getElementById('reverseButtonId').classList.add("hidden");
 				document.getElementById('quote').classList.add('hidden');
 				document.querySelector(".reserve-button").classList.add("hidden");
                 document.getElementById('oneWayReturnButtons').classList.add('hidden');
-				document.getElementById('reserveFields').classList.add('hidden');			
+				document.getElementById('reserveFields').classList.add('hidden');				
             }
         }
 		
@@ -975,7 +977,7 @@
             <input type="text" id="promoCode" name="promoCode" placeholder="Enter promo code" value="">
             <button type="button" class="clear-button" tabindex="-1" onclick="document.getElementById('promoCode').value=''">&times;</button>
           </div>
-          <div style="flex: 1;">
+          <div style="flex: 1;" id="reverseButtonId">
             <button type="button" style="width: 100%;" class="reverse-button" tabindex="-1" onclick="reverseLocations()">&#x21C5; Reverse</button>
           </div>
         </div>

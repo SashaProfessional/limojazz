@@ -420,6 +420,111 @@
       });
     }
     
+    // Modified calculatePrice function
+    function calculatePrice(distanceValue, durationValue, type) {
+      if (type === "myFare") {
+        var baseRate = 6.00;
+        var initialPerKmRate = 3.80;
+        var minimumPerKmRate = 3.00;
+        var distanceInKm = distanceValue / 1000;
+        var durationInMin = durationValue / 60;
+        function calculatePerKmRate(distance) {
+          if (distance >= 700) return minimumPerKmRate;
+          var rateDecrease = (initialPerKmRate - minimumPerKmRate) * (distance / 700);
+          return initialPerKmRate - rateDecrease;
+        }
+        var perKmRate = calculatePerKmRate(distanceInKm);
+        var perMinRate = 0;
+        var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
+    
+        // Apply flat rates if applicable
+        var flatRates = { "nyon": 90, "eysins": 90, "lausanne": 230, "zermatt": 900 };
+        var pickupValue = document.getElementById("pickup").value.toLowerCase();
+        var dropoffValue = document.getElementById("destination").value.toLowerCase();
+        function getMatchingCity(input) {
+          input = input.toLowerCase();
+          for (var city in flatRates) {
+            if (input.includes(city)) return city;
+          }
+          return null;
+        }
+        var pickupCity = getMatchingCity(pickupValue);
+        var dropoffCity = getMatchingCity(dropoffValue);
+        if (pickupValue.includes("gva") && dropoffCity) {
+          totalPrice = flatRates[dropoffCity];
+        } else if (dropoffValue.includes("gva") && pickupCity) {
+          totalPrice = flatRates[pickupCity];
+        }
+    
+        // Rounding adjustments to get the normal (non-discounted) price
+        var normalPrice;
+        if (totalPrice < 15) {
+          normalPrice = 15;
+        } else if (totalPrice < 80) {
+          normalPrice = Math.ceil(totalPrice / 5) * 5;
+        } else {
+          normalPrice = Math.floor(totalPrice / 10) * 10;
+        }
+    
+        // Check for promo code and apply discount on the normal price (rounded down)
+        var promoInput = document.getElementById("promoCode").value.toLowerCase().trim();
+        var promoCodes = {
+          "nyon10": { city: "nyon", multiplier: 0.9 },
+          "zermatt20": { city: "zermatt", multiplier: 0.8 },
+          "gva5": { all: true, multiplier: 0.95 }
+        };
+    
+        var finalPrice = normalPrice;
+        var promoApplied = false;
+        if (promoInput !== "") {
+          if (promoCodes.hasOwnProperty(promoInput)) {
+            var promoData = promoCodes[promoInput];
+            var applicable = false;
+            if (promoData.all) {
+              if (pickupValue.includes("gva") || dropoffValue.includes("gva")) {
+                applicable = true;
+              } else {
+                showPromoError("Promo code not applicable to the selected route");
+              }
+            } else {
+              if ((pickupValue.includes("gva") && dropoffCity === promoData.city) ||
+                  (dropoffValue.includes("gva") && pickupCity === promoData.city)) {
+                applicable = true;
+              } else {
+                showPromoError("Promo code not applicable to the selected route");
+              }
+            }
+            if (applicable) {
+              promoApplied = true;
+              finalPrice = Math.floor(normalPrice * promoData.multiplier);
+            }
+          } else {
+            showPromoError("Invalid promo code");
+          }
+        }
+    
+        return { finalPrice: finalPrice, normalPrice: normalPrice, promoApplied: promoApplied };
+      } else if (type === "taxi") {
+        var baseRate = 6.30;
+        var distanceInKm = distanceValue / 1000;
+        var durationInMin = durationValue / 60;
+        var perKmRate = 3.80;
+        var perMinRate = 0;
+        var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin) + 5 + Math.floor(distanceInKm / 50) * 5;
+        totalPrice = Math.ceil(totalPrice);
+        return { finalPrice: totalPrice.toFixed(2), promoApplied: false };
+      } else if (type === "uberVan") {
+        var baseRate = 8.00;
+        var distanceInKm = distanceValue / 1000;
+        var durationInMin = durationValue / 60;
+        var perKmRate = 3.60;
+        var perMinRate = 0.60;
+        var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
+        totalPrice = Math.ceil(totalPrice);
+        return { finalPrice: totalPrice.toFixed(2), promoApplied: false };
+      }
+    }
+    
     function calculateDistances(origin, destination) {
       document.getElementById("promo-error-box").style.display = "none";
       var departureTime = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
@@ -435,9 +540,12 @@
           directionsRenderer.setDirections(result);
           var distance = result.routes[0].legs[0].distance.value;
           var duration = result.routes[0].legs[0].duration.value;
-          var calculatedPrice = calculatePrice(distance, duration, "myFare");
-          var taxiPrice = calculatePrice(distance, duration, "taxi");
-          var uberVanPrice = calculatePrice(distance, duration, "uberVan");
+          var priceObj = calculatePrice(distance, duration, "myFare");
+          // Store globally for later use (WhatsApp/Email)
+          window.currentFareObj = priceObj;
+    
+          var taxiPrice = calculatePrice(distance, duration, "taxi").finalPrice;
+          var uberVanPrice = calculatePrice(distance, duration, "uberVan").finalPrice;
           var distanceText = result.routes[0].legs[0].distance.text;
           var durationText = result.routes[0].legs[0].duration.text;
     
@@ -448,7 +556,16 @@
           quoteBox3Label = "Estimated Fare";
           document.getElementById("quoteBox1").innerText = "~ " + distanceText;
           document.getElementById("quoteBox2").innerText = "~ " + durationText;
-          document.getElementById("quoteBox3").innerText = "CHF " + calculatedPrice;
+    
+          // Update the quote box with promo formatting if applicable
+          var displayPrice;
+          if (priceObj.promoApplied) {
+            displayPrice = "CHF " + priceObj.finalPrice + " <span style='text-decoration: line-through;'>CHF " + priceObj.normalPrice + "</span>";
+          } else {
+            displayPrice = "CHF " + priceObj.finalPrice;
+          }
+          document.getElementById("quoteBox3").innerHTML = displayPrice;
+    
           document.getElementById("quoteNote1").innerHTML = `
             <ul style="list-style-type: disc; padding-left: 10px; margin-left: 0;">
               <li style="margin-bottom: 8px;">Quote subject to change based on service area or special events.</li>
@@ -461,7 +578,7 @@
           document.querySelector(".quote-button").classList.add("active");
           document.querySelector(".quote-button").innerText = "Update Quote";
           document.querySelector(".reserve-button").classList.remove("hidden");
-          if (calculatedPrice < 80) {
+          if (priceObj.finalPrice < 80) {
             showError("Quote below the Minimum Reservation fare");
             document.querySelector(".reserve-button").innerText = "Reserve for CHF 80";
           }
@@ -469,93 +586,6 @@
           alert("Directions request failed due to " + status);
         }
       });
-    }
-    
-    function calculatePrice(distanceValue, durationValue, type) {
-      var baseRate, perKmRate, perMinRate;
-      var distanceInKm = distanceValue / 1000;
-      var durationInMin = durationValue / 60;
-      var totalPrice;
-      if (type === "myFare") {
-        baseRate = 6.00;
-        var initialPerKmRate = 3.80;
-        var minimumPerKmRate = 3.00;
-        function calculatePerKmRate(distance) {
-          if (distance >= 700) return minimumPerKmRate;
-          let rateDecrease = (initialPerKmRate - minimumPerKmRate) * (distance / 700);
-          return initialPerKmRate - rateDecrease;
-        }
-        perKmRate = calculatePerKmRate(distanceInKm);
-        perMinRate = 0;
-        totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
-    
-        var flatRates = { "nyon": 90, "eysins": 90, "lausanne": 230, "zermatt": 900 };
-        function getMatchingCity(input) {
-          input = input.toLowerCase();
-          for (var city in flatRates) {
-            if (input.includes(city)) return city;
-          }
-          return null;
-        }
-        var pickupValue = document.getElementById("pickup").value.toLowerCase();
-        var dropoffValue = document.getElementById("destination").value.toLowerCase();
-        var pickupCity = getMatchingCity(pickupValue);
-        var dropoffCity = getMatchingCity(dropoffValue);
-        if (pickupValue.includes("gva") && dropoffCity) {
-          totalPrice = flatRates[dropoffCity];
-        } else if (dropoffValue.includes("gva") && pickupCity) {
-          totalPrice = flatRates[pickupCity];
-        }
-    
-        var promoInput = document.getElementById("promoCode").value.toLowerCase().trim();
-        var promoCodes = {
-          "nyon10": { city: "nyon", multiplier: 0.9 },
-          "zermatt20": { city: "zermatt", multiplier: 0.8 },
-          "gva5": { all: true, multiplier: 0.95 }
-        };
-        if (promoInput !== "") {
-          if (promoCodes.hasOwnProperty(promoInput)) {
-            var promoData = promoCodes[promoInput];
-            if (promoData.all) {
-              if (pickupValue.includes("gva") || dropoffValue.includes("gva")) {
-                totalPrice = totalPrice * promoData.multiplier;
-              } else {
-                showPromoError("Promo code not applicable to the selected route");
-              }
-            } else {
-              if ((pickupValue.includes("gva") && dropoffCity === promoData.city) ||
-                  (dropoffValue.includes("gva") && pickupCity === promoData.city)) {
-                totalPrice = totalPrice * promoData.multiplier;
-              } else {
-                showPromoError("Promo code not applicable to the selected route");
-              }
-            }
-          } else {
-            showPromoError("Invalid promo code");
-          }
-        }
-    
-        if (totalPrice < 15) {
-          totalPrice = 15;
-        } else if (totalPrice < 80) {
-          totalPrice = Math.ceil(totalPrice / 5) * 5;
-        } else {
-          totalPrice = Math.floor(totalPrice / 10) * 10;
-        }
-      } else if (type === "taxi") {
-        baseRate = 6.30;
-        perKmRate = 3.80;
-        perMinRate = 0;
-        totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin) + 5 + Math.floor(distanceInKm / 50) * 5;
-        totalPrice = Math.ceil(totalPrice);
-      } else if (type === "uberVan") {
-        baseRate = 8.00;
-        perKmRate = 3.60;
-        perMinRate = 0.60;
-        totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
-        totalPrice = Math.ceil(totalPrice);
-      }
-      return totalPrice.toFixed(2);
     }
     
     function showPromoError(errorType) {
@@ -582,45 +612,45 @@
         document.querySelector(".reserve-button").innerText = "Reserve for CHF 80";
       }
     }
+    
+    function selectRideType(type) {
+      const singleRideButton = document.getElementById('singleRideButton');
+      const byTheHourButton = document.getElementById('byTheHourButton');
+      const byTheHourFields = document.getElementById('byTheHourFields');
+      const dropoffLocationContainer = document.getElementById('dropoffLocationContainer');
 
-        function selectRideType(type) {
-            const singleRideButton = document.getElementById('singleRideButton');
-            const byTheHourButton = document.getElementById('byTheHourButton');
-            const byTheHourFields = document.getElementById('byTheHourFields');
-            const dropoffLocationContainer = document.getElementById('dropoffLocationContainer');
-
-            if (type === 'singleRide') {
-                singleRideButton.classList.add('selected');
-                byTheHourButton.classList.remove('selected');
-                byTheHourFields.classList.add('hidden');
-                dropoffLocationContainer.classList.remove('hidden');
-                document.getElementById('map-canvas').style.display = 'none';
-				document.getElementById('reverseButtonId').classList.remove("hidden");
-                document.getElementById('quote').classList.add('hidden');
-				document.querySelector(".reserve-button").classList.add("hidden");
-				document.getElementById('oneWayReturnButtons').classList.remove('hidden');
-				document.getElementById('reserveFields').classList.add('hidden');
-            } else {
-                singleRideButton.classList.remove('selected');
-                byTheHourButton.classList.add('selected');
-                byTheHourFields.classList.remove('hidden');
-                dropoffLocationContainer.classList.add('hidden');
-				document.getElementById('map-canvas').style.display = 'none';
-				document.getElementById('reverseButtonId').classList.add("hidden");
-				document.getElementById('quote').classList.add('hidden');
-				document.querySelector(".reserve-button").classList.add("hidden");
-                document.getElementById('oneWayReturnButtons').classList.add('hidden');
-				document.getElementById('reserveFields').classList.add('hidden');				
-            }
-        }
+      if (type === 'singleRide') {
+        singleRideButton.classList.add('selected');
+        byTheHourButton.classList.remove('selected');
+        byTheHourFields.classList.add('hidden');
+        dropoffLocationContainer.classList.remove('hidden');
+        document.getElementById('map-canvas').style.display = 'none';
+		    document.getElementById('reverseButtonId').classList.remove("hidden");
+        document.getElementById('quote').classList.add('hidden');
+		    document.querySelector(".reserve-button").classList.add("hidden");
+		    document.getElementById('oneWayReturnButtons').classList.remove('hidden');
+		    document.getElementById('reserveFields').classList.add('hidden');
+      } else {
+        singleRideButton.classList.remove('selected');
+        byTheHourButton.classList.add('selected');
+        byTheHourFields.classList.remove('hidden');
+        dropoffLocationContainer.classList.add('hidden');
+		    document.getElementById('map-canvas').style.display = 'none';
+		    document.getElementById('reverseButtonId').classList.add("hidden");
+		    document.getElementById('quote').classList.add('hidden');
+		    document.querySelector(".reserve-button").classList.add("hidden");
+        document.getElementById('oneWayReturnButtons').classList.add('hidden');
+		    document.getElementById('reserveFields').classList.add('hidden');				
+      }
+    }
 		
     function calculateQuote() {
       if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
         calculateHourlyQuote();
-		document.getElementById('quote').classList.remove('hidden');
+		    document.getElementById('quote').classList.remove('hidden');
       } else {
         calculateDistancesIfBothFilled();
-		document.getElementById('quote').classList.remove('hidden');
+		    document.getElementById('quote').classList.remove('hidden');
       }
     }
     
@@ -784,7 +814,13 @@
       const destination = document.getElementById("destination").value;
       const quoteBox1 = document.getElementById("quoteBox1").innerText;
       const quoteBox2 = document.getElementById("quoteBox2").innerText;
-      let quoteBox3 = document.getElementById("quoteBox3").innerText;
+      // Use the global currentFareObj to generate a plain-text quote
+      var quoteBox3Text;
+      if (window.currentFareObj && window.currentFareObj.promoApplied) {
+        quoteBox3Text = "CHF " + window.currentFareObj.finalPrice + " (was CHF " + window.currentFareObj.normalPrice + ")";
+      } else {
+        quoteBox3Text = document.getElementById("quoteBox3").innerText;
+      }
       if (errorType === "outside") {
         let whatsappMessage = "*OUTSIDE SERVICING AREA:*\n\n";
         whatsappMessage += `*Pick-Up Location:* ${pickup}\n`;
@@ -798,7 +834,7 @@
         whatsappMessage += `*Dropoff Location:* ${destination}\n`;
         whatsappMessage += `*${quoteBox1Label}:* ${quoteBox1}\n`;
         whatsappMessage += `*${quoteBox2Label}:* ${quoteBox2}\n`;
-        whatsappMessage += `*${quoteBox3Label}:* ${quoteBox3}\n`;
+        whatsappMessage += `*${quoteBox3Label}:* ${quoteBox3Text}\n`;
         openExternalLink(`https://wa.me/+41788230803?text=${encodeURIComponent(whatsappMessage)}`);
       } else {
         const name = document.getElementById("name").value;
@@ -813,6 +849,7 @@
         const suitcases = document.querySelector("#suitcaseButtons .selected")?.innerText;
         const message = document.getElementById("message").value;
         const promoCode = document.getElementById("promoCode").value;
+        const subject = `${date} ${name}`;
         let whatsappMessage = "*RESERVATION REQUEST:*\n\n";
         whatsappMessage += `*Pick-Up Location:* ${pickup}\n`;
         whatsappMessage += `*Drop-off Location:* ${destination}\n`;
@@ -835,7 +872,7 @@
         }
         whatsappMessage += `*${quoteBox1Label}:* ${quoteBox1}\n`;
         whatsappMessage += `*${quoteBox2Label}:* ${quoteBox2}\n`;
-        whatsappMessage += `*${quoteBox3Label}:* ${quoteBox3}${document.getElementById("returnButton").classList.contains("selected") ? " (per way)" : ""}\n`;
+        whatsappMessage += `*${quoteBox3Label}:* ${quoteBox3Text}${document.getElementById("returnButton").classList.contains("selected") ? " (per way)" : ""}\n`;
         if (message) whatsappMessage += `*Additional Information:* ${message}\n`;
         if (promoCode) whatsappMessage += `*Promo Code:* ${promoCode}\n`;
         openExternalLink(`https://wa.me/+41788230803?text=${encodeURIComponent(whatsappMessage)}`);
@@ -858,10 +895,13 @@
       const suitcases = document.querySelector("#suitcaseButtons .selected")?.innerText;
       const message = document.getElementById("message").value;
       const promoCode = document.getElementById("promoCode").value;
-      const quoteBox1 = document.getElementById("quoteBox1").innerText;
-      const quoteBox2 = document.getElementById("quoteBox2").innerText;
-      let quoteBox3 = document.getElementById("quoteBox3").innerText;
       const subject = `${date} ${name}`;
+      let quoteBox3Text;
+      if (window.currentFareObj && window.currentFareObj.promoApplied) {
+        quoteBox3Text = "CHF " + window.currentFareObj.finalPrice + " (was CHF " + window.currentFareObj.normalPrice + ")";
+      } else {
+        quoteBox3Text = document.getElementById("quoteBox3").innerText;
+      }
       let emailBody = "Reservation Request:\n\n";
       emailBody += `Pick-Up Location: ${pickup}\n`;
       emailBody += `Drop-off Location: ${destination}\n`;
@@ -881,11 +921,10 @@
         emailBody += `Number of Days: ${numberOfDays}\n`;
         emailBody += `Hours per Day: ${hoursPerDay}\n`;
       }
-      emailBody += `${quoteBox1Label}: ${quoteBox1}\n`;
-      emailBody += `${quoteBox2Label}: ${quoteBox2}\n`;
-      emailBody += `${quoteBox3Label}: ${quoteBox3}${document.getElementById("returnButton").classList.contains("selected") ? " (per way)" : ""}\n`;
+      emailBody += `${quoteBox1Label}: ${document.getElementById("quoteBox1").innerText}\n`;
+      emailBody += `${quoteBox2Label}: ${document.getElementById("quoteBox2").innerText}\n`;
+      emailBody += `${quoteBox3Label}: ${quoteBox3Text}${document.getElementById("returnButton").classList.contains("selected") ? " (per way)" : ""}\n`;
       if (message) emailBody += `Additional Information: ${message}\n`;
-      if (promoCode) emailBody += `Promo Code: ${promoCode}\n`;
       openExternalLink(`mailto:reservation@limojazz.ch?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`);
     }
     

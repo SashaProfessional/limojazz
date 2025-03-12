@@ -582,7 +582,30 @@
         document.querySelector(".reserve-button").innerText = "Reserve for CHF 80";
       }
     }
-    
+
+        function selectRideType(type) {
+            const singleRideButton = document.getElementById('singleRideButton');
+            const byTheHourButton = document.getElementById('byTheHourButton');
+            const byTheHourFields = document.getElementById('byTheHourFields');
+            const dropoffLocationContainer = document.getElementById('dropoffLocationContainer');
+
+            if (type === 'singleRide') {
+                singleRideButton.classList.add('selected');
+                byTheHourButton.classList.remove('selected');
+                byTheHourFields.classList.add('hidden');
+                dropoffLocationContainer.classList.remove('hidden');
+				document.getElementById('map-canvas').style.display = 'block';
+				document.getElementById('oneWayReturnButtons').classList.remove('hidden');
+            } else {
+                singleRideButton.classList.remove('selected');
+                byTheHourButton.classList.add('selected');
+                byTheHourFields.classList.remove('hidden');
+                dropoffLocationContainer.classList.add('hidden');
+				document.getElementById('map-canvas').style.display = 'none';
+                document.getElementById('oneWayReturnButtons').classList.add('hidden');				
+            }
+        }
+		
     function calculateQuote() {
       if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
         calculateHourlyQuote();
@@ -930,7 +953,7 @@
       </div>
       
       <!-- Drop-off Field -->
-      <div class="input-container">
+      <div class="input-container" id="dropoffLocationContainer">
         <label for="destination">Drop-off Location</label>
         <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" required value="">
         <button type="button" class="clear-button" tabindex="-1" onclick="document.getElementById('destination').value=''">&times;</button>

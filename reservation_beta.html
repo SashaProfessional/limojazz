@@ -12,7 +12,11 @@
   <title>Quote & Reserve</title>
   <style>
     /* A universal reset for all elements (including inputs) */
-    *, *::before, *::after { box-sizing: border-box; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
     /* Base Styles */
     body {
       font-family: Arial, sans-serif;
@@ -30,20 +34,69 @@
       background-color: #000;
       border-radius: 8px;
     }
-    h2 { text-align: center; margin-bottom: 10px; }
-    h3 { text-align: center; margin-bottom: 20px; font-weight: normal; font-size: 16px; }
-    p { margin: 0 0 15px; }
-    label { display: block; margin-bottom: 5px; }
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: normal;
+      font-size: 16px;
+    }
+    p {
+      margin: 0 0 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    /* Adjust inputs to have extra right padding for in-field buttons */
     input, textarea {
       width: 100%;
       padding: 10px;
+      padding-right: 120px;  /* extra space for three buttons */
       margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
       background-color: #555;
       color: #fff;
     }
-    /* Clear Button */
+    /* Input container for in-field buttons */
+    .input-container {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    /* In-field buttons styling */
+    .infield-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: gray;
+      border: none;
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    /* Order from right: Clear, then Geneva, then Current.
+       When reading left-to-right inside the field the order becomes:
+       Current location, Geneva Airport, then Clear field button. */
+    .btn-clear {
+      right: 10px;
+    }
+    .btn-airport {
+      right: 50px;
+    }
+    .btn-current {
+      right: 90px;
+    }
+    /* Existing clear button for promo code, etc. */
     .clear-button {
       position: absolute;
       right: 10px;
@@ -55,12 +108,16 @@
       cursor: pointer;
       font-size: 16px;
     }
-    .clear-button:focus { outline: none; }
+    .clear-button:focus {
+      outline: none;
+    }
     .clear-button { tabindex: -1; }
-    /* Input Container & Flex Row */
-    .input-container { position: relative; margin-bottom: 15px; }
-    .field-row { display: flex; align-items: stretch; gap: 10px; }
-    /* Button Groups */
+    /* Field row and other layout styles */
+    .field-row {
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+    }
     .button-group {
       display: flex;
       gap: 10px;
@@ -78,12 +135,26 @@
       text-decoration: none;
       font-weight: bold;
     }
-    .button-group button.selected { background-color: #ffbd59; color: black; }
-    button[type="submit"] { background-color: #4CAF50; font-weight: bold; }
-    button[type="resetForm"] { background-color: #f44336; font-weight: bold; }
-    button[type="button"] { background-color: gray; font-weight: bold; }
-    button:hover, .button-group a:hover { background-color: #fff; color: black; }
-    /* Quote & Reserve Buttons */
+    .button-group button.selected {
+      background-color: #ffbd59;
+      color: black;
+    }
+    button[type="submit"] {
+      background-color: #4CAF50;
+      font-weight: bold;
+    }
+    button[type="resetForm"] {
+      background-color: #f44336;
+      font-weight: bold;
+    }
+    button[type="button"] {
+      background-color: gray;
+      font-weight: bold;
+    }
+    button:hover, .button-group a:hover {
+      background-color: #fff;
+      color: black;
+    }
     .quote-button, .reserve-button {
       width: 100%;
       padding: 10px;
@@ -94,11 +165,26 @@
       cursor: pointer;
       font-weight: bold;
     }
-    .quote-button.inactive, .reserve-button.inactive { background-color: #ffbd59; color: black; }
-    .quote-button.active { background-color: #ffbd59; color: black; }
-    .quote-button:hover { background-color: #fff; color: black; }
-    .reserve-button.active { background-color: #fff; color: black; }
-    .reserve-button:hover { background-color: #fff; color: black; }
+    .quote-button.inactive, .reserve-button.inactive {
+      background-color: #ffbd59;
+      color: black;
+    }
+    .quote-button.active {
+      background-color: #ffbd59;
+      color: black;
+    }
+    .quote-button:hover {
+      background-color: #fff;
+      color: black;
+    }
+    .reserve-button.active {
+      background-color: #fff;
+      color: black;
+    }
+    .reserve-button:hover {
+      background-color: #fff;
+      color: black;
+    }
     /* Reverse Button */
     .reverse-button {
       background-color: gray;
@@ -111,10 +197,18 @@
       text-align: center;
       display: block;
     }
-    .reverse-button:hover { background-color: #fff; color: black; }
+    .reverse-button:hover {
+      background-color: #fff;
+      color: black;
+    }
     /* Utility */
-    .hidden { display: none; }
-    .row { display: flex; gap: 10px; }
+    .hidden {
+      display: none;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
     /* Info Boxes */
     #promo-error-box, #error-box-minRate, #error-box-fieldCheck {
       background-color: #f8d7da;
@@ -124,7 +218,9 @@
       margin-bottom: 10px;
       display: none;
     }
-    #promo-error-box h3, #error-box-minRate h3, #error-box-fieldCheck h3 { margin: 0 0 5px; }
+    #promo-error-box h3, #error-box-minRate h3, #error-box-fieldCheck h3 {
+      margin: 0 0 5px;
+    }
     /* Quote Info */
     .quote-info {
       margin-top: 20px;
@@ -132,9 +228,20 @@
       padding: 10px;
       border-radius: 8px;
     }
-    .quote-info h3 { text-align: left; margin-bottom: 5px; }
-    .quote-info h4 { text-align: left; margin-bottom: 10px; font-size: 12px; font-style: italic; }
-    .quote-info .row { display: flex; gap: 10px; }
+    .quote-info h3 {
+      text-align: left;
+      margin-bottom: 5px;
+    }
+    .quote-info h4 {
+      text-align: left;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-style: italic;
+    }
+    .quote-info .row {
+      display: flex;
+      gap: 10px;
+    }
     .quote-info .row > div {
       flex: 1;
       padding: 10px;
@@ -143,21 +250,41 @@
       background-color: #fff;
       color: black;
     }
-    .quoteBox3 { background-color: #ffbd59; font-weight: bold; }
-    .quote-info p { text-align: left; font-size: 12px; font-style: italic; }
+    .quoteBox3 {
+      background-color: #ffbd59;
+      font-weight: bold;
+    }
+    .quote-info p {
+      text-align: left;
+      font-size: 12px;
+      font-style: italic;
+    }
     /* Map Canvas */
-    #map-canvas { height: 400px; width: 100%; display: none; margin-top: 20px; }
+    #map-canvas {
+      height: 400px;
+      width: 100%;
+      display: none;
+      margin-top: 20px;
+    }
     /* Promo Note & Header Note */
-    .promo-note, .header-note {
+    .promo-note {
       font-size: 12px;
       font-style: italic;
       color: #ccc;
     }
-    .promo-note a, .header-note a { color: #ccc; text-decoration: underline; }
-    /* New Location Row for Pickup & Drop-off with Extra Buttons */
-    .location-row { display: flex; align-items: flex-start; gap: 10px; }
-    .location-fields { flex: 1; }
-    .location-btns { display: flex; flex-direction: column; gap: 10px; }
+    .promo-note a {
+      color: #ccc;
+      text-decoration: underline;
+    }
+    .header-note {
+      font-size: 12px;
+      font-style: italic;
+      color: #ccc;
+    }
+    .header-note a {
+      color: #ccc;
+      text-decoration: underline;
+    }
   </style>
   
   <!-- Google Maps & jQuery -->
@@ -270,10 +397,11 @@
     // New function: update logo based on URL parameter
     function updateLogoFromURL() {
       var params = getQueryParams();
-      var logoParam = params.logo;
+      var logoParam = params.logo; // e.g., ?logo=zermatt
       var logoMapping = {
         "zermatt": "https://limojazz.github.io/limojazz/img/limojazz_zernatt_promo_250.gif",
         "main": "https://limojazz.github.io/limojazz/img/limojazz.svg"
+        // add more mappings as needed
       };
       if (logoParam && logoMapping[logoParam]) {
         var logoImg = document.querySelector("#logo-container img");
@@ -337,6 +465,7 @@
       });
     }
     
+    // Modified calculatePrice function with promo handling
     function calculatePrice(distanceValue, durationValue, type) {
       if (type === "myFare") {
         var baseRate = 6.00;
@@ -353,6 +482,7 @@
         var perMinRate = 0;
         var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
     
+        // Apply flat rates if applicable
         var flatRates = { "nyon": 90, "eysins": 90, "lausanne": 230, "zermatt": 900 };
         var pickupValue = document.getElementById("pickup").value.toLowerCase();
         var dropoffValue = document.getElementById("destination").value.toLowerCase();
@@ -371,6 +501,7 @@
           totalPrice = flatRates[pickupCity];
         }
     
+        // Rounding adjustments to get the normal (non-discounted) price
         var normalPrice;
         if (totalPrice < 15) {
           normalPrice = 15;
@@ -380,6 +511,7 @@
           normalPrice = Math.floor(totalPrice / 10) * 10;
         }
     
+        // Check for promo code and apply discount on the normal price (rounded down)
         var promoInput = document.getElementById("promoCode").value.toLowerCase().trim();
         var promoCodes = {
           "nyon10": { city: "nyon", multiplier: 0.9 },
@@ -454,6 +586,7 @@
           var distance = result.routes[0].legs[0].distance.value;
           var duration = result.routes[0].legs[0].duration.value;
           var priceObj = calculatePrice(distance, duration, "myFare");
+          // Store globally for later use (WhatsApp/Email)
           window.currentFareObj = priceObj;
     
           var taxiPrice = calculatePrice(distance, duration, "taxi").finalPrice;
@@ -529,7 +662,7 @@
       const byTheHourButton = document.getElementById('byTheHourButton');
       const byTheHourFields = document.getElementById('byTheHourFields');
       const dropoffLocationContainer = document.getElementById('dropoffLocationContainer');
-
+    
       if (type === 'singleRide') {
         singleRideButton.classList.add('selected');
         byTheHourButton.classList.remove('selected');
@@ -554,7 +687,7 @@
         document.getElementById('reserveFields').classList.add('hidden');				
       }
     }
-    
+		
     function calculateQuote() {
       if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
         calculateHourlyQuote();
@@ -848,38 +981,42 @@
       document.getElementById("promoCode").value = promoVal;
     }
     
-    // New function: Set pickup field to Geneva Airport (GVA)
-    function setPickupToAirport() {
-      document.getElementById("pickup").value = "Geneva Airport (GVA)";
+    /* New Functions for In-Field Location Buttons */
+    var currentLocationAddress = sessionStorage.getItem("currentLocationAddress") || "";
+    function setFieldToAirport(fieldId) {
+      document.getElementById(fieldId).value = "Geneva Airport (GVA)";
     }
-    
-    // New function: Get current location and fill pickup field via reverse geocoding
-    function setPickupToCurrentLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function(position) {
-        var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        geocoder.geocode({ location: latLng }, function(results, status) {
-          console.log("Geocoder status:", status, results); // Debug log
-          if (status === google.maps.GeocoderStatus.OK) {
-            if (results && results.length > 0) {
-              document.getElementById("pickup").value = results[0].formatted_address;
-            } else {
-              alert("No address found");
-            }
-          } else {
-            alert("Geocoder failed: " + status);
-          }
-        });
-      },
-      function(error) {
-        alert("Error getting location: " + error.message);
+    function setFieldToCurrentLocation(fieldId) {
+      if (currentLocationAddress) {
+        document.getElementById(fieldId).value = currentLocationAddress;
+        return;
       }
-    );
-  } else {
-    alert("Geolocation is not supported by this browser.");
-  }
-}
+      document.getElementById(fieldId).value = "Current location loading, please wait...";
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            geocoder.geocode({ location: latLng }, function(results, status) {
+              if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+                currentLocationAddress = results[0].formatted_address;
+                sessionStorage.setItem("currentLocationAddress", currentLocationAddress);
+                document.getElementById(fieldId).value = currentLocationAddress;
+              } else {
+                alert("Could not determine current location");
+                document.getElementById(fieldId).value = "";
+              }
+            });
+          },
+          function(error) {
+            alert("Error getting location: " + error.message);
+            document.getElementById(fieldId).value = "";
+          }
+        );
+      } else {
+        alert("Geolocation is not supported by this browser.");
+        document.getElementById(fieldId).value = "";
+      }
+    }
     
     window.addEventListener("load", function () {
       initialize();
@@ -887,10 +1024,9 @@
       updateLogoFromURL(); // update logo based on URL param
       document.getElementById("oneWayButton").click(); // default to one way
     });
-    
-    document.getElementById("pickup")?.addEventListener("input", toggleAirportFields);
-    document.getElementById("destination")?.addEventListener("input", toggleAirportFields);
-    document.getElementById("date")?.addEventListener("input", function () {
+    document.getElementById("pickup").addEventListener("input", toggleAirportFields);
+    document.getElementById("destination").addEventListener("input", toggleAirportFields);
+    document.getElementById("date").addEventListener("input", function () {
       const date = new Date(this.value);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -900,7 +1036,7 @@
       }
       document.getElementById("returnDate").setAttribute("min", this.value);
     });
-    document.getElementById("returnDate")?.addEventListener("input", function () {
+    document.getElementById("returnDate").addEventListener("input", function () {
       const returnDate = new Date(this.value);
       const startDate = new Date(document.getElementById("date").value);
       if (returnDate < startDate) {
@@ -939,35 +1075,31 @@
         </div>
       </div>
       
-      <!-- Location Row: Pickup & Drop-off with Extra Buttons -->
-      <div class="location-row">
-        <div class="location-fields">
-          <!-- Pick-Up Field -->
-          <div class="input-container">
-            <label for="pickup">Pick-Up Location</label>
-            <input type="text" id="pickup" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" required value="">
-            <button type="button" class="clear-button" tabindex="-1" onclick="document.getElementById('pickup').value=''">&times;</button>
-          </div>
-          <!-- Drop-off Field -->
-          <div class="input-container" id="dropoffLocationContainer">
-            <label for="destination">Drop-off Location</label>
-            <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" required value="">
-            <button type="button" class="clear-button" tabindex="-1" onclick="document.getElementById('destination').value=''">&times;</button>
-          </div>
-        </div>
-        <div class="location-btns">
-          <!-- Airplane Icon Button: Insert Geneva Airport (GVA) -->
-          <button type="button" class="location-btn" title="Airport" onclick="setPickupToAirport()" style="width: 40px; height: 40px; background-color: gray; border: none; border-radius: 4px; color: white;">
-            <span style="font-size: 32px; display: block; line-height: 40px;">&#x2708;</span>
-          </button>
-          <!-- Current Location Icon Button: Lookup GPS -->
-          <button type="button" class="location-btn" title="Current Location" onclick="setPickupToCurrentLocation()" style="width: 40px; height: 40px; background-color: gray; border: none; border-radius: 4px; color: white;">
-            <span style="font-size: 32px; display: block; line-height: 40px;">🎯</span>
-          </button>
+      <!-- Pick-Up Field with In-Field Buttons -->
+      <div class="input-group">
+        <div class="input-container">
+          <label for="pickup">Pick-Up Location</label>
+          <input type="text" id="pickup" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" required value="">
+          <!-- In-field buttons: Order from right (clear is rightmost) -->
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')">&#x2316;</button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('pickup')">&#x2708;</button>
+          <button type="button" class="infield-button btn-clear" tabindex="-1" onclick="document.getElementById('pickup').value=''">&times;</button>
         </div>
       </div>
       
-      <!-- Revised Promo Code + Reverse Button -->
+      <!-- Drop-off Field with In-Field Buttons -->
+      <div class="input-group" id="dropoffLocationContainer">
+        <div class="input-container">
+          <label for="destination">Drop-off Location</label>
+          <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" required value="">
+          <!-- In-field buttons: Order from right -->
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')">&#x2316;</button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('destination')">&#x2708;</button>
+          <button type="button" class="infield-button btn-clear" tabindex="-1" onclick="document.getElementById('destination').value=''">&times;</button>
+        </div>
+      </div>
+      
+      <!-- Revised Promo Code + Reverse Button using arrivalName strategy -->
       <div class="input-container">
         <label for="promoCode">Promo Code</label>
         <div class="field-row">

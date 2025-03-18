@@ -51,16 +51,52 @@
       display: block;
       margin-bottom: 5px;
     }
+    /* Adjust inputs to have extra right padding for in-field buttons */
     input, textarea {
       width: 100%;
       padding: 10px;
+      padding-right: 120px;  /* extra space for three buttons */
       margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
       background-color: #555;
       color: #fff;
     }
-    /* Clear Button (skip in tab navigation) */
+    /* Input container for in-field buttons */
+    .input-container {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    /* In-field buttons styling */
+    .infield-button {
+      position: absolute;
+      top: 59%;
+      transform: translateY(-50%);
+      background-color: gray;
+      border: none;
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    /* Order from right: Clear, then Geneva, then Current.
+       When reading left-to-right inside the field the order becomes:
+       Current location, Geneva Airport, then Clear field button. */
+    .btn-clear {
+      right: 10px;
+    }
+    .btn-airport {
+      right: 50px;
+    }
+    .btn-current {
+      right: 90px;
+    }
+    /* Existing clear button for promo code, etc. */
     .clear-button {
       position: absolute;
       right: 10px;
@@ -75,19 +111,13 @@
     .clear-button:focus {
       outline: none;
     }
-    /* Remove from tab order */
     .clear-button { tabindex: -1; }
-    /* Input Container & Flex Row */
-    .input-container {
-      position: relative;
-      margin-bottom: 15px;
-    }
+    /* Field row and other layout styles */
     .field-row {
       display: flex;
       align-items: stretch;
       gap: 10px;
     }
-    /* Button Groups */
     .button-group {
       display: flex;
       gap: 10px;
@@ -119,13 +149,12 @@
     }
     button[type="button"] {
       background-color: gray;
-      font-weight: bold;
+      <!-- font-weight: bold; -->
     }
     button:hover, .button-group a:hover {
       background-color: #fff;
       color: black;
     }
-    /* Quote & Reserve Buttons */
     .quote-button, .reserve-button {
       width: 100%;
       padding: 10px;
@@ -156,7 +185,7 @@
       background-color: #fff;
       color: black;
     }
-    /* Reverse Button – similar strategy to arrivalName buttons */
+    /* Reverse Button */
     .reverse-button {
       background-color: gray;
       color: white;
@@ -237,7 +266,7 @@
       display: none;
       margin-top: 20px;
     }
-    /* Promo Note (below Promo Code) */
+    /* Promo Note & Header Note */
     .promo-note {
       font-size: 12px;
       font-style: italic;
@@ -247,7 +276,6 @@
       color: #ccc;
       text-decoration: underline;
     }
-	  /* header-note */
     .header-note {
       font-size: 12px;
       font-style: italic;
@@ -574,7 +602,6 @@
           document.getElementById("quoteBox1").innerText = "~ " + distanceText;
           document.getElementById("quoteBox2").innerText = "~ " + durationText;
     
-          // Update the quote box with promo formatting if applicable
           var displayPrice;
           if (priceObj.promoApplied) {
             displayPrice = "CHF " + priceObj.finalPrice + " <span style='text-decoration: line-through;'>CHF " + priceObj.normalPrice + "</span>";
@@ -635,39 +662,39 @@
       const byTheHourButton = document.getElementById('byTheHourButton');
       const byTheHourFields = document.getElementById('byTheHourFields');
       const dropoffLocationContainer = document.getElementById('dropoffLocationContainer');
-
+    
       if (type === 'singleRide') {
         singleRideButton.classList.add('selected');
         byTheHourButton.classList.remove('selected');
         byTheHourFields.classList.add('hidden');
         dropoffLocationContainer.classList.remove('hidden');
         document.getElementById('map-canvas').style.display = 'none';
-		    document.getElementById('reverseButtonId').classList.remove("hidden");
+        document.getElementById('reverseButtonId').classList.remove("hidden");
         document.getElementById('quote').classList.add('hidden');
-		    document.querySelector(".reserve-button").classList.add("hidden");
-		    document.getElementById('oneWayReturnButtons').classList.remove('hidden');
-		    document.getElementById('reserveFields').classList.add('hidden');
+        document.querySelector(".reserve-button").classList.add("hidden");
+        document.getElementById('oneWayReturnButtons').classList.remove('hidden');
+        document.getElementById('reserveFields').classList.add('hidden');
       } else {
         singleRideButton.classList.remove('selected');
         byTheHourButton.classList.add('selected');
         byTheHourFields.classList.remove('hidden');
         dropoffLocationContainer.classList.add('hidden');
-		    document.getElementById('map-canvas').style.display = 'none';
-		    document.getElementById('reverseButtonId').classList.add("hidden");
-		    document.getElementById('quote').classList.add('hidden');
-		    document.querySelector(".reserve-button").classList.add("hidden");
+        document.getElementById('map-canvas').style.display = 'none';
+        document.getElementById('reverseButtonId').classList.add("hidden");
+        document.getElementById('quote').classList.add('hidden');
+        document.querySelector(".reserve-button").classList.add("hidden");
         document.getElementById('oneWayReturnButtons').classList.add('hidden');
-		    document.getElementById('reserveFields').classList.add('hidden');				
+        document.getElementById('reserveFields').classList.add('hidden');				
       }
     }
 		
     function calculateQuote() {
       if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
         calculateHourlyQuote();
-		    document.getElementById('quote').classList.remove('hidden');
+        document.getElementById('quote').classList.remove('hidden');
       } else {
         calculateDistancesIfBothFilled();
-		    document.getElementById('quote').classList.remove('hidden');
+        document.getElementById('quote').classList.remove('hidden');
       }
     }
     
@@ -954,6 +981,43 @@
       document.getElementById("promoCode").value = promoVal;
     }
     
+    /* New Functions for In-Field Location Buttons */
+    var currentLocationAddress = sessionStorage.getItem("currentLocationAddress") || "";
+    function setFieldToAirport(fieldId) {
+      document.getElementById(fieldId).value = "Geneva Airport (GVA)";
+    }
+    function setFieldToCurrentLocation(fieldId) {
+      if (currentLocationAddress) {
+        document.getElementById(fieldId).value = currentLocationAddress;
+        return;
+      }
+      document.getElementById(fieldId).value = "Current location loading, please wait...";
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            geocoder.geocode({ location: latLng }, function(results, status) {
+              if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+                currentLocationAddress = results[0].formatted_address;
+                sessionStorage.setItem("currentLocationAddress", currentLocationAddress);
+                document.getElementById(fieldId).value = currentLocationAddress;
+              } else {
+                alert("Could not determine current location");
+                document.getElementById(fieldId).value = "";
+              }
+            });
+          },
+          function(error) {
+            alert("Error getting location: " + error.message);
+            document.getElementById(fieldId).value = "";
+          }
+        );
+      } else {
+        alert("Geolocation is not supported by this browser.");
+        document.getElementById(fieldId).value = "";
+      }
+    }
+    
     window.addEventListener("load", function () {
       initialize();
       prefillFieldsFromQuery();
@@ -980,6 +1044,11 @@
         this.value = "";
       }
     });
+	  function clearField(fieldId) {
+    const field = document.getElementById(fieldId);
+    field.value = '';
+    field.focus();
+  }
   </script>
 </head>
 <body>
@@ -1011,18 +1080,28 @@
         </div>
       </div>
       
-      <!-- Pick-Up Field -->
-      <div class="input-container">
-        <label for="pickup">Pick-Up Location</label>
-        <input type="text" id="pickup" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" required value="">
-        <button type="button" class="clear-button" tabindex="-1" onclick="document.getElementById('pickup').value=''">&times;</button>
+      <!-- Pick-Up Field with In-Field Buttons -->
+      <div class="input-group">
+        <div class="input-container">
+          <label for="pickup">Pick-Up Location</label>
+          <input type="text" id="pickup" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" required value="">
+          <!-- In-field buttons: Order from right (clear is rightmost) -->
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')">&#x2299;</button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('pickup')">&#x2708;</button>
+          <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('pickup')">&times;</button>
+        </div>
       </div>
       
-      <!-- Drop-off Field -->
-      <div class="input-container" id="dropoffLocationContainer">
-        <label for="destination">Drop-off Location</label>
-        <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" required value="">
-        <button type="button" class="clear-button" tabindex="-1" onclick="document.getElementById('destination').value=''">&times;</button>
+      <!-- Drop-off Field with In-Field Buttons -->
+      <div class="input-group" id="dropoffLocationContainer">
+        <div class="input-container">
+          <label for="destination">Drop-off Location</label>
+          <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" required value="">
+          <!-- In-field buttons: Order from right -->
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')">&#x2299;</button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('destination')">&#x2708;</button>
+          <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('destination')">&times;</button>
+        </div>
       </div>
       
       <!-- Revised Promo Code + Reverse Button using arrivalName strategy -->

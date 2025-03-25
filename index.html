@@ -23,114 +23,148 @@
       transition: height 0.3s;
       overflow: visible;
     }
-    .navbar.scrolled {
-      height: 65px;
-    }
+    .navbar.scrolled { height: 65px; }
     .navbar-container {
       max-width: 1200px;
       margin: auto;
       display: flex;
       justify-content: space-between;
-      align-items: flex-end; /* Align left and right content to bottom */
+      align-items: center; /* vertically center items */
       height: 100%;
       position: relative;
     }
-    /* LEFT: Hamburger & Reserve Button */
+    
+    /* LEFT: Hamburger & Reserve Button (reserve appears on scroll) */
     .navbar-left {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       gap: 10px;
     }
     .hamburger {
       background: none;
       border: none;
       cursor: pointer;
+      font-size: 1.8rem;
+      color: #fff;
       padding: 0;
-    }
-    .hamburger .bar {
-      display: block;
-      width: 25px;
-      height: 3px;
-      background-color: #fff;
-      margin: 3px 0;
-      transition: 0.3s;
+      line-height: 1;
     }
     .reserve-btn {
-      background-color: #FFBD59;
-      border: none;
-      padding: 8px 12px;
-      color: #000;
-      font-size: 1rem;
+      display: none;
+      background-color: #000;
+      border: 2px solid #fff;
+      padding: 0.1rem 5px;
+      color: #fff;
+      font-size: 1.1rem;
       border-radius: 4px;
       cursor: pointer;
-      transition: background-color 0.3s;
-      display: flex;
-      align-items: center;
+      transition: background-color 0.3s, border-color 0.3s, color 0.3s;
     }
-    .reserve-btn:hover {
-      background-color: #e0a744;
+    .reserve-btn:hover { 
+      background-color: #e0a744; 
+      border-color: #e0a744;
+      color: #000; 
     }
-    /* Reserve button text and icon */
-    .reserve-text { display: inline; }
-    .reserve-icon { display: none; }
-    @media screen and (max-width: 768px) {
-      .reserve-text { display: none; }
-      .reserve-icon { display: inline; }
-    }
-    @media screen and (min-width: 769px) {
-      .reserve-text { display: inline; }
-      .reserve-icon { display: none; }
-    }
-
-    /* CENTER: Logo (centered, overflows navbar) */
+    
+    /* CENTER: Logo – Always positioned with top at navbar top */
     .navbar-center {
       position: absolute;
+      top: 0;
       left: 50%;
       transform: translateX(-50%);
-      top: 0; /* Align to top of navbar */
+      z-index: 2;
     }
     .logo {
       height: 250px;
       transition: height 0.3s;
-	  margin-top: 10px;
     }
-    .logo.scrolled {
-      height: 125px;
-	  margin-top: 5px;
-    }
-
-    /* RIGHT: Social Icons */
+    .logo.scrolled { height: 125px; }
+    
+    /* RIGHT: Social Icons (desktop) */
     .navbar-right {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
+      gap: 10px;
     }
-    .navbar-social a {
+    .desktop-social {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 1.8rem;
+    }
+    .desktop-social a { color: #fff; transition: color 0.3s; }
+    .desktop-social a:hover { color: #FFBD59; }
+    
+    /* MOBILE MENU (vertical list) */
+    .navbar-menu {
+      display: none;
+      flex-direction: column;
+      background-color: #000;
+      position: absolute;
+      left: 0;
+      padding: 0.5rem 0;
+    }
+    /* Position the mobile menu based on navbar state */
+    .navbar:not(.scrolled) .navbar-menu { top: 130px; }
+    .navbar.scrolled .navbar-menu { top: 65px; }
+    .navbar-menu.active { display: flex; }
+    .navbar-menu li {
+      padding: 10px 20px;
+      border-bottom: 1px solid #333;
+    }
+    .navbar-menu li:last-child { border-bottom: none; }
+    .mobile-social {
+      text-align: left;
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+    .mobile-social a {
       color: #fff;
-      font-size: 1.2rem;
-      margin-left: 10px;
+      font-size: 2rem;
+      margin-right: 10px;
       transition: color 0.3s;
     }
-    .navbar-social a:hover { color: #FFBD59; }
-
-    /* COVER SECTION (Full Screen) */
+    .mobile-social a:hover { color: #FFBD59; }
+    
+    /* MOBILE OVERRIDES */
+    @media screen and (max-width: 768px) {
+      .navbar, .navbar.scrolled { height: 65px !important; }
+      .logo, .logo.scrolled { height: 125px !important; }
+      /* In mobile, only show Instagram, WhatsApp, and Call */
+      .desktop-only { display: none; }
+      .navbar-social a { font-size: 2rem; }
+      .navbar-menu { top: 65px !important; }
+    }
+    
+    /* COVER SECTION – Now starts below the navbar and fills remaining space */
     #cover {
       position: relative;
-      height: 100vh;
+      height: calc(100vh - 130px);
       overflow: hidden;
+      margin-top: 130px;
     }
+    @media screen and (max-width: 768px) {
+      #cover { height: calc(100vh - 65px); margin-top: 65px; }
+    }
+    /* Make cover media fixed so it stays in place as you scroll */
     #cover .media {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      min-width: 100%;
-      min-height: 100%;
+      position: fixed;
+      top: 130px;
+      left: 0;
+      width: 100%;
+      height: calc(100vh - 130px);
       object-fit: cover;
+      z-index: -1;
+      transition: top 0.3s, height 0.3s;
     }
-    /* Show the image first and hide the video */
+    @media screen and (max-width: 768px) {
+      #cover .media {
+         top: 65px;
+         height: calc(100vh - 65px);
+      }
+    }
     #cover .cover-image { display: block; }
     #cover .cover-video { display: none; }
-    /* Once video is ready, swap the display */
     #cover.video-loaded .cover-image { display: none; }
     #cover.video-loaded .cover-video { display: block; }
     #cover .content {
@@ -139,7 +173,22 @@
       text-align: center;
       color: #fff;
       padding: 20px;
-	  margin-top: 300px;
+      margin-top: 150px;
+    }
+    .scroll-arrow {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      animation: bounce 1.5s infinite;
+      z-index: 3;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, -10px); }
     }
     #cover::after {
       content: "";
@@ -148,31 +197,51 @@
       background: rgba(0,0,0,0.5);
       z-index: 1;
     }
-
+    
     /* NORMAL SECTIONS */
     section.normal {
       padding: 60px 20px;
       background-color: #000;
       color: #fff;
+      padding-top: 150px;
     }
     .container { max-width: 1200px; margin: auto; }
     h2 { font-size: 2rem; margin-bottom: 20px; text-align: center; }
     p { margin-bottom: 20px; font-size: 1rem; }
     ul li { margin-bottom: 10px; }
-
-    /* PARALLAX SECTIONS (75% Viewport Height) */
+    
+    /* PARALLAX SECTIONS (75% Viewport Height) with Video Background */
     .parallax-section {
-      height: 75vh;
-      background-attachment: fixed;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
       position: relative;
+      height: 75vh;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       color: #fff;
+    }
+    .parallax-media {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+    .parallax-media .bg-image { display: block; }
+    .parallax-media .bg-video { display: none; }
+    .parallax-section.video-loaded .bg-image { display: none; }
+    .parallax-section.video-loaded .bg-video { display: block; }
+    .parallax-section .bg-video,
+    .parallax-section .bg-image {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      object-fit: cover;
     }
     .parallax-section::after {
       content: "";
@@ -192,7 +261,7 @@
       border-radius: 5px;
       display: inline-block;
     }
-
+    
     /* BUTTON STYLES */
     .btn {
       display: inline-block;
@@ -208,7 +277,7 @@
       transition: background-color 0.3s;
     }
     .btn:hover { background-color: #e0a744; }
-
+    
     /* FOOTER */
     footer {
       background-color: #000;
@@ -220,41 +289,55 @@
 </head>
 <body>
   <!-- NAVBAR -->
-  <nav class="navbar">
+  <nav class="navbar" id="navbar">
     <div class="navbar-container container">
+      <!-- LEFT: Hamburger & Reserve Button (Reserve always on right of left side) -->
       <div class="navbar-left">
-        <button class="hamburger" id="mobile-menu">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
+        <button class="hamburger" id="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
         </button>
-        <button class="reserve-btn">
-          <span class="reserve-text">Reserve Now</span>
-          <span class="reserve-icon"><i class="fas fa-concierge-bell"></i></span>
-        </button>
+        <button class="reserve-btn" id="reserve-btn">Reserve Now!</button>
       </div>
+      
+      <!-- CENTER: Logo -->
       <div class="navbar-center">
-        <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="LimoJazz Logo" class="logo">
+        <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="LimoJazz Logo" class="logo" id="logo">
       </div>
+      
+      <!-- RIGHT: Social Icons (desktop) -->
       <div class="navbar-right">
-        <div class="navbar-social">
-          <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
+        <div class="desktop-social" id="desktop-social">
+          <a href="https://www.facebook.com/limojazz" class="desktop-only" target="_blank"><i class="fab fa-facebook"></i></a>
           <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
           <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
-          <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download><i class="fas fa-address-card"></i></a>
+          <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" class="desktop-only" download target="_blank"><i class="fas fa-address-card"></i></a>
           <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
         </div>
       </div>
+      
+      <!-- MOBILE MENU (vertical list) -->
+      <ul class="navbar-menu" id="navbar-menu">
+        <li><a href="#cover">Home</a></li>
+        <li><a href="https://www.limojazz.ch/reservation">Reservation</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li class="mobile-social">
+          <div class="mobile-social-icons">
+            <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
+          </div>
+        </li>
+      </ul>
     </div>
   </nav>
-
-  <!-- COVER SECTION (Image then Video) -->
+  
+  <!-- COVER SECTION -->
   <section id="cover">
-    <!-- Cover Image (fallback) -->
+    <!-- Cover fallback image -->
     <img src="https://picsum.photos/1920/1080?random=1" alt="Cover Image" class="media cover-image">
-    <!-- Cover Video (hidden until loaded) -->
+    <!-- Cover video -->
     <video class="media cover-video" autoplay loop muted playsinline>
-      <source src="https://media.istockphoto.com/id/901880324/video/luxury-taxi-driver-opening-door-for-wealthy-client-inviting-for-ride-services.mp4?s=mp4-640x640-is&k=20&c=Ae9eSd5Ev12rMSA6s8rbbFyu0zaWo7id_KH_Rbu7yd8=" type="video/mp4">
+      <source src="https://media.istockphoto.com/id/1139896459/video/skiing-on-skis.mp4?s=mp4-640x640-is&k=20&c=BUOX4FzEW5u2PQOAvqIEscj-VUfqTZ7jJ3qxnwwr4f4=" type="" type="video/mp4">
       Your browser does not support the video tag.
     </video>
     <div class="content">
@@ -262,26 +345,30 @@
       <p>Experience luxury transportation like never before.</p>
       <a href="https://www.limojazz.ch/reservation" class="btn">Reserve Now!</a>
     </div>
+    <!-- Scroll Arrow -->
+    <div class="scroll-arrow" onclick="document.querySelector('#about').scrollIntoView({behavior: 'smooth'})">
+      <i class="fas fa-chevron-down"></i>
+    </div>
   </section>
-
-  <!-- NORMAL SECTION: About Us (Starts immediately after Cover) -->
+  
+  <!-- NORMAL SECTION: About Us -->
   <section class="normal" id="about">
     <div class="container">
       <h2>About Us</h2>
       <p>At LimoJazz, luxury is more than just a ride—it's an experience. Whether it's for business trips, weddings, special events, or tailor-made tours, every journey is seamless, stylish, and uniquely yours.</p>
     </div>
   </section>
-
-  <!-- NORMAL SECTION: Meet the Team -->
-  <section class="normal" id="team">
-    <div class="container">
-      <h2>Meet Tomas Ferrari &amp; The LimoJazz Team</h2>
-      <p>I’m Tomas Ferrari, the founder of LimoJazz. After nearly a decade as a professional chauffeur, I created this brand to set a new standard in premium chauffeur services—one that blends elegance, discretion, and true hospitality. Our handpicked team shares these values, ensuring the highest level of professionalism and comfort.</p>
+  
+  <!-- PARALLAX SECTION: Fleet with Video Background -->
+  <div class="parallax-section" id="parallax-fleet">
+    <div class="parallax-media">
+      <!-- Fallback image -->
+      <img src="https://picsum.photos/1920/1080?random=3" alt="Fleet Image" class="bg-image">
+      <!-- Video element; same URL as cover -->
+      <video class="bg-video" autoplay loop muted playsinline>
+        <source src="https://media.istockphoto.com/id/1139896459/video/skiing-on-skis.mp4?s=mp4-640x640-is&k=20&c=BUOX4FzEW5u2PQOAvqIEscj-VUfqTZ7jJ3qxnwwr4f4=" type="video/mp4">
+      </video>
     </div>
-  </section>
-
-  <!-- PARALLAX SECTION: Fleet -->
-  <div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=3');">
     <div class="content">
       <div class="text-overlay">
         <h2>A Fleet for Every Occasion</h2>
@@ -289,7 +376,7 @@
       </div>
     </div>
   </div>
-
+  
   <!-- NORMAL SECTION: Tailored Service -->
   <section class="normal" id="services">
     <div class="container">
@@ -300,9 +387,15 @@
       </ul>
     </div>
   </section>
-
-  <!-- PARALLAX SECTION: On-Board Amenities -->
-  <div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=4');">
+  
+  <!-- PARALLAX SECTION: On-Board Amenities with Video Background -->
+  <div class="parallax-section" id="parallax-amenities">
+    <div class="parallax-media">
+      <img src="https://picsum.photos/1920/1080?random=4" alt="Amenities Image" class="bg-image">
+      <video class="bg-video" autoplay loop muted playsinline>
+        <source src="https://media.istockphoto.com/id/901880324/video/luxury-taxi-driver-opening-door-for-wealthy-client-inviting-for-ride-services.mp4?s=mp4-640x640-is&k=20&c=Ae9eSd5Ev12rMSA6s8rbbFyu0zaWo7id_KH_Rbu7yd8=" type="video/mp4">
+      </video>
+    </div>
     <div class="content">
       <div class="text-overlay">
         <h2>On-Board Comfort &amp; Amenities</h2>
@@ -315,17 +408,23 @@
       </div>
     </div>
   </div>
-
-  <!-- NORMAL SECTION: Booking &amp; Support -->
+  
+  <!-- NORMAL SECTION: Booking & Support -->
   <section class="normal" id="booking">
     <div class="container">
       <h2>Effortless Booking &amp; 24/7 Support</h2>
       <p>Booking your chauffeur is as simple as sending a text. No account or upfront payment needed—fill out our quick booking form to generate a pre-written WhatsApp message or email. For single rides, pay upon arrival. For business bookings, we provide tailored invoices.</p>
     </div>
   </section>
-
-  <!-- PARALLAX SECTION: Reviews -->
-  <div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=5');">
+  
+  <!-- PARALLAX SECTION: Reviews with Video Background -->
+  <div class="parallax-section" id="parallax-reviews">
+    <div class="parallax-media">
+      <img src="https://picsum.photos/1920/1080?random=5" alt="Reviews Image" class="bg-image">
+      <video class="bg-video" autoplay loop muted playsinline>
+        <source src="https://media.istockphoto.com/id/1139896459/video/skiing-on-skis.mp4?s=mp4-640x640-is&k=20&c=BUOX4FzEW5u2PQOAvqIEscj-VUfqTZ7jJ3qxnwwr4f4=" type=" type="video/mp4">
+      </video>
+    </div>
     <div class="content">
       <div class="text-overlay">
         <h2>Reviews</h2>
@@ -337,7 +436,7 @@
       </div>
     </div>
   </div>
-
+  
   <!-- NORMAL SECTION: Contact -->
   <section class="normal" id="contact">
     <div class="container">
@@ -346,39 +445,67 @@
       <p>Email: <a href="mailto:reservation@limojazz.ch">reservation@limojazz.ch</a></p>
     </div>
   </section>
-
+  
   <!-- FOOTER -->
   <footer>
     <p>&copy; 2025 LimoJazz. All Rights Reserved.</p>
   </footer>
-
-  <!-- JAVASCRIPT: Mobile Navbar Toggle & Cover Video Swap, and Scroll Shrink Effect -->
+  
+  <!-- JAVASCRIPT: Navbar, Mobile Menu, Video Swaps, and Scroll Effects -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Mobile navbar toggle (if needed)
-      const mobileMenu = document.getElementById('mobile-menu');
-      mobileMenu.addEventListener('click', () => {
-        // You can add functionality here if you have a mobile menu panel.
+      // Mobile navbar menu toggle
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const navbarMenu = document.getElementById('navbar-menu');
+      mobileMenuBtn.addEventListener('click', () => {
+        navbarMenu.classList.toggle('active');
+      });
+      
+      // Close mobile menu automatically when scrolling
+      window.addEventListener('scroll', () => {
+        if (navbarMenu.classList.contains('active')) {
+          navbarMenu.classList.remove('active');
+        }
       });
       
       // Cover video swap
-      const coverVideo = document.querySelector('.cover-video');
+      const coverVideo = document.querySelector('#cover .cover-video');
       coverVideo.addEventListener('canplay', () => {
         document.getElementById('cover').classList.add('video-loaded');
       });
       
-      // Navbar scroll shrink effect
-      window.addEventListener('scroll', function() {
-        const navbar = document.querySelector('.navbar');
-        const logo = document.querySelector('.logo');
-        if (window.scrollY > 50) {
-          navbar.classList.add('scrolled');
-          logo.classList.add('scrolled');
-        } else {
-          navbar.classList.remove('scrolled');
-          logo.classList.remove('scrolled');
+      // Parallax sections: swap fallback image with video when video can play
+      const parallaxSections = document.querySelectorAll('.parallax-section');
+      parallaxSections.forEach(section => {
+        const video = section.querySelector('.bg-video');
+        if(video) {
+          video.addEventListener('canplay', () => {
+            section.classList.add('video-loaded');
+          });
         }
       });
+      
+      // Desktop scroll shrink effect
+      function updateNavbar() {
+        if (window.innerWidth > 768) {
+          if (window.scrollY > 50) {
+            document.getElementById('navbar').classList.add('scrolled');
+            document.getElementById('logo').classList.add('scrolled');
+          } else {
+            document.getElementById('navbar').classList.remove('scrolled');
+            document.getElementById('logo').classList.remove('scrolled');
+            document.getElementById('reserve-btn').style.display = 'none';
+          }
+        }
+		if (window.scrollY > 50) {
+		// Move reserve button to left and show it
+            document.getElementById('reserve-btn').style.display = 'inline-flex';
+			} else {
+            document.getElementById('reserve-btn').style.display = 'none';
+			}
+      }
+      window.addEventListener('scroll', updateNavbar);
+      window.addEventListener('resize', updateNavbar);
     });
   </script>
 </body>

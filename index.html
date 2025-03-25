@@ -188,6 +188,10 @@
       animation: bounce 1.5s infinite;
       z-index: 3;
     }
+	    @keyframes bounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, -10px); }
+    }
 
     /* NORMAL SECTIONS */
     section.normal {
@@ -268,7 +272,7 @@
         <button class="hamburger" id="mobile-menu-btn">
           <i class="fas fa-bars"></i>
         </button>
-        <button class="reserve-btn" id="reserve-btn">Book Now!</button>
+        <button class="reserve-btn" id="reserve-btn">Book!</button>
       </div>
       <!-- CENTER: Logo -->
       <div class="navbar-center">
@@ -308,7 +312,7 @@
     <img src="https://picsum.photos/1920/1080?random=1" alt="Cover Image" class="media cover-image">
     <!-- Cover Video -->
     <video class="media cover-video" autoplay loop muted playsinline>
-      <source src="https://media.istockphoto.com/id/517337219/video/actor-on-red-carpet.mp4?s=mp4-640x640-is&k=20&c=0Wt6cVZG3wo0ZtrFbZ1_E5UM6nOBhozcykNWQIHZ5NM="video/mp4">
+      <source src="https://media.istockphoto.com/id/901880324/video/luxury-taxi-driver-opening-door-for-wealthy-client-inviting-for-ride-services.mp4?s=mp4-640x640-is&k=20&c=Ae9eSd5Ev12rMSA6s8rbbFyu0zaWo7id_KH_Rbu7yd8="video/mp4">
       Your browser does not support the video tag.
     </video>
     <div class="content">

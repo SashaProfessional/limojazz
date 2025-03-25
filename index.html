@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LimoJazz - Elevating Your Journey</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* RESET */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* NAVBAR */
+    .navbar {
+      background-color: #000;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      height: 130px;
+      transition: height 0.3s;
+      overflow: visible;
+    }
+    .navbar.scrolled {
+      height: 65px;
+    }
+    .navbar-container {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end; /* Align left and right content to bottom */
+      height: 100%;
+      position: relative;
+    }
+    /* LEFT: Hamburger & Reserve Button */
+    .navbar-left {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .hamburger {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .hamburger .bar {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background-color: #fff;
+      margin: 3px 0;
+      transition: 0.3s;
+    }
+    .reserve-btn {
+      background-color: #FFBD59;
+      border: none;
+      padding: 8px 12px;
+      color: #000;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    .reserve-btn:hover {
+      background-color: #e0a744;
+    }
+    /* Reserve button text and icon */
+    .reserve-text { display: inline; }
+    .reserve-icon { display: none; }
+    @media screen and (max-width: 768px) {
+      .reserve-text { display: none; }
+      .reserve-icon { display: inline; }
+    }
+    @media screen and (min-width: 769px) {
+      .reserve-text { display: inline; }
+      .reserve-icon { display: none; }
+    }
+
+    /* CENTER: Logo (centered, overflows navbar) */
+    .navbar-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0; /* Align to top of navbar */
+    }
+    .logo {
+      height: 250px;
+      transition: height 0.3s;
+	  margin-top: 10px;
+    }
+    .logo.scrolled {
+      height: 125px;
+	  margin-top: 5px;
+    }
+
+    /* RIGHT: Social Icons */
+    .navbar-right {
+      display: flex;
+      align-items: flex-end;
+    }
+    .navbar-social a {
+      color: #fff;
+      font-size: 1.2rem;
+      margin-left: 10px;
+      transition: color 0.3s;
+    }
+    .navbar-social a:hover { color: #FFBD59; }
+
+    /* COVER SECTION (Full Screen) */
+    #cover {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #cover .media {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+    }
+    /* Show the image first and hide the video */
+    #cover .cover-image { display: block; }
+    #cover .cover-video { display: none; }
+    /* Once video is ready, swap the display */
+    #cover.video-loaded .cover-image { display: none; }
+    #cover.video-loaded .cover-video { display: block; }
+    #cover .content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: #fff;
+      padding: 20px;
+    }
+    #cover::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1;
+    }
+
+    /* NORMAL SECTIONS */
+    section.normal {
+      padding: 60px 20px;
+      background-color: #000;
+      color: #fff;
+    }
+    .container { max-width: 1200px; margin: auto; }
+    h2 { font-size: 2rem; margin-bottom: 20px; text-align: center; }
+    p { margin-bottom: 20px; font-size: 1rem; }
+    ul li { margin-bottom: 10px; }
+
+    /* PARALLAX SECTIONS (75% Viewport Height) */
+    .parallax-section {
+      height: 75vh;
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+    }
+    .parallax-section::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 1;
+    }
+    .parallax-section .content {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+    }
+    .text-overlay {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+
+    /* BUTTON STYLES */
+    .btn {
+      display: inline-block;
+      background-color: #FFBD59;
+      color: #000;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: background-color 0.3s;
+    }
+    .btn:hover { background-color: #e0a744; }
+
+    /* FOOTER */
+    footer {
+      background-color: #000;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-container container">
+      <div class="navbar-left">
+        <button class="hamburger" id="mobile-menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+        <button class="reserve-btn">
+          <span class="reserve-text">Reserve Now</span>
+          <span class="reserve-icon"><i class="fas fa-concierge-bell"></i></span>
+        </button>
+      </div>
+      <div class="navbar-center">
+        <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="LimoJazz Logo" class="logo">
+      </div>
+      <div class="navbar-right">
+        <div class="navbar-social">
+          <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download><i class="fas fa-address-card"></i></a>
+          <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- COVER SECTION (Image then Video) -->
+  <section id="cover">
+    <!-- Cover Image (fallback) -->
+    <img src="https://picsum.photos/1920/1080?random=1" alt="Cover Image" class="media cover-image">
+    <!-- Cover Video (hidden until loaded) -->
+    <video class="media cover-video" autoplay loop muted playsinline>
+      <source src="https://media.istockphoto.com/id/901880324/video/luxury-taxi-driver-opening-door-for-wealthy-client-inviting-for-ride-services.mp4?s=mp4-640x640-is&k=20&c=Ae9eSd5Ev12rMSA6s8rbbFyu0zaWo7id_KH_Rbu7yd8=" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="content">
+      <h1>LimoJazz: Elevating Your Journey</h1>
+      <p>Experience luxury transportation like never before.</p>
+      <a href="https://www.limojazz.ch/reservation" class="btn">Reserve Now!</a>
+    </div>
+  </section>
+
+  <!-- NORMAL SECTION: About Us (Starts immediately after Cover) -->
+  <section class="normal" id="about">
+    <div class="container">
+      <h2>About Us</h2>
+      <p>At LimoJazz, luxury is more than just a ride—it's an experience. Whether it's for business trips, weddings, special events, or tailor-made tours, every journey is seamless, stylish, and uniquely yours.</p>
+    </div>
+  </section>
+
+  <!-- NORMAL SECTION: Meet the Team -->
+  <section class="normal" id="team">
+    <div class="container">
+      <h2>Meet Tomas Ferrari &amp; The LimoJazz Team</h2>
+      <p>I’m Tomas Ferrari, the founder of LimoJazz. After nearly a decade as a professional chauffeur, I created this brand to set a new standard in premium chauffeur services—one that blends elegance, discretion, and true hospitality. Our handpicked team shares these values, ensuring the highest level of professionalism and comfort.</p>
+    </div>
+  </section>
+
+  <!-- PARALLAX SECTION: Fleet -->
+  <div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=3');">
+    <div class="content">
+      <div class="text-overlay">
+        <h2>A Fleet for Every Occasion</h2>
+        <p>Our flagship Mercedes-Benz V-Class offers premium space and comfort, along with Business Class E-Class and First-Class S-Class for that extra touch of luxury.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- NORMAL SECTION: Tailored Service -->
+  <section class="normal" id="services">
+    <div class="container">
+      <h2>Tailored Service, Your Way</h2>
+      <ul>
+        <li>Hourly or Transfer-Based – Flexibility to fit your schedule.</li>
+        <li>Any Occasion – From corporate events to nights out, weddings to custom tours.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PARALLAX SECTION: On-Board Amenities -->
+  <div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=4');">
+    <div class="content">
+      <div class="text-overlay">
+        <h2>On-Board Comfort &amp; Amenities</h2>
+        <p>Every ride with LimoJazz is designed for maximum comfort and convenience:</p>
+        <ul style="text-align: left; display: inline-block;">
+          <li><i class="fas fa-check"></i> WiFi on board – Stay connected.</li>
+          <li><i class="fas fa-check"></i> Bottled water – Complimentary.</li>
+          <li><i class="fas fa-check"></i> Child seats available – Request during booking.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- NORMAL SECTION: Booking &amp; Support -->
+  <section class="normal" id="booking">
+    <div class="container">
+      <h2>Effortless Booking &amp; 24/7 Support</h2>
+      <p>Booking your chauffeur is as simple as sending a text. No account or upfront payment needed—fill out our quick booking form to generate a pre-written WhatsApp message or email. For single rides, pay upon arrival. For business bookings, we provide tailored invoices.</p>
+    </div>
+  </section>
+
+  <!-- PARALLAX SECTION: Reviews -->
+  <div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=5');">
+    <div class="content">
+      <div class="text-overlay">
+        <h2>Reviews</h2>
+        <p class="review">“Outstanding service, French speaking driver with excellent English”</p>
+        <p class="review">“What a fantastic ride. Friendly driver, incredibly spacious, Wi-Fi, tablet in the back for music selection and bottled water!”</p>
+        <p class="review">“Muito obrigado, uma viagem rapida e tranquila”</p>
+        <p class="review">“Rapide et efficace, super voiture confortable”</p>
+        <p class="review">“Excellent experience, service oriented. Tomas truly values long-term relationships—highly recommended!”</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- NORMAL SECTION: Contact -->
+  <section class="normal" id="contact">
+    <div class="container">
+      <h2>Contact Us</h2>
+      <p>Phone: <a href="tel:+41788230803">+41 78 823 08 03</a></p>
+      <p>Email: <a href="mailto:reservation@limojazz.ch">reservation@limojazz.ch</a></p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2025 LimoJazz. All Rights Reserved.</p>
+  </footer>
+
+  <!-- JAVASCRIPT: Mobile Navbar Toggle & Cover Video Swap, and Scroll Shrink Effect -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile navbar toggle (if needed)
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.addEventListener('click', () => {
+        // You can add functionality here if you have a mobile menu panel.
+      });
+      
+      // Cover video swap
+      const coverVideo = document.querySelector('.cover-video');
+      coverVideo.addEventListener('canplay', () => {
+        document.getElementById('cover').classList.add('video-loaded');
+      });
+      
+      // Navbar scroll shrink effect
+      window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        const logo = document.querySelector('.logo');
+        if (window.scrollY > 50) {
+          navbar.classList.add('scrolled');
+          logo.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+          logo.classList.remove('scrolled');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

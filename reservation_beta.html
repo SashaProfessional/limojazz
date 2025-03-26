@@ -9,22 +9,27 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="apple-touch-icon" href="https://limojazz.github.io/limojazz/img/pwa_ios_limojazz_512.png">
   <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
   <title>Quote & Reserve</title>
+  <!-- Font Awesome for navbar icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* A universal reset for all elements (including inputs) */
-    *,
-    *::before,
-    *::after {
+    /* ==============================
+       Reservation Page Styles
+       ============================== */
+    *, *::before, *::after {
       box-sizing: border-box;
     }
-    /* Base Styles */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Figtree', sans-serif;
       background-color: #000;
       color: #fff;
       margin: 0;
       padding: 0;
     }
+	button {
+	font-family: 'Figtree', sans-serif;
+	}
     .container {
       box-sizing: content-box;
       max-width: 600px;
@@ -51,26 +56,23 @@
       display: block;
       margin-bottom: 5px;
     }
-    /* Adjust inputs to have extra right padding for in-field buttons */
     input, textarea {
       width: 100%;
       padding: 10px;
-      padding-right: 120px;  /* extra space for three buttons */
+      padding-right: 120px;  /* extra space for in-field buttons */
       margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
       background-color: #555;
       color: #fff;
     }
-    /* Input container for in-field buttons */
     .input-container {
       position: relative;
       margin-bottom: 15px;
     }
-    /* In-field buttons styling */
     .infield-button {
       position: absolute;
-      top: 50%;
+      top: 59%;
       transform: translateY(-50%);
       background-color: gray;
       border: none;
@@ -82,21 +84,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 20px;
     }
-    /* Order from right: Clear, then Geneva, then Current.
-       When reading left-to-right inside the field the order becomes:
-       Current location, Geneva Airport, then Clear field button. */
-    .btn-clear {
-      right: 10px;
-    }
-    .btn-airport {
-      right: 50px;
-    }
-    .btn-current {
-      right: 90px;
-    }
-    /* Existing clear button for promo code, etc. */
+    .btn-clear { right: 10px; }
+    .btn-airport { right: 50px; }
+    .btn-current { right: 90px; }
     .clear-button {
       position: absolute;
       right: 10px;
@@ -108,11 +100,8 @@
       cursor: pointer;
       font-size: 16px;
     }
-    .clear-button:focus {
-      outline: none;
-    }
+    .clear-button:focus { outline: none; }
     .clear-button { tabindex: -1; }
-    /* Field row and other layout styles */
     .field-row {
       display: flex;
       align-items: stretch;
@@ -123,7 +112,8 @@
       gap: 10px;
       margin-bottom: 10px;
     }
-    .button-group button, .button-group a {
+    .button-group button,
+    .button-group a {
       flex: 1;
       padding: 10px;
       background-color: gray;
@@ -149,13 +139,14 @@
     }
     button[type="button"] {
       background-color: gray;
-      font-weight: bold;
     }
-    button:hover, .button-group a:hover {
+    button:hover,
+    .button-group a:hover {
       background-color: #fff;
       color: black;
     }
-    .quote-button, .reserve-button {
+    .quote-button,
+    .reserve-button {
       width: 100%;
       padding: 10px;
       margin-top: 20px;
@@ -165,7 +156,8 @@
       cursor: pointer;
       font-weight: bold;
     }
-    .quote-button.inactive, .reserve-button.inactive {
+    .quote-button.inactive,
+    .reserve-button.inactive {
       background-color: #ffbd59;
       color: black;
     }
@@ -185,7 +177,6 @@
       background-color: #fff;
       color: black;
     }
-    /* Reverse Button */
     .reverse-button {
       background-color: gray;
       color: white;
@@ -201,16 +192,11 @@
       background-color: #fff;
       color: black;
     }
-    /* Utility */
-    .hidden {
-      display: none;
-    }
-    .row {
-      display: flex;
-      gap: 10px;
-    }
-    /* Info Boxes */
-    #promo-error-box, #error-box-minRate, #error-box-fieldCheck {
+    .hidden { display: none; }
+    .row { display: flex; gap: 10px; }
+    #promo-error-box,
+    #error-box-minRate,
+    #error-box-fieldCheck {
       background-color: #f8d7da;
       color: #721c24;
       border-radius: 8px;
@@ -218,10 +204,11 @@
       margin-bottom: 10px;
       display: none;
     }
-    #promo-error-box h3, #error-box-minRate h3, #error-box-fieldCheck h3 {
+    #promo-error-box h3,
+    #error-box-minRate h3,
+    #error-box-fieldCheck h3 {
       margin: 0 0 5px;
     }
-    /* Quote Info */
     .quote-info {
       margin-top: 20px;
       background-color: #444;
@@ -259,14 +246,12 @@
       font-size: 12px;
       font-style: italic;
     }
-    /* Map Canvas */
     #map-canvas {
       height: 400px;
       width: 100%;
       display: none;
       margin-top: 20px;
     }
-    /* Promo Note & Header Note */
     .promo-note {
       font-size: 12px;
       font-style: italic;
@@ -285,6 +270,305 @@
       color: #ccc;
       text-decoration: underline;
     }
+    
+    /* ==============================
+       Navbar Styles (from index16.html)
+       ============================== */
+    .navbar {
+      background-color: #000;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      height: 130px;
+      transition: height 0.3s;
+      overflow: visible;
+    }
+    .navbar.scrolled { height: 65px; }
+    .navbar-container {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+      position: relative;
+	  padding: 0 20px;
+    }
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hamburger {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.8rem;
+      color: #fff;
+      padding: 0;
+      line-height: 1;
+    }
+	.hamburger:hover { color: #FFBD59; background-color: #000;}
+    .reserve-btn {
+      display: none;
+      background-color: #000;
+      border: 2px solid #fff;
+      padding: 0.1rem 5px;
+      color: #fff;
+      font-size: 1.1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    }
+    .reserve-btn:hover { 
+      background-color: #FFBD59; 
+      border-color: #FFBD59;
+      color: #000; 
+    }
+    .navbar-center {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+    .logo {
+      height: 250px;
+      transition: height 0.3s;
+    }
+    .logo.scrolled { height: 125px; }
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .desktop-social {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 1.8rem;
+    }
+    .desktop-social a {
+      color: #fff;
+      transition: color 0.3s;
+    }
+    .desktop-social a:hover { color: #FFBD59; }
+    .navbar-menu {
+      display: none;
+      flex-direction: column;
+      background-color: #000;
+      position: absolute;
+      left: 0;
+      padding: 0.5rem 0;
+    }
+	.navbar-menu a {
+  text-decoration: none; /* Removes underline */
+  color: #000;           /* Change this to your desired color */
+  font-family: 'Figtree', sans-serif; /* Applies Figtree */
+}
+.navbar-menu li {
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-menu li a {
+  display: block;       /* Makes the anchor cover the entire li */
+  padding: 15px 25px;   /* Adjust as needed */
+  text-decoration: none;
+  color: #fff;
+  font-family: 'Figtree', sans-serif;
+}
+
+.navbar-menu li a:hover {
+  background-color: #FFBD59;
+  color: #000;
+}
+
+.hamburger {
+  display: inline-block;
+  cursor: pointer;
+  width: 30px;
+  height: 20px;
+  position: relative;
+  z-index: 2000; /* ensure it's on top */
+}
+
+.hamburger span {
+  background: #fff;
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  border-radius: 3px;
+  left: 0;
+  transition: 0.3s ease-in-out;
+}
+
+.hamburger span:nth-child(1) {
+  top: 0;
+}
+
+.hamburger span:nth-child(2) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.hamburger span:nth-child(3) {
+  bottom: 0;
+}
+
+/* When the hamburger is clicked (open state) */
+.hamburger.open span:nth-child(1) {
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  bottom: 50%;
+  transform: translateY(50%) rotate(-45deg);
+}
+
+
+
+    .navbar:not(.scrolled) .navbar-menu { top: 130px; }
+    .navbar.scrolled .navbar-menu { top: 65px; }
+    .navbar-menu.active { display: flex; }
+    .navbar-menu li {
+      padding: 15px 25px;
+      border-bottom: 1px solid #444;
+      font-size: 1.2rem;
+	  background-color: #FFBD59;
+    }
+    .navbar-menu li:hover {
+      background-color: #222;
+    }
+    .mobile-social {
+      text-align: left;
+      padding-left: 20px;
+      margin-top: 10px;
+	  background-color: black;
+    }
+    .mobile-social a {
+      color: #000;
+      font-size: 2rem;
+      margin-right: 10px;
+      transition: color 0.3s;
+    }
+    .mobile-social a:hover { color: #FFBD59; }
+    @media screen and (max-width: 768px) {
+      .navbar, .navbar.scrolled { height: 65px !important; }
+      .logo, .logo.scrolled { height: 125px !important; }
+      .desktop-only { display: none; }
+      .navbar-menu { top: 65px !important; }
+    }
+    /* Hide these icons on mobile */
+    .desktop-social a.hide-mobile { }
+    @media screen and (max-width: 768px) {
+      .desktop-social a.hide-mobile { display: none; }
+    }
+	.containerForm { margin-top: 150px; padding-top: 100px; background-color: black }
+	@media screen and (max-width: 768px) {
+	.containerForm { padding-top: 10px; }
+	}
+	
+	
+	
+	.fullpage-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 1500;
+  transform: translateY(100%); /* Start off-screen at the bottom */
+  transition: transform 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Active state slides the menu into view */
+.fullpage-menu.active {
+  transform: translateY(0);
+}
+
+/* Close button */
+.fullpage-menu .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 2rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  z-index: 2000;
+}
+
+.fullpage-menu .close-btn:hover {
+  color: #FFBD59;
+}
+
+/* Top section: Logo */
+.menu-top {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.menu-logo {
+  height: 300px; /* Adjust as needed */
+}
+
+/* Navigation list */
+.menu-list {
+  list-style: none;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+.menu-list li {
+  margin: 20px 0;
+}
+.menu-list li a {
+  display: block;
+  padding: 15px 25px;
+  text-decoration: none;
+  color: #fff;
+  font-family: 'Figtree', sans-serif;
+  font-size: 2.5rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+.menu-list li a:hover {
+  background-color: #FFBD59;
+  color: #000;
+}
+
+/* Bottom section: Social icons */
+.menu-bottom {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.menu-bottom .social-icons a {
+  color: #fff;
+  font-size: 3rem;
+  margin: 0 10px;
+  transition: color 0.3s;
+}
+.menu-bottom .social-icons a:hover {
+  color: #FFBD59;
+}
+
+
   </style>
   
   <!-- Google Maps & jQuery -->
@@ -296,7 +580,6 @@
     var directionsRenderer;
     var geocoder;
     
-    /* WhatsApp & External Link Handling */
     function openExternalLink(url) {
       if (url.startsWith("https://wa.me")) {
         openWhatsAppLink(url);
@@ -325,12 +608,11 @@
       window.location.href = newUrl;
     }
     
-    /* Google Maps Initialization */
     function initialize() {
       var inputOrigin = document.getElementById("pickup");
       var inputDestination = document.getElementById("destination");
       var nyon = new google.maps.LatLng(46.3833, 6.2396);
-      var radius = 200 * 1000; // 200 km
+      var radius = 200 * 1000;
       var sw = google.maps.geometry.spherical.computeOffset(nyon, radius, 225);
       var ne = google.maps.geometry.spherical.computeOffset(nyon, radius, 45);
       var nyonBounds = new google.maps.LatLngBounds(sw, ne);
@@ -394,14 +676,12 @@
       if (params.promoCode) document.getElementById("promoCode").value = params.promoCode;
     }
     
-    // New function: update logo based on URL parameter
     function updateLogoFromURL() {
       var params = getQueryParams();
-      var logoParam = params.logo; // e.g., ?logo=zermatt
+      var logoParam = params.logo;
       var logoMapping = {
         "zermatt": "https://limojazz.github.io/limojazz/img/limojazz_zernatt_promo_250.gif",
         "main": "https://limojazz.github.io/limojazz/img/limojazz.svg"
-        // add more mappings as needed
       };
       if (logoParam && logoMapping[logoParam]) {
         var logoImg = document.querySelector("#logo-container img");
@@ -411,7 +691,6 @@
       }
     }
     
-    /* Reverse Pickup & Destination */
     function reverseLocations() {
       var pickupElem = document.getElementById("pickup");
       var destinationElem = document.getElementById("destination");
@@ -420,7 +699,6 @@
       destinationElem.value = temp;
     }
     
-    /* Quote & Reserve Flow */
     function calculateDistancesIfBothFilled() {
       var origin = document.getElementById("pickup").value;
       var destination = document.getElementById("destination").value;
@@ -465,7 +743,6 @@
       });
     }
     
-    // Modified calculatePrice function with promo handling
     function calculatePrice(distanceValue, durationValue, type) {
       if (type === "myFare") {
         var baseRate = 6.00;
@@ -482,7 +759,6 @@
         var perMinRate = 0;
         var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
     
-        // Apply flat rates if applicable
         var flatRates = { "nyon": 90, "eysins": 90, "lausanne": 230, "zermatt": 900 };
         var pickupValue = document.getElementById("pickup").value.toLowerCase();
         var dropoffValue = document.getElementById("destination").value.toLowerCase();
@@ -501,7 +777,6 @@
           totalPrice = flatRates[pickupCity];
         }
     
-        // Rounding adjustments to get the normal (non-discounted) price
         var normalPrice;
         if (totalPrice < 15) {
           normalPrice = 15;
@@ -511,7 +786,6 @@
           normalPrice = Math.floor(totalPrice / 10) * 10;
         }
     
-        // Check for promo code and apply discount on the normal price (rounded down)
         var promoInput = document.getElementById("promoCode").value.toLowerCase().trim();
         var promoCodes = {
           "nyon10": { city: "nyon", multiplier: 0.9 },
@@ -586,7 +860,6 @@
           var distance = result.routes[0].legs[0].distance.value;
           var duration = result.routes[0].legs[0].duration.value;
           var priceObj = calculatePrice(distance, duration, "myFare");
-          // Store globally for later use (WhatsApp/Email)
           window.currentFareObj = priceObj;
     
           var taxiPrice = calculatePrice(distance, duration, "taxi").finalPrice;
@@ -981,7 +1254,6 @@
       document.getElementById("promoCode").value = promoVal;
     }
     
-    /* New Functions for In-Field Location Buttons */
     var currentLocationAddress = sessionStorage.getItem("currentLocationAddress") || "";
     function setFieldToAirport(fieldId) {
       document.getElementById(fieldId).value = "Geneva Airport (GVA)";
@@ -1021,8 +1293,8 @@
     window.addEventListener("load", function () {
       initialize();
       prefillFieldsFromQuery();
-      updateLogoFromURL(); // update logo based on URL param
-      document.getElementById("oneWayButton").click(); // default to one way
+      updateLogoFromURL();
+      document.getElementById("oneWayButton").click();
     });
     document.getElementById("pickup").addEventListener("input", toggleAirportFields);
     document.getElementById("destination").addEventListener("input", toggleAirportFields);
@@ -1044,13 +1316,91 @@
         this.value = "";
       }
     });
+    function clearField(fieldId) {
+      const field = document.getElementById(fieldId);
+      field.value = '';
+      field.focus();
+    }
   </script>
 </head>
 <body>
-  <div class="container">
-    <div id="logo-container" style="display: flex; justify-content: center; align-items: center;">
-      <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="Logo" style="width: 250px; height: auto;">
+  <!-- ==============================
+       Navbar from index16.html
+       ============================== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container container">
+      <div class="navbar-left">
+        <button class="hamburger" id="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+        <a href="https://limojazz.github.io/limojazz/index.html">
+          <button class="reserve-btn" id="reserve-btn">Home</button>
+        </a>
+      </div>
+      <div class="navbar-center">
+        <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="LimoJazz Logo" class="logo" id="logo">
+      </div>
+      <div class="navbar-right">
+        <div class="desktop-social" id="desktop-social">
+          <a href="https://www.facebook.com/limojazz" target="_blank" class="hide-mobile"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank" class="hide-mobile"><i class="fas fa-address-card"></i></a>
+          <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
+        </div>
+      </div>
+      <!-- <ul class="navbar-menu" id="navbar-menu"> -->
+        <!-- <li><a href="#cover">Home</a></li> -->
+        <!-- <li><a href="https://limojazz.github.io/limojazz/reservation.html">Reservation</a></li> -->
+        <!-- <li><a href="#contact">Contact</a></li> -->
+        <!-- <li class="mobile-social"> -->
+          <!-- <div class="mobile-social-icons"> -->
+            <!-- <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a> -->
+            <!-- <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a> -->
+            <!-- <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a> -->
+            <!-- <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank"><i class="fas fa-address-card"></i></a> -->
+            <!-- <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a> -->
+          <!-- </div> -->
+        <!-- </li> -->
+      <!-- </ul> -->
     </div>
+  </nav>
+
+<!-- fullpage-menu.html -->
+<div class="fullpage-menu" id="fullpage-menu">
+  <!-- Close button -->
+  <button class="close-btn" id="menu-close-btn">&times;</button>
+  
+  <!-- Top section: Logo -->
+  <div class="menu-top">
+    <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="LimoJazz Logo" class="menu-logo">
+  </div>
+  
+  <!-- Middle section: Navigation items -->
+  <ul class="menu-list">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="reservation.html">Reservation</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  
+  <!-- Bottom section: Social icons -->
+  <div class="menu-bottom">
+    <div class="social-icons">
+			<a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank"><i class="fas fa-address-card"></i></a>
+            <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
+    </div>
+  </div>
+</div>
+
+
+  <!-- ==============================
+       Main Reservation Content
+       ============================== -->
+  <!-- The original logo container has been removed -->
+  <div class="container containerForm">
     <h2>Quote instantly!</h2>
     <h3>Reserve in less than a minute!</h3>
     
@@ -1080,10 +1430,9 @@
         <div class="input-container">
           <label for="pickup">Pick-Up Location</label>
           <input type="text" id="pickup" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" required value="">
-          <!-- In-field buttons: Order from right (clear is rightmost) -->
-          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')">&#x2316;</button>
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')">&#x2299;</button>
           <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('pickup')">&#x2708;</button>
-          <button type="button" class="infield-button btn-clear" tabindex="-1" onclick="document.getElementById('pickup').value=''">&times;</button>
+          <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('pickup')">&times;</button>
         </div>
       </div>
       
@@ -1091,14 +1440,14 @@
       <div class="input-group" id="dropoffLocationContainer">
         <div class="input-container">
           <label for="destination">Drop-off Location</label>
-          <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" required value="">
-          <!-- In-field buttons: Order from right -->
-          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')">&#x2316;</button>
+          <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel &amp; Spa, Interlaken, Switzerland" required value="">
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')">&#x2299;</button>
           <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('destination')">&#x2708;</button>
-          <button type="button" class="infield-button btn-clear" tabindex="-1" onclick="document.getElementById('destination').value=''">&times;</button>
+          <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('destination')">&times;</button>
         </div>
       </div>
       
+
       <!-- Revised Promo Code + Reverse Button using arrivalName strategy -->
       <div class="input-container">
         <label for="promoCode">Promo Code</label>
@@ -1229,6 +1578,70 @@
           console.error('Service Worker registration failed:', error);
         });
     }
+	
+	
   </script>
+ <!-- JAVASCRIPT: Navbar, Mobile Menu, and Scroll Effects -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile navbar menu toggle
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const navbarMenu = document.getElementById('navbar-menu');
+      mobileMenuBtn.addEventListener('click', () => {
+        navbarMenu.classList.toggle('active');
+      });
+      
+      
+      // Desktop scroll shrink effect & hide mobile menu on scroll
+      function updateNavbar() {
+        // Hide mobile menu when scrolling
+        navbarMenu.classList.remove('active');
+        if (window.innerWidth > 768) {
+          if (window.scrollY > 50) {
+            document.getElementById('navbar').classList.add('scrolled');
+            document.getElementById('logo').classList.add('scrolled');
+            document.getElementById('reserve-btn').style.display = 'inline-flex';
+          } else {
+            document.getElementById('navbar').classList.remove('scrolled');
+            document.getElementById('logo').classList.remove('scrolled');
+            document.getElementById('reserve-btn').style.display = 'none';
+          }
+        }
+        if (window.scrollY > 50) {
+          document.getElementById('reserve-btn').style.display = 'inline-flex';
+        } else {
+          document.getElementById('reserve-btn').style.display = 'none';
+        }
+      }
+      window.addEventListener('scroll', updateNavbar);
+      window.addEventListener('resize', updateNavbar);
+    });
+	
+	
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const fullpageMenu = document.getElementById('fullpage-menu');
+  const menuCloseBtn = document.getElementById('menu-close-btn');
+
+  // Toggle menu with hamburger button
+  mobileMenuBtn.addEventListener('click', function() {
+    this.classList.toggle('open'); // animate the hamburger icon
+    fullpageMenu.classList.toggle('active'); // show/hide the full-page menu
+  });
+
+  // Close menu with the X button
+  menuCloseBtn.addEventListener('click', function() {
+    fullpageMenu.classList.remove('active');
+    mobileMenuBtn.classList.remove('open');
+  });
+});
+
+
+
+  </script>
+  
+  
 </body>
 </html>

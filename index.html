@@ -7,6 +7,9 @@
   <!-- External CSS libraries -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
 
   <style>
     /* Global Reset & Base */
@@ -225,19 +228,31 @@
     ul li { margin-bottom: 10px; }
     
     /* PARALLAX SECTIONS */
-    .parallax-section {
-      height: 75vh;
-      background-attachment: fixed;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: #fff;
-    }
+
+	
+	.parallax-section {
+	  background-attachment: fixed;
+	  background-repeat: no-repeat;
+	  position: relative;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  text-align: center;
+	  color: #fff;
+	  /* Default (desktop) styles */
+	  height: calc(100vh - 60px);
+	  background-position: center 60px;
+	  background-size: auto calc(100vh - 60px);
+	}
+
+	@media (max-width: 768px) {
+	  .parallax-section {
+		/* Override for mobile devices */
+		height: calc(100vh - 120px);
+		background-size: auto calc(100vh - 120px);
+	  }
+	}
+
     .parallax-section::after {
       content: "";
       position: absolute;
@@ -288,13 +303,40 @@
 	a {
     color: #fff;
 	}
+
+  .VIpgJd-ZVi9od-ORHb-OEVmcd {
+    display: none !important;
+  }
+  body {
+    top: 0 !important;
+  }
+  
+    /* Hide the default Google Translate dropdown */
+    .goog-te-combo {
+      display: none;
+    }
+    /* Style the toggle button */
+    #toggle-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+	  color: white;
+      cursor: pointer;
+    }
+  
   </style>
 </head>
 <body>
   <!-- Fixed Top Bar -->
   <header class="top-bar">
-    <div class="hamburger">
+    <div class="hamburger" style="display: flex; align-items: center;">
       <a href="#"><i class="fas fa-bars"></i></a>
+  <div id="custom-translate">
+    <button id="toggle-btn" class="notranslate" onclick="toggleLanguage()">FR</button>
+  </div>
+  <!-- Google Translate Element Container (hidden) -->
+  <div id="google_translate_element" style="display: none;"></div>
+  <!-- <div id="google_translate_element" style="margin-left: 10px;"></div> -->
     </div>
     <div class="social-icons">
       <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
@@ -467,6 +509,37 @@
         document.getElementById('cover').classList.add('video-loaded');
       });
     }
-  </script>
+
+  
+    // Initialize Google Translate
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,fr', // Only French is included
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+    
+    // Global variable to track the current language state
+    var currentLanguage = 'en';
+    
+    // Single toggle function
+    function toggleLanguage() {
+      var combo = document.querySelector('.goog-te-combo');
+      if (!combo) return; // Exit if the widget isn't ready
+      if (currentLanguage === 'en') {
+        document.getElementById('toggle-btn').innerText = 'EN';
+        combo.value = 'fr';
+        combo.dispatchEvent(new Event('change'));
+        currentLanguage = 'fr';
+      } else {
+        document.getElementById('toggle-btn').innerText = 'FR';
+        combo.value = 'en';
+        combo.dispatchEvent(new Event('change'));
+        currentLanguage = 'en';
+      }
+    }
+</script>
+
 </body>
 </html>

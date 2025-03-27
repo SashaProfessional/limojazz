@@ -8,16 +8,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+
 
 
 
   <style>
+  
+body, button {
+  font-family: 'Figtree', sans-serif;
+}
+
     /* Global Reset & Base */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: sans-serif;
+      font-family: 'Figtree', sans-serif;
     }
     
     /* -----------------------------
@@ -165,13 +172,13 @@
       }
     }
     #cover .media {
-      position: fixed;
-      top: 60px;
-      left: 0;
-      width: 100%;
-      height: calc(100vh - 60px);
-      object-fit: cover;
-      z-index: -1;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 60px);
+  object-fit: cover;
+  z-index: -1;
       transition: top 0.3s, height 0.3s;
     }
     @media screen and (max-width: 768px) {
@@ -180,25 +187,31 @@
          height: calc(100vh - 120px);
       }
     }
+	
+	
+
+
+	
+	
     #cover .cover-image { display: block; }
     #cover .cover-video { display: none; }
     #cover.video-loaded .cover-image { display: none; }
     #cover.video-loaded .cover-video { display: block; }
-    #cover .content {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      color: #fff;
-      padding: 20px;
-      margin-top: 200px;
-    }
-    #cover::after {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 1;
-    }
+    <!-- #cover .content { -->
+      <!-- position: relative; -->
+      <!-- z-index: 2; -->
+      <!-- text-align: center; -->
+      <!-- color: #fff; -->
+      <!-- padding: 20px; -->
+      <!-- margin-top: 200px; -->
+    <!-- } -->
+    <!-- #cover::after { -->
+      <!-- content: ""; -->
+      <!-- position: absolute; -->
+      <!-- top: 0; left: 0; right: 0; bottom: 0; -->
+      <!-- background: rgba(0,0,0,0.5); -->
+      <!-- z-index: 1; -->
+    <!-- } -->
     .scroll-arrow {
       position: absolute;
       bottom: 20px;
@@ -229,7 +242,6 @@
     
     /* PARALLAX SECTIONS */
 
-	
 	.parallax-section {
 	  background-attachment: fixed;
 	  background-repeat: no-repeat;
@@ -241,17 +253,17 @@
 	  color: #fff;
 	  /* Default (desktop) styles */
 	  height: calc(100vh - 60px);
-	  background-position: center 60px;
-	  background-size: auto calc(100vh - 60px);
+	  background-position: center;
+	  background-size: cover;
 	}
 
 	@media (max-width: 768px) {
 	  .parallax-section {
 		/* Override for mobile devices */
 		height: calc(100vh - 120px);
-		background-size: auto calc(100vh - 120px);
 	  }
 	}
+
 
     .parallax-section::after {
       content: "";
@@ -303,18 +315,16 @@
 	a {
     color: #fff;
 	}
-
-  .VIpgJd-ZVi9od-ORHb-OEVmcd {
-    display: none !important;
-  }
-  body {
-    top: 0 !important;
-  }
-  
-    /* Hide the default Google Translate dropdown */
-    .goog-te-combo {
-      display: none;
-    }
+	
+	/* This is to hide the ugly google translate top bar when on translated version */
+	  .VIpgJd-ZVi9od-ORHb-OEVmcd {
+		display: none !important;
+	  }
+	  /* This correct the bar added space on top when google translate the page */
+	  body {
+		top: 0 !important;
+	  }
+	  
     /* Style the toggle button */
     #toggle-btn {
       background: none;
@@ -324,6 +334,217 @@
       cursor: pointer;
     }
   
+  
+  .cover {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.media-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  pointer-events: none;
+}
+
+.cover-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+  
+<!-- #cover .content { -->
+  <!-- position: absolute; -->
+  <!-- top: 60%; /* Move content 2/3 down the page */ -->
+  <!-- left: 50%; -->
+  <!-- transform: translate(-50%, -50%); -->
+  <!-- z-index: 2; -->
+  <!-- text-align: center; -->
+  <!-- color: #fff; -->
+  <!-- padding: 40px 20px; -->
+  <!-- backdrop-filter: blur(10px); -->
+  <!-- background: rgba(0, 0, 0, 0.4); -->
+  <!-- border-radius: 12px; -->
+  <!-- max-width: 800px; -->
+  <!-- box-shadow: 0 0 40px rgba(0, 0, 0, 0.4); -->
+<!-- } -->
+
+.cover-title {
+  font-size: 2.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.cover-subtitle {
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+#cover .content {
+  opacity: 0;
+  animation: fadeInUp 1.2s ease-out 0.3s forwards;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+
+
+/* Position the parallax overlay similar to the cover overlay */
+<!-- #cover .content { -->
+  <!-- position: absolute; -->
+  <!-- top: 60%; -->
+  <!-- left: 50%; -->
+  <!-- transform: translate(-50%, -50%); -->
+  <!-- z-index: 2; -->
+  <!-- text-align: center; -->
+  <!-- padding: 20px; -->
+  <!-- width: 100%; -->
+  <!-- max-width: 800px; -->
+        <!-- backdrop-filter: blur(15px) saturate(180%); -->
+      <!-- -webkit-backdrop-filter: blur(15px) saturate(180%); -->
+	        <!-- background: rgba(255, 255, 255, 0.05); -->
+      <!-- border: 1px solid rgba(255, 255, 255, 0.2); -->
+      <!-- backdrop-filter: blur(15px) saturate(180%); -->
+      <!-- -webkit-backdrop-filter: blur(15px) saturate(180%); -->
+      <!-- border-radius: 16px; -->
+      <!-- padding: 40px 30px; -->
+      <!-- box-shadow: 0 0 40px rgba(0, 0, 0, 0.6); -->
+      <!-- color: #fff; -->
+      <!-- display: inline-block; -->
+      <!-- animation: floatUp 1s ease-out both; -->
+      <!-- isolation: isolate; -->
+<!-- } -->
+
+<!-- /* Position the parallax overlay similar to the cover overlay */ -->
+<!-- #cover .content { -->
+      <!-- background: rgba(255, 255, 255, 0.05); -->
+      <!-- border: 1px solid rgba(255, 255, 255, 0.2); -->
+      <!-- backdrop-filter: blur(15px) saturate(180%); -->
+      <!-- -webkit-backdrop-filter: blur(15px) saturate(180%); -->
+      <!-- border-radius: 16px; -->
+      <!-- padding: 40px 30px; -->
+      <!-- box-shadow: 0 0 40px rgba(0, 0, 0, 0.6); -->
+      <!-- color: #fff; -->
+      <!-- display: inline-block; -->
+      <!-- animation: floatUp 1s ease-out both; -->
+      <!-- isolation: isolate; -->
+    <!-- } -->
+
+/* Position the parallax overlay similar to the cover overlay */
+.parallax-section .content {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  max-width: 800px;
+}
+
+
+<!-- /* Apply glossy overlay styling to the text overlay */ -->
+<!-- .text-overlay { -->
+  <!-- background: rgba(0, 0, 0, 0.4); -->
+  <!-- backdrop-filter: blur(10px); -->
+  <!-- border-radius: 12px; -->
+  <!-- padding: 40px 20px; -->
+  <!-- margin: 0 auto; -->
+  <!-- display: inline-block; -->
+<!-- } -->
+
+<!-- /* Apply glossy overlay styling to the text overlay */ -->
+<!-- .cover .text-overlay { -->
+  <!-- background: rgba(0, 0, 0, 0.4); -->
+  <!-- backdrop-filter: blur(10px); -->
+  <!-- border-radius: 12px; -->
+  <!-- padding: 40px 20px; -->
+  <!-- margin: 0 auto; -->
+  <!-- display: inline-block; -->
+<!-- } -->
+.cover .content {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  max-width: 800px;
+}
+
+
+    .text-overlay {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(15px) saturate(180%);
+      -webkit-backdrop-filter: blur(15px) saturate(180%);
+      border-radius: 16px;
+      padding: 40px 30px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+      color: #fff;
+      display: inline-block;
+      animation: floatUp 1s ease-out both;
+      isolation: isolate;
+    }
+
+    .text-overlay:hover {
+      <!-- box-shadow: 0 0 60px rgba(255, 189, 89, 0.6); -->
+      <!-- border-color: rgba(255, 189, 89, 0.4); -->
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+
+<!-- .blur-layer { -->
+  <!-- position: absolute; -->
+  <!-- top: 0; left: 0; -->
+  <!-- width: 100%; -->
+  <!-- height: 100%; -->
+  <!-- z-index: 1; -->
+  <!-- backdrop-filter: blur(15px); -->
+  <!-- -webkit-backdrop-filter: blur(15px); -->
+<!-- } -->
+
+
+.content {
+  position: relative;
+  z-index: 2;
+    <!-- backdrop-filter: blur(15px); -->
+  <!-- -webkit-backdrop-filter: blur(15px); -->
+}
+
+.text-overlay {
+  position: relative;
+  z-index: 3;
+}
+
+
+
   </style>
 </head>
 <body>
@@ -380,23 +601,28 @@
   </nav>
   
   <!-- COVER SECTION (from index16.html) -->
-  <section id="cover">
-    <!-- Fallback Cover Image -->
-    <img src="https://picsum.photos/1920/1080?random=1" alt="Cover Image" class="media cover-image">
-    <!-- Cover Video -->
-    <video class="media cover-video" autoplay loop muted playsinline>
-      <source src="https://media.istockphoto.com/id/901880324/video/luxury-taxi-driver-opening-door-for-wealthy-client-inviting-for-ride-services.mp4?s=mp4-640x640-is&k=20&c=Ae9eSd5Ev12rMSA6s8rbbFyu0zaWo7id_KH_Rbu7yd8=" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <div class="content">
+<section class="cover" id="cover">
+<div class="media-container">
+  <img src="https://picsum.photos/1920/1080?random=1" alt="Cover Image" class="media cover-image">
+  <video class="media cover-video" autoplay loop muted playsinline>
+    <source src="https://media.istockphoto.com/id/2046526427/video/skiing-in-gornergrat-train-station-with-matterhorn-in-the-background-4k-cinematic-drone.mp4?s=mp4-640x640-is&k=20&c=p3TCq6laSDpPeTzW-qGA3ezu2sVR8Ryuwq7TDp5G9PU=" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  </div>
+  <!-- <div class="blur-layer"> -->
+<div class="text-overlay content">
+    <div class="">
       <h1>LimoJazz: Elevating Your Journey</h1>
       <p>Experience luxury transportation like never before.</p>
       <a href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
     </div>
-    <div class="scroll-arrow">
-      <a href="#about"><i class="fas fa-chevron-down"></i></a>
-    </div>
-  </section>
+  <!-- </div> -->
+  </div>
+  <div class="scroll-arrow">
+    <a href="#about"><i class="fas fa-chevron-down"></i></a>
+  </div>
+</section>
+
   
   <!-- NORMAL SECTION: About Us -->
   <section class="normal" id="about">
@@ -407,14 +633,16 @@
   </section>
   
   <!-- PARALLAX SECTION: Fleet -->
-  <div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=3');">
-    <div class="content">
-      <div class="text-overlay">
-        <h2>A Fleet for Every Occasion</h2>
-        <p>Our flagship Mercedes-Benz V-Class offers premium space and comfort, along with Business Class E-Class and First-Class S-Class for that extra touch of luxury.</p>
-      </div>
+<div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=3');">
+  <div class="content">
+    <div class="text-overlay">
+      <h2>A Fleet for Every Occasion</h2>
+      <p>Our flagship Mercedes-Benz V-Class offers premium space and comfort, along with Business Class E-Class and First-Class S-Class for that extra touch of luxury.</p>
+      <a href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
     </div>
   </div>
+</div>
+
   
   <!-- NORMAL SECTION: Tailored Service -->
   <section class="normal" id="services">
@@ -428,19 +656,21 @@
   </section>
   
   <!-- PARALLAX SECTION: On-Board Amenities -->
-  <div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=4');">
-    <div class="content">
-      <div class="text-overlay">
-        <h2>On-Board Comfort &amp; Amenities</h2>
-        <p>Every ride with LimoJazz is designed for maximum comfort and convenience:</p>
-        <ul style="text-align: left; display: inline-block;">
-          <li><i class="fas fa-check"></i> WiFi on board – Stay connected.</li>
-          <li><i class="fas fa-check"></i> Bottled water – Complimentary.</li>
-          <li><i class="fas fa-check"></i> Child seats available – Request during booking.</li>
-        </ul>
-      </div>
+<div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=4');">
+  <div class="content">
+    <div class="text-overlay">
+      <h2>On-Board Comfort &amp; Amenities</h2>
+      <p>Every ride with LimoJazz is designed for maximum comfort and convenience:</p>
+      <ul style="text-align: left; display: inline-block;">
+        <li><i class="fas fa-check"></i> WiFi on board – Stay connected.</li>
+        <li><i class="fas fa-check"></i> Bottled water – Complimentary.</li>
+        <li><i class="fas fa-check"></i> Child seats available – Request during booking.</li>
+      </ul><p></p>
+      <a href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
     </div>
   </div>
+</div>
+
   
   <!-- NORMAL SECTION: Booking & Support -->
   <section class="normal" id="booking">
@@ -451,18 +681,20 @@
   </section>
   
   <!-- PARALLAX SECTION: Reviews -->
-  <div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=5');">
-    <div class="content">
-      <div class="text-overlay">
-        <h2>Reviews</h2>
-        <p class="review">“Outstanding service, French speaking driver with excellent English”</p>
-        <p class="review">“What a fantastic ride. Friendly driver, incredibly spacious, Wi-Fi, tablet in the back for music selection and bottled water!”</p>
-        <p class="review">“Muito obrigado, uma viagem rapida e tranquila”</p>
-        <p class="review">“Rapide et efficace, super voiture confortable”</p>
-        <p class="review">“Excellent experience, service oriented. Tomas truly values long-term relationships—highly recommended!”</p>
-      </div>
+<div class="parallax-section" style="background-image: url('https://picsum.photos/1920/1080?random=5');">
+  <div class="content">
+    <div class="text-overlay">
+      <h2>Reviews</h2>
+      <p class="review">“Outstanding service, French speaking driver with excellent English”</p>
+      <p class="review">“What a fantastic ride. Friendly driver, incredibly spacious, Wi-Fi, tablet in the back for music selection and bottled water!”</p>
+      <p class="review">“Muito obrigado, uma viagem rapida e tranquila”</p>
+      <p class="review">“Rapide et efficace, super voiture confortable”</p>
+      <p class="review">“Excellent experience, service oriented. Tomas truly values long-term relationships—highly recommended!”</p>
+      <a href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
     </div>
   </div>
+</div>
+
   
   <!-- NORMAL SECTION: Contact -->
   <section class="normal" id="contact">
@@ -523,22 +755,26 @@
     // Global variable to track the current language state
     var currentLanguage = 'en';
     
+	
     // Single toggle function
     function toggleLanguage() {
       var combo = document.querySelector('.goog-te-combo');
-      if (!combo) return; // Exit if the widget isn't ready
+      <!-- if (!combo) return; // Exit if the widget isn't ready -->
       if (currentLanguage === 'en') {
-        document.getElementById('toggle-btn').innerText = 'EN';
         combo.value = 'fr';
         combo.dispatchEvent(new Event('change'));
         currentLanguage = 'fr';
+        document.getElementById('toggle-btn').innerText = 'EN';
       } else {
-        document.getElementById('toggle-btn').innerText = 'FR';
         combo.value = 'en';
+		<!-- had to duplicate below entry twice for proper reset of translation -->
+        combo.dispatchEvent(new Event('change'));
         combo.dispatchEvent(new Event('change'));
         currentLanguage = 'en';
+        document.getElementById('toggle-btn').innerText = 'FR';
       }
     }
+	
 </script>
 
 </body>

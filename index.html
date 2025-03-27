@@ -179,7 +179,7 @@
     #cover.video-loaded .cover-video { display: block; }
     .scroll-arrow {
       position: absolute;
-      bottom: 20px;
+      bottom: 160px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 2rem;
@@ -188,6 +188,11 @@
       animation: bounce 1.5s infinite;
       z-index: 3;
     }
+	@media screen and (max-width: 768px) {
+	.scroll-arrow {
+		bottom: 100px;
+	}
+	}
     @keyframes bounce {
       0%, 100% { transform: translate(-50%, 0); }
       50% { transform: translate(-50%, -10px); }
@@ -296,7 +301,18 @@
     a { color: #fff; }
 
     /* Hide Google Translate top bar and fix spacing */
+	/* https://stackoverflow.com/questions/75471527/how-to-hide-google-translate-toolbar-popup */
     .VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; }
+    .VIpgJd-suEOdc VIpgJd-yAWNEb-L7lbkb { display: none !important; }
+    .VIpgJd-ZVi9od-aZ2wEe-wOHMyf { display: none !important; }
+    .VIpgJd-yAWNEb-hvhgNd { display: none !important; }
+    #goog-gt-vt { display: none !important; }
+    #goog-gt-tt { display: none !important; }
+	/*To remove the highlighting*/
+	.VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q{
+		background-color: unset !important;
+		box-shadow: none !important;
+	}
     body { top: 0 !important; }
 
     /* Toggle Button Style */
@@ -339,6 +355,34 @@
       width: 100%;
       max-width: 800px;
     }
+	
+#fixed-book-now {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 320;
+  background-color: #FFBD59;
+  color: #000;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+#fixed-book-now:hover {
+  box-shadow: 0 10px 14px rgba(0, 0, 0, 0.2);
+  transform: translateX(-50%) translateY(-2px);
+  background-color: #000;
+}
+
+
   </style>
 </head>
 <body>
@@ -385,6 +429,13 @@
     </div>
   </footer>
 
+
+<!-- fixed book button -->
+<div>
+  <a id="fixed-book-now" href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
+</div>
+
+
   <!-- Full-Screen Overlay Menu -->
   <nav class="overlay-menu">
     <ul>
@@ -392,6 +443,7 @@
       <li><a href="https://limojazz.github.io/limojazz/reservation.html">Reservation</a></li>
     </ul>
   </nav>
+
 
   <!-- COVER SECTION -->
   <section class="cover" id="cover">
@@ -402,11 +454,7 @@
         Your browser does not support the video tag.
       </video>
     </div>
-    <div class="text-overlay content">
-      <h1>LimoJazz: Elevating Your Journey</h1>
-      <p>Experience luxury transportation like never before.</p>
-      <a href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
-    </div>
+
     <div class="scroll-arrow">
       <a href="#about"><i class="fas fa-chevron-down"></i></a>
     </div>
@@ -425,8 +473,7 @@
     <div class="content">
       <div class="text-overlay">
         <h2>A Fleet for Every Occasion</h2>
-        <p>Our flagship Mercedes-Benz V-Class offers premium space and comfort, along with Business Class E-Class and First-Class S-Class for that extra touch of luxury.</p>
-        <a href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
+        <p>Our flagship Mercedes-Benz V-Class offers premium space and comfort, along with Business Class E-Class and First-Class S-Class for that extra touch of luxury.</p>        
       </div>
     </div>
   </div>
@@ -453,7 +500,6 @@
           <li><i class="fas fa-check"></i> Bottled water – Complimentary.</li>
           <li><i class="fas fa-check"></i> Child seats available – Request during booking.</li>
         </ul>
-        <a href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
       </div>
     </div>
   </div>
@@ -476,7 +522,6 @@
         <p class="review">“Muito obrigado, uma viagem rapida e tranquila”</p>
         <p class="review">“Rapide et efficace, super voiture confortable”</p>
         <p class="review">“Excellent experience, service oriented. Tomas truly values long-term relationships—highly recommended!”</p>
-        <a href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
       </div>
     </div>
   </div>

@@ -36,28 +36,20 @@
       padding: 0 20px;
       z-index: 300;
     }
-    /* Left: Language Selector */
-    .lang-selector {
-      display: flex;
-      align-items: center;
+    .top-bar .hamburger a,
+    .top-bar .social-icons a {
+      text-decoration: none;
     }
-    /* Right: Social Icons and Hamburger */
-    .top-right-icons {
-      display: flex;
-      align-items: center;
-    }
-    .top-right-icons .social-icons a,
-    .top-right-icons .hamburger {
-      margin-left: 15px;
-    }
-    .social-icons a i {
+    .top-bar .hamburger i,
+    .top-bar .social-icons a i {
       color: #fff;
       font-size: 24px;
+      margin: 0 10px;
       cursor: pointer;
       transition: all 0.3s ease;
     }
     @media (max-width: 768px) {
-      .top-right-icons .social-icons {
+      .top-bar .social-icons {
         display: none;
       }
     }
@@ -109,40 +101,64 @@
       transition: all 0.3s ease;
     }
 
-    /* Overlay Menu: Slide-in from Right */
-    .overlay-menu {
-      position: fixed;
-      top: 150px;              /* Menu starts at 150px from top */
-      right: 20px;             /* Right edge is 20px from the screen */
-      background: #000;
-      transition: transform 0.5s ease;
-      z-index: 200;
-      transform: translateX(100%); /* Initially off-screen to the right */
-    }
-    .overlay-menu.open {
-      transform: translateX(0);    /* Slides in to final position */
-    }
+    /* Overlay Menu */
+
+/* Updated Overlay Menu */
+.overlay-menu {
+  position: fixed;
+  top: 0px;
+  right: 0;
+  padding-top: 150px;
+  padding-bottom: 150px;
+  background: #000;
+  transition: transform 0.5s ease;
+  z-index: 200;
+}
+
+@media (max-width: 768px) {
+  .overlay-menu {
+    width: 100%;
+	height: 100%;
+    transform: translateX(100%); /* Hidden off-screen to the right */
+  }
+  .overlay-menu.open {
+    transform: translateX(0); /* Slides in fully */
+  }
+}
+
+@media (min-width: 769px) {
+  .overlay-menu {
+    width: 100%;
+    height: 100%;
+    transform: translateX(100%); /* Start offscreen */
+  }
+  .overlay-menu.open {
+    transform: translateX(0); /* Slide in from the right */
+  }
+}
+
+
+
+
     .overlay-menu ul {
       list-style: none;
-      padding: 0;
       margin: 0;
-      text-align: right;       /* Align menu items to the right */
+      text-align: right;
     }
     .overlay-menu ul li {
-      margin: 20px 0;
+      margin: 50px 50px;
     }
     .overlay-menu ul li a {
       text-decoration: none;
-      font-size: 32px;
+      font-size: 50px;
       color: #fff;
       cursor: pointer;
-      display: block;
     }
 
     /* COVER SECTION */
     #cover {
       position: relative;
-      height: calc(100vh - 60px);
+      height: calc(100vh - 60px); /* Desktop: subtract top bar */
       overflow: hidden;
       margin-top: 60px;
     }
@@ -158,11 +174,12 @@
       left: 0;
       width: 100%;
       height: calc(100vh - 60px);
-      object-fit: contain;
-      background-color: black;
+      object-fit: contain; /* change to cover if you want video to occupy full screen and crop */
+	  background-color: black;
       z-index: -1;
       transition: top 0.3s, height 0.3s;
     }
+
     @media screen and (max-width: 768px) {
       #cover .media {
         top: 60px;
@@ -184,11 +201,11 @@
       animation: bounce 1.5s infinite;
       z-index: 3;
     }
-    @media screen and (max-width: 768px) {
-      .scroll-arrow {
-        bottom: 100px;
-      }
-    }
+	@media screen and (max-width: 768px) {
+	.scroll-arrow {
+		bottom: 100px;
+	}
+	}
     @keyframes bounce {
       0%, 100% { transform: translate(-50%, 0); }
       50% { transform: translate(-50%, -10px); }
@@ -261,7 +278,8 @@
       }
       100% {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+        <!-- transform: translateY(0) scale(1); -->
+		transform: translate(-50%, -50%) scale(1);
       }
     }
 
@@ -296,46 +314,21 @@
     a { color: #fff; }
 
     /* Hide Google Translate top bar and fix spacing */
+	/* https://stackoverflow.com/questions/75471527/how-to-hide-google-translate-toolbar-popup */
     .VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; }
     .VIpgJd-suEOdc VIpgJd-yAWNEb-L7lbkb { display: none !important; }
     .VIpgJd-ZVi9od-aZ2wEe-wOHMyf { display: none !important; }
     .VIpgJd-yAWNEb-hvhgNd { display: none !important; }
     #goog-gt-vt { display: none !important; }
     #goog-gt-tt { display: none !important; }
-    .VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q{
-      background-color: unset !important;
-      box-shadow: none !important;
-    }
+	/*To remove the highlighting*/
+	.VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q{
+		background-color: unset !important;
+		box-shadow: none !important;
+	}
     body { top: 0 !important; }
 
-    /* Hamburger Menu - New Structure and Animation */
-    .hamburger {
-      cursor: pointer;
-      width: 35px;
-      height: 30px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      align-items: center;
-      transition: transform 0.3s ease;
-    }
-    .hamburger div {
-      width: 100%;
-      height: 4px;
-      background-color: #fff;
-      transition: 0.4s;
-    }
-    .hamburger.change .bar1 {
-      transform: rotate(-45deg) translate(-8px, 8px);
-    }
-    .hamburger.change .bar2 {
-      opacity: 0;
-    }
-    .hamburger.change .bar3 {
-      transform: rotate(45deg) translate(-8px, -8px);
-    }
-
-    /* Toggle Button Style (for language toggle) */
+    /* Toggle Button Style */
     #toggle-btn {
       background: none;
       border: none;
@@ -375,58 +368,59 @@
       width: 100%;
       max-width: 800px;
     }
-    
-    #fixed-book-now {
-      position: fixed;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 320;
-      background-color: #FFBD59;
-      color: #000;
-      padding: 10px 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      cursor: pointer;
-      box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
-      transition: box-shadow 0.3s ease, transform 0.3s ease;
-    }
-    #fixed-book-now:hover {
-      box-shadow: 0 10px 14px rgba(0, 0, 0, 0.2);
-      transform: translateX(-50%) translateY(-2px);
-      background-color: #000;
-    }
+	
+#fixed-book-now {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 320;
+  background-color: #FFBD59;
+  color: #000;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+#fixed-book-now:hover {
+  box-shadow: 0 10px 14px rgba(0, 0, 0, 0.2);
+  transform: translateX(-50%) translateY(-2px);
+  background-color: #000;
+}
+
+
   </style>
 </head>
 <body>
   <!-- Fixed Top Bar -->
-  <header class="top-bar">
-    <!-- Left Side: Language Selector -->
-    <div class="lang-selector">
-      <div id="custom-translate">
-        <button id="toggle-btn" class="notranslate" onclick="toggleLanguage()">FR</button>
-      </div>
+<!-- Updated Top Bar -->
+<header class="top-bar">
+  <div class="language-selector">
+    <button id="toggle-btn" class="notranslate" onclick="toggleLanguage()">FR</button>
+  </div>
+        <!-- Hidden Google Translate Element -->
+      <div id="google_translate_element" style="display: none;"></div>
+  <div class="right-section" style="display: flex; align-items: center;">
+    <div class="social-icons">
+      <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank"><i class="fas fa-address-card"></i></a>
+      <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
     </div>
-    <!-- Right Side: Social Icons & Hamburger -->
-    <div class="top-right-icons">
-      <div class="social-icons">
-        <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
-        <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank"><i class="fas fa-address-card"></i></a>
-        <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
-      </div>
-      <div class="hamburger" id="hamburger">
-        <div class="bar1"></div>
-        <div class="bar2"></div>
-        <div class="bar3"></div>
-      </div>
+    <div class="hamburger" style="margin-left: 15px;">
+      <a href="#"><i class="fas fa-bars"></i></a>
     </div>
-  </header>
+  </div>
+</header>
+
 
   <!-- Fixed Logo -->
   <div class="logo-container">
@@ -452,18 +446,21 @@
     </div>
   </footer>
 
-  <!-- Fixed Book Button -->
-  <div>
-    <a id="fixed-book-now" href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
-  </div>
 
-  <!-- Slide-In Overlay Menu -->
-  <nav class="overlay-menu" id="overlay-menu">
+<!-- fixed book button -->
+<div>
+  <a id="fixed-book-now" href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
+</div>
+
+
+  <!-- Full-Screen Overlay Menu -->
+  <nav class="overlay-menu">
     <ul>
       <li><a href="https://limojazz.github.io/limojazz/index.html">Home</a></li>
       <li><a href="https://limojazz.github.io/limojazz/reservation.html">Reservation</a></li>
     </ul>
   </nav>
+
 
   <!-- COVER SECTION -->
   <section class="cover" id="cover">
@@ -562,13 +559,18 @@
 
   <!-- JavaScript: Menu Toggle, Smooth Scroll & Cover Video Swap -->
   <script>
-    // Toggle Slide-In Overlay Menu on Hamburger Click with Animation
-    const overlayMenu = document.getElementById('overlay-menu');
-    const hamburger = document.getElementById('hamburger');
-    hamburger.addEventListener('click', function(e) {
+    // Toggle Overlay Menu on Hamburger Click
+    const overlayMenu = document.querySelector('.overlay-menu');
+    const hamburgerIcon = document.querySelector('.top-bar .hamburger a');
+    hamburgerIcon.addEventListener('click', function(e) {
       e.preventDefault();
       overlayMenu.classList.toggle('open');
-      hamburger.classList.toggle('change');
+      const iconEl = hamburgerIcon.querySelector('i');
+      if (overlayMenu.classList.contains('open')) {
+        iconEl.classList.replace('fa-bars', 'fa-times');
+      } else {
+        iconEl.classList.replace('fa-times', 'fa-bars');
+      }
     });
 
     // Smooth Scroll for Scroll Arrow
@@ -606,6 +608,7 @@
         document.getElementById('toggle-btn').innerText = 'EN';
       } else {
         combo.value = 'en';
+        // Dispatch event twice for proper reset
         combo.dispatchEvent(new Event('change'));
         combo.dispatchEvent(new Event('change'));
         currentLanguage = 'en';

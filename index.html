@@ -174,7 +174,7 @@
       left: 0;
       width: 100%;
       height: calc(100vh - 60px);
-      object-fit: contain; /* change to cover if you want video to occupy full screen and crop */
+      object-fit: cover; /* change to cover or contain if you want video to occupy full screen and crop */
 	  background-color: black;
       z-index: -1;
       transition: top 0.3s, height 0.3s;
@@ -462,20 +462,20 @@
   </nav>
 
 
-  <!-- COVER SECTION -->
-  <section class="cover" id="cover">
-    <div class="media-container">
-      <img src="https://picsum.photos/1920/1080?random=1" alt="Cover Image" class="media cover-image">
-      <video class="media cover-video" autoplay loop muted playsinline>
-        <source src="https://limojazz.github.io/limojazz/vid/zermatt20_cover.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-    </div>
+<!-- COVER SECTION -->
+<section class="cover" id="cover">
+  <div class="media-container">
+    <img src="https://picsum.photos/1920/1080?random=1" alt="Cover Image" class="media cover-image">
+    <video id="cover-video" class="media cover-video" autoplay loop muted playsinline>
+      <source id="video-source" src="" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
 
-    <div class="scroll-arrow">
-      <a href="#about"><i class="fas fa-chevron-down"></i></a>
-    </div>
-  </section>
+  <div class="scroll-arrow">
+    <a href="#about"><i class="fas fa-chevron-down"></i></a>
+  </div>
+</section>
 
   <!-- NORMAL SECTION: About Us -->
   <section class="normal" id="about">
@@ -615,6 +615,21 @@
         document.getElementById('toggle-btn').innerText = 'FR';
       }
     }
+	
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const videoSource = document.getElementById('video-source');
+    // Adjust the breakpoint if needed; here it's set to 768px.
+    if (window.innerWidth < 768) {
+      // Mobile: load the vertical video
+      videoSource.src = 'https://limojazz.github.io/limojazz/vid/zermatt20_cover.mp4';
+    } else {
+      // Desktop: load the horizontal video
+      videoSource.src = 'https://media.istockphoto.com/id/901880324/video/luxury-taxi-driver-opening-door-for-wealthy-client-inviting-for-ride-services.mp4?s=mp4-640x640-is&k=20&c=Ae9eSd5Ev12rMSA6s8rbbFyu0zaWo7id_KH_Rbu7yd8=';
+    }
+    document.getElementById('cover-video').load();
+  });
+
   </script>
 </body>
 </html>

@@ -7,9 +7,19 @@
   <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <title>Quote & Reserve</title>
+
   <link rel="apple-touch-icon" href="https://limojazz.github.io/limojazz/img/pwa_ios_limojazz_512.png">
   <link rel="manifest" href="manifest.json">
-  <title>Quote & Reserve</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" /> -->
+  <!-- <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/common.css">
+
   <style>
     /* A universal reset for all elements (including inputs) */
     *,
@@ -19,7 +29,6 @@
     }
     /* Base Styles */
     body {
-      font-family: Arial, sans-serif;
       background-color: #000;
       color: #fff;
       margin: 0;
@@ -28,8 +37,7 @@
     .container {
       box-sizing: content-box;
       max-width: 600px;
-      margin: auto;
-      margin-bottom: 80px;
+      margin: 150px auto 60px;
       padding: 0 20px;
       background-color: #000;
       border-radius: 8px;
@@ -1051,18 +1059,60 @@
   }
   </script>
 </head>
+<header class="top-bar">
+  <div class="language-select-wrapper notranslate">
+    <div class="language-select-trigger" data-value="en">
+      <img src="https://flagcdn.com/w40/gb.png" alt="EN" />
+      <span>EN</span>
+    </div>
+    <div class="language-select-options">
+      <div class="language-select-option" data-value="en">
+        <img src="https://flagcdn.com/w40/gb.png" alt="EN" />
+        <span>EN</span>
+      </div>
+      <div class="language-select-option" data-value="fr">
+        <img src="https://flagcdn.com/w40/fr.png" alt="FR" />
+        <span>FR</span>
+      </div>
+      <div class="language-select-option" data-value="de">
+        <img src="https://flagcdn.com/w40/de.png" alt="DE" />
+        <span>DE</span>
+      </div>
+      <div class="language-select-option" data-value="zh-CN">
+        <img src="https://flagcdn.com/w40/cn.png" alt="CH" />
+        <span>CH</span>
+      </div>
+      <div class="language-select-option" data-value="it">
+        <img src="https://flagcdn.com/w40/it.png" alt="IT" />
+        <span>IT</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="right-section" style="display: flex; align-items: center;">
+    <div class="hamburger" style="margin-left: 15px;">
+      <a href="#"><i class="fas fa-bars"></i></a>
+    </div>
+  </div>
+</header>
+
+<!-- Hidden Google Translate Element -->
+<div id="google_translate_element"></div>
+
+<!-- Fixed Logo -->
+<div class="logo-container">
+  <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="Logo">
+</div>
+
 <body>
   <div class="container">
-    <div id="logo-container" style="display: flex; justify-content: center; align-items: center;">
-      <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="Logo" style="width: 250px; height: auto;">
-    </div>
     <h2>Quote instantly!</h2>
     <h3>Reserve in less than a minute!</h3>
     
     <form id="reservationForm" onsubmit="generateWhatsAppLink(event)">
       <!-- Standard vs. Hourly Reservation Buttons -->
       <div class="button-group">
-        <button type="button" id="singleRideButton" class="selected" onclick="selectRideType('singleRide')">Standard Reservation</button>
+        <button type="button" id="singleRideButton" class="selected" onclick="selectRideType('singleRide')"> Standard Reservation</button>
         <button type="button" id="byTheHourButton" onclick="selectRideType('byTheHour')">Hourly Reservation</button>
       </div>
       
@@ -1223,6 +1273,41 @@
     </form>
   </div>
   
+  <footer>
+    <div class="footer-left-section">
+      <div>Phone: <a href="tel:+41788230803">+41 78 823 08 03</a></div>
+      <div>Email: <a href="mailto:reservation@limojazz.ch">reservation@limojazz.ch</a></div>
+    </div>
+
+    <div class="footer-right-section">
+      <div class="bottom-item">
+        <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank"><i class="fas fa-address-card"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Full-Screen Overlay Menu -->
+  <nav class="overlay-menu">
+    <ul>
+      <li><a href="https://limojazz.github.io/limojazz/index.html">Home</a></li>
+      <li><a href="https://limojazz.github.io/limojazz/reservation.html">Reservation</a></li>
+    </ul>
+  </nav>
+  
+  <script src="/scripts/header.js"></script>
+
   <!-- Service Worker Registration for PWA -->
   <script>
     if ('serviceWorker' in navigator) {

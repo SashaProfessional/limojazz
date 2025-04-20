@@ -11,15 +11,19 @@ button {
   font-family: "Figtree", sans-serif !important;
 }
 
-/* Global Hover Effects */
-a:hover,
-a:hover i,
-button:hover {
-  color: #ffbd59 !important;
+/* Number Input Arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
-a {
-  color: #fff;
+input[type="number"] {
+  -moz-appearance: textfield;
 }
+
+input:focus {
+    outline: none;
+  }
 
 /* Hide Google Translate top bar and fix spacing */
 /* https://stackoverflow.com/questions/75471527/how-to-hide-google-translate-toolbar-popup */
@@ -244,6 +248,7 @@ footer {
 
 #book-now-button:hover {
   background-color: #000;
+  color: #ffbd59;
 }
 
 .footer-right-section {
@@ -265,4 +270,11 @@ footer {
   font-size: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.overlay-menu a:hover,
+.hamburger i:hover,
+.footer-left-section a:hover,
+.footer-right-section .bottom-item a i:hover {
+  color: #ffbd59;
 }

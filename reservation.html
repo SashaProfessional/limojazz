@@ -37,10 +37,11 @@
     .container {
       box-sizing: content-box;
       max-width: 600px;
-      margin: 150px auto 60px;
+      margin: 150px auto 0;
       padding: 0 20px;
       background-color: #000;
       border-radius: 8px;
+      padding-bottom: 100px;
     }
     h2 {
       text-align: center;
@@ -71,10 +72,24 @@
       color: #fff;
     }
     /* Input container for in-field buttons */
-    .input-container {
-      position: relative;
+    .input-group {
       margin-bottom: 15px;
     }
+    .input-container {
+      position: relative;
+    }
+    .error-message {
+      color: red;
+      line-height: 20px;
+      display: none;
+    }
+    .input-group.error .error-message  {
+      display: block;
+    }
+    .input-group.error input {
+      border-color: red;
+    }
+
     /* In-field buttons styling */
     .infield-button {
       position: absolute;
@@ -104,27 +119,13 @@
     .btn-current {
       right: 90px;
     }
-    /* Existing clear button for promo code, etc. */
-    .clear-button {
-      position: absolute;
+    .btn-reverse {
       right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: transparent;
-      border: none;
-      color: #fff;
-      cursor: pointer;
-      font-size: 16px;
+      top: 85px;
+      z-index: 1;
     }
-    .clear-button:focus {
-      outline: none;
-    }
-    .clear-button { tabindex: -1; }
-    /* Field row and other layout styles */
-    .field-row {
-      display: flex;
-      align-items: stretch;
-      gap: 10px;
+    .error .btn-reverse {
+      top: 95px;
     }
     .button-group {
       display: flex;
@@ -193,22 +194,6 @@
       background-color: #fff;
       color: black;
     }
-    /* Reverse Button */
-    .reverse-button {
-      background-color: gray;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      padding: 10px;
-      text-align: center;
-      display: block;
-    }
-    .reverse-button:hover {
-      background-color: #fff;
-      color: black;
-    }
     /* Utility */
     .hidden {
       display: none;
@@ -218,17 +203,53 @@
       gap: 10px;
     }
     /* Info Boxes */
-    #promo-error-box, #error-box-minRate, #error-box-fieldCheck {
+    #error-box-promo, #error-box-general, #error-box-fieldCheck {
       background-color: #f8d7da;
       color: #721c24;
       border-radius: 8px;
       padding: 10px;
+      margin-top: 20px;
       margin-bottom: 10px;
       display: none;
     }
-    #promo-error-box h3, #error-box-minRate h3, #error-box-fieldCheck h3 {
+    #error-box-promo h3, #error-box-general h3, #error-box-fieldCheck h3 {
       margin: 0 0 5px;
     }
+    #error-box-general, #error-box-promo {
+      display: none;
+    }
+    #error-box-general > div,
+    #error-box-promo > div {
+      display: none;
+    }
+    #error-box-general.error,
+    #error-box-promo.error {
+      display: block;
+    }
+
+    #error-box-promo.invalid-code > .invalid-code {
+      display: block;
+    }
+    #error-box-promo.wrong-route > .wrong-route {
+      display: block;
+    }
+    
+    #error-box-general.outside-servising-area > .outside-servising-area {
+      display: block;
+    }
+    #error-box-general.below-minimum-fare > .below-minimum-fare {
+      display: block;
+    }
+    #error-box-general.geocode-destination-failed > .geocode-destination-failed {
+      display: block;
+    }
+    #error-box-general.geocode-origin-failed > .geocode-origin-failed {
+      display: block;
+    }
+    #error-box-general.directions-request-failed > .directions-request-failed {
+      display: block;
+    }
+
     /* Quote Info */
     .quote-info {
       margin-top: 20px;
@@ -427,23 +448,69 @@
       pickupElem.value = destinationElem.value;
       destinationElem.value = temp;
     }
+
+    function getTranslatableText(id){
+      return document.getElementById(id)?.textContent || ''
+    }
+    
+    function clearValidation() {
+      const inputGroups = document.querySelectorAll('.input-group.error');
+      const errorBoxGeneral = document.getElementById('error-box-general');      
+      const errorBoxPromo = document.getElementById("error-box-promo");
+
+      inputGroups.forEach(group => {
+        group.classList.remove('error');
+      });
+      if(errorBoxGeneral){
+        errorBoxGeneral.classList.remove('error');
+      }
+      if(errorBoxPromo){
+        errorBoxPromo.classList.remove('error');
+      }
+    }
+
+    function setValidationError(inputId, messageSourceId) {
+      const inputEl = document.getElementById(inputId);
+      if (!inputEl) return;
+
+      const inputGroup = inputEl.closest('.input-group');
+      if (!inputGroup) return;
+
+      inputGroup.classList.add('error');
+
+      const messageEl = inputGroup.querySelector('.error-message');
+      const sourceMessage = getTranslatableText(messageSourceId);
+
+      if (messageEl) {
+        messageEl.textContent = sourceMessage;
+      }
+    } 
     
     /* Quote & Reserve Flow */
     function calculateDistancesIfBothFilled() {
       var origin = document.getElementById("pickup").value;
       var destination = document.getElementById("destination").value;
+
+      clearValidation()
+
+      if (!origin) {
+        setValidationError('pickup', 'validation-enter-pickup');
+      }
+
+      if (!destination) {
+        setValidationError('destination', 'validation-enter-destination');
+      }
+
       if (origin && destination) {
         toggleAirportFields();
         checkServicingArea(origin, destination);
-      } else {
-        alert("Please enter both pickup and dropoff locations.");
-      }
+      } 
     }
     
     function checkServicingArea(origin, destination) {
       var serviceCenter = new google.maps.LatLng(46.3833, 6.2396);
-      var minRadius = 50000;
-      var maxRadius = 500000;
+      var MIN_RADIUS = 50000;
+      var MAX_RADIUS = 500000;
       geocoder.geocode({ address: origin }, function(results, status) {
         if (status === google.maps.GeocoderStatus.OK) {
           var originLocation = results[0].geometry.location;
@@ -453,22 +520,22 @@
               var distanceToOrigin = google.maps.geometry.spherical.computeDistanceBetween(serviceCenter, originLocation);
               var distanceToDestination = google.maps.geometry.spherical.computeDistanceBetween(serviceCenter, destinationLocation);
               var totalDistance = google.maps.geometry.spherical.computeDistanceBetween(originLocation, destinationLocation);
-              var serviceRadius = Math.min(Math.max(minRadius, totalDistance / 2), maxRadius);
+              var serviceRadius = Math.min(Math.max(MIN_RADIUS, totalDistance / 2), MAX_RADIUS);
               if (distanceToOrigin > serviceRadius && distanceToDestination > serviceRadius) {
-                showError("Ride outside our servicing area");
-                document.getElementById("quote").classList.add("hidden");
+                showGeneralError("outside-servising-area");
                 document.getElementById("map-canvas").style.display = "none";
                 document.getElementById("reserveFields").classList.add("hidden");
                 document.querySelector(".reserve-button").classList.add("hidden");
-              } else {
+              } else {                
+                document.getElementById('quote').classList.remove('hidden');
                 calculateDistances(origin, destination);
               }
             } else {
-              alert("Geocode for destination failed due to: " + status);
+              showGeneralError("geocode-destination-failed");
             }
           });
         } else {
-          alert("Geocode for origin failed due to: " + status);
+          showGeneralError("geocode-origin-failed");
         }
       });
     }
@@ -537,14 +604,14 @@
               if (pickupValue.includes("gva") || dropoffValue.includes("gva")) {
                 applicable = true;
               } else {
-                showPromoError("Promo code not applicable to the selected route");
+                showPromoError("wrong-route");
               }
             } else {
               if ((pickupValue.includes("gva") && dropoffCity === promoData.city) ||
                   (dropoffValue.includes("gva") && pickupCity === promoData.city)) {
                 applicable = true;
               } else {
-                showPromoError("Promo code not applicable to the selected route");
+                showPromoError("wrong-route");
               }
             }
             if (applicable) {
@@ -552,7 +619,7 @@
               finalPrice = Math.floor(normalPrice * promoData.multiplier);
             }
           } else {
-            showPromoError("Invalid promo code");
+            showPromoError("invalid-code");
           }
         }
     
@@ -579,7 +646,6 @@
     }
     
     function calculateDistances(origin, destination) {
-      document.getElementById("promo-error-box").style.display = "none";
       var departureTime = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
       var request = {
         origin: origin,
@@ -602,11 +668,11 @@
           var distanceText = result.routes[0].legs[0].distance.text;
           var durationText = result.routes[0].legs[0].duration.text;
     
-          document.getElementById("quoteTitle").innerText = "Quote";
-          document.getElementById("quoteSubtitle").innerText = "Mercedes V-Class (up to 6 passengers and 5 large suitcases)";
-          quoteBox1Label = "Distance";
-          quoteBox2Label = "Duration";
-          quoteBox3Label = "Estimated Fare";
+          document.getElementById("quoteTitle").innerText = getTranslatableText('quote-label');
+          document.getElementById("quoteSubtitle").innerText = getTranslatableText('mercedes-v');
+          quoteBox1Label = getTranslatableText('distance-label');
+          quoteBox2Label = getTranslatableText('duration-label');
+          quoteBox3Label = getTranslatableText('estimated-fare');
           document.getElementById("quoteBox1").innerText = "~ " + distanceText;
           document.getElementById("quoteBox2").innerText = "~ " + durationText;
     
@@ -620,48 +686,41 @@
     
           document.getElementById("quoteNote1").innerHTML = `
             <ul style="list-style-type: disc; padding-left: 10px; margin-left: 0;">
-              <li style="margin-bottom: 8px;">Quote subject to change based on service area or special events.</li>
-              <li style="margin-bottom: 8px;">Comparison: Estimated Taxi price: CHF ${taxiPrice}, Estimated UberVan price: CHF ${uberVanPrice}</li>
-              <li style="margin-bottom: 8px;">Comparisons are provided for informational purposes only.</li>
+              <li style="margin-bottom: 8px;">${getTranslatableText('qn1')}</li>
+              <li style="margin-bottom: 8px;">${getTranslatableText('qn2')}: CHF ${taxiPrice}, ${getTranslatableText('qn3')}: CHF ${uberVanPrice}</li>
+              <li style="margin-bottom: 8px;">${getTranslatableText('qn4')}</li>
             </ul>`;
           document.getElementById("quote").classList.remove("hidden");
           document.getElementById("map-canvas").style.display = "block";
           document.querySelector(".quote-button").classList.remove("inactive");
           document.querySelector(".quote-button").classList.add("active");
-          document.querySelector(".quote-button").innerText = "Update Quote";
+          document.querySelector(".quote-button").innerText = getTranslatableText('update-quote');
           document.querySelector(".reserve-button").classList.remove("hidden");
           if (priceObj.finalPrice < 80) {
-            showError("Quote below the Minimum Reservation fare");
-            document.querySelector(".reserve-button").innerText = "Reserve for CHF 80";
+            showGeneralError("below-minimum-fare");
+            document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-80');
           }
         } else {
-          alert("Directions request failed due to " + status);
+          showGeneralError("directions-request-failed");
         }
       });
     }
     
     function showPromoError(errorType) {
-      var promoErrorBox = document.getElementById("promo-error-box");
-      promoErrorBox.style.display = "block";
-      if (errorType === "Invalid promo code") {
-        promoErrorBox.innerHTML = "<h3>Invalid Promo Code</h3><p>The promo code entered is not valid. It will be ignored.</p>";
-      } else if (errorType === "Promo code not applicable to the selected route") {
-        promoErrorBox.innerHTML = "<h3>Promo Code Not Applicable</h3><p>This promo code cannot be applied to the selected route and will be ignored.</p>";
-      }
+      var errorBoxPromo = document.getElementById("error-box-promo");
+
+      errorBoxPromo.classList.remove("invalid-code", "wrong-route")
+      errorBoxPromo.classList.add('error', errorType)
     }
     
-    function showError(errorType) {
-      var errorBox = document.getElementById("error-box-minRate");
-      errorBox.style.display = "block";
-      if (errorType === "Ride outside our servicing area") {
-        errorBox.innerHTML = '<h3>Ride outside our servicing area</h3><p><i>Please describe your needs further via WhatsApp or call us and we’ll try to help.</i></p>' +
-          '<div class="button-group">' +
-          '<button style="width: 50%;" class="whatsapp-button" onclick="generateWhatsAppLink(event, true)">Contact us via WhatsApp</button>' +
-          '<a href="tel:+41788230803" target="_blank" style="width: 50%;">Call us +41 78 823 08 03</a>' +
-          "</div>";
-      } else if (errorType === "Quote below the Minimum Reservation fare") {
-        errorBox.innerHTML = "<h3>Quote below the Minimum Reservation fare</h3><p>Our minimum reservation rate is CHF 80. Please call us for urgent rides or note that the price will be adjusted to CHF 80.</p>";
-        document.querySelector(".reserve-button").innerText = "Reserve for CHF 80";
+    function showGeneralError(errorType) {
+      var errorBoxGeneral = document.getElementById("error-box-general");
+
+      errorBoxGeneral.classList.remove("outside-servising-area", "below-minimum-fare", "geocode-destination-failed", "geocode-origin-failed", "directions-request-failed")
+      errorBoxGeneral.classList.add('error', errorType)
+
+      if (errorType === "below-minimum-fare") {
+        document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-80');
       }
     }
     
@@ -699,10 +758,8 @@
     function calculateQuote() {
       if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
         calculateHourlyQuote();
-        document.getElementById('quote').classList.remove('hidden');
       } else {
         calculateDistancesIfBothFilled();
-        document.getElementById('quote').classList.remove('hidden');
       }
     }
     
@@ -1133,45 +1190,51 @@
       <!-- Pick-Up Field with In-Field Buttons -->
       <div class="input-group">
         <div class="input-container">
-          <label for="pickup">Pick-Up Location</label>
+          <label for="pickup">Pick-Up Location*</label>
           <input type="text" id="pickup" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" required value="">
+          <button id="reverseButtonId" class="infield-button btn-reverse" type="button" tabindex="-1" onclick="reverseLocations()">&#x21C5;</button>
           <!-- In-field buttons: Order from right (clear is rightmost) -->
           <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')">&#x2299;</button>
           <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('pickup')">&#x2708;</button>
           <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('pickup')">&times;</button>
         </div>
+        <div class="error-message"></div>
       </div>
+
       
       <!-- Drop-off Field with In-Field Buttons -->
       <div class="input-group" id="dropoffLocationContainer">
         <div class="input-container">
-          <label for="destination">Drop-off Location</label>
+          <label for="destination">Drop-off Location*</label>
           <input type="text" id="destination" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" required value="">
           <!-- In-field buttons: Order from right -->
           <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')">&#x2299;</button>
           <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('destination')">&#x2708;</button>
           <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('destination')">&times;</button>
         </div>
+        <div class="error-message"></div>
       </div>
       
       <!-- Revised Promo Code + Reverse Button using arrivalName strategy -->
-      <div class="input-container">
-        <label for="promoCode">Promo Code</label>
-        <div class="field-row">
-          <div style="position: relative; flex: 3;">
+        <div class="input-group">
+          <div class="input-container">
+            <label for="promoCode">Promo Code</label>
             <input type="text" id="promoCode" name="promoCode" placeholder="Enter promo code" value="">
-            <button type="button" class="clear-button" tabindex="-1" onclick="document.getElementById('promoCode').value=''">&times;</button>
+            <button type="button" class="infield-button btn-clear" tabindex="-1" onclick="document.getElementById('promoCode').value=''">&times;</button>
           </div>
-          <div style="flex: 1;" id="reverseButtonId">
-            <button type="button" style="width: 100%;" class="reverse-button" tabindex="-1" onclick="reverseLocations()">&#x21C5; Reverse</button>
-          </div>
+          <small class="promo-note">
+            Follow us on <a href="https://www.instagram.com/limojazz.ch" tabindex="-1" target="_blank">Instagram</a> and <a href="https://www.facebook.com/limojazz" tabindex="-1" target="_blank">Facebook</a> for exclusive deals and insider promos!
+          </small>
         </div>
-        <small class="promo-note">
-          Follow us on <a href="https://www.instagram.com/limojazz.ch" tabindex="-1" target="_blank">Instagram</a> and <a href="https://www.facebook.com/limojazz" tabindex="-1" target="_blank">Facebook</a> for exclusive deals and insider promos!
-        </small>
-      </div>
       
-      <div id="promo-error-box"></div>
+      <div id="error-box-promo">
+        <div class="invalid-code">
+          <p>Invalid Promo Code. The promo code entered is not valid. It will be ignored.</p>
+        </div>
+        <div class="wrong-route">
+          <p>Promo Code Not Applicable. This promo code cannot be applied to the selected route and will be ignored.</p>
+        </div>
+      </div>
       <button type="button" class="quote-button inactive" onclick="calculateQuote()">Quote</button>
       
       <!-- Map -->
@@ -1189,7 +1252,32 @@
         <p id="quoteNote1"></p>
         <p id="quoteNote2"></p>
       </div>
-      <div id="error-box-minRate"></div>
+      <div id="error-box-general">
+        <div class="error-box outside-servising-area">
+          <h3>Ride outside our servicing area</h3>
+          <p><i>Please describe your needs further via WhatsApp or call us and we’ll try to help.</i></p>
+          <div class="button-group">
+            <button style="width: 50%;" class="whatsapp-button" onclick="generateWhatsAppLink(event, true)">Contact us via WhatsApp</button>
+            <a href="tel:+41788230803" target="_blank" style="width: 50%;">Call us +41 78 823 08 03</a>
+          </div>
+        </div>
+
+        <div class="error-box below-minimum-fare">
+          <h3>Quote below the Minimum Reservation fare</h3>
+          <p>Our minimum reservation rate is CHF 80. Please call us for urgent rides or note that the price will be adjusted to CHF 80.</p>
+        </div>
+
+        <div class="error-box geocode-destination-failed">
+          <h3>Geocode for destination failed</h3>
+        </div>
+
+        <div class="error-box geocode-origin-failed">
+          <h3>Geocode for origin failed</h3>
+        </div>
+        <div class="error-box directions-request-failed">
+          <h3>Directions request failed</h3>
+        </div>
+      </div>
       
       <!-- Reserve Button -->
       <button type="button" class="reserve-button inactive hidden" onclick="toggleReserveFields()">Reserve</button>
@@ -1269,6 +1357,22 @@
           <button type="button" onclick="generateEmailMessage()">Submit via Email</button>
           <button type="resetForm" onclick="customResetAllExcept()">Reset Form</button>
         </div>
+      </div>
+
+      <div style="display: none">
+        <div id="validation-enter-pickup">Please enter pickup location</div>
+        <div id="validation-enter-destination">Please enter dropoff location</div>
+        <div id="reserve-for-80">Reserve for CHF 80</div>
+        <div id="quote-label">Quote</div>
+        <div id="mercedes-v">Mercedes V-Class (up to 6 passengers and 5 large suitcases)</div>
+        <div id="distance-label">Distance</div>
+        <div id="duration-label">Duration</div>
+        <div id="estimated-fare">Estimated Fare</div>
+        <div id="qn1">Quote subject to change based on service area or special events.</div>
+        <div id="qn2">Comparison: Estimated Taxi price</div>
+        <div id="qn3">Estimated UberVan price</div>
+        <div id="qn4">Comparisons are provided for informational purposes only.</div>
+        <div id="update-quote">Update Quote</div>
       </div>
     </form>
   </div>

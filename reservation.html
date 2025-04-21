@@ -18,6 +18,7 @@
   <!-- <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
 
+  <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/common.css">
 
   <style>
@@ -69,6 +70,7 @@
       border-radius: 4px;
       background-color: #555;
       color: #fff;
+      min-height: 37px;
     }
     .with-right-buttons {
       padding-right: 120px;  /* extra space for three buttons */
@@ -94,6 +96,7 @@
 
     /* In-field buttons styling */
     .infield-button {
+      padding: 0;              
       position: absolute;
       top: 59%;
       transform: translateY(-50%);
@@ -114,12 +117,28 @@
        Current location, Geneva Airport, then Clear field button. */
     .btn-clear {
       right: 10px;
+      font-size: 30px;
     }
     .btn-airport {
       right: 50px;
     }
+    .btn-airport img,
+    .btn-reverse img {
+      height: 20px;
+      width: 20px;
+      transform: rotate(90deg);
+    }
+    .btn-reverse:not(:hover) img,
+    .btn-airport:not(:hover) img,
+    .btn-current:not(:hover) img {
+      filter: invert(1);
+    }
     .btn-current {
       right: 90px;
+    }
+    .btn-current img {
+      height: 20px;
+      width: 20px;
     }
     .btn-reverse {
       right: 10px;
@@ -160,11 +179,34 @@
     }
     button[type="button"] {
       background-color: gray;
-      <!-- font-weight: bold; -->
     }
     button:hover, .button-group a:hover {
       background-color: #fff;
       color: black;
+    }
+    #airportFields .row>:first-child {
+      flex: 1;
+    }
+    #airportFields .row>:nth-child(2) {
+      flex: 3;
+    }
+    .arrival-name button {
+      /* width: 25%; */
+    }
+    @media (max-width: 550px) {
+      .arrival-name {
+        flex-direction: column;
+        width: 50%;
+      }
+      .arrival-name button {
+        width: 100%;
+      }
+      #airportFields .row>:first-child {
+        flex: 1;
+      }
+      #airportFields .row>:nth-child(2) {
+        flex: 1;
+      }
     }
     .quote-button, .reserve-button {
       width: 100%;
@@ -271,7 +313,7 @@
     .quote-info {
       margin-top: 20px;
       background-color: #444;
-      padding: 10px;
+      padding: 10px 20px;
       border-radius: 8px;
     }
     .quote-info h3 {
@@ -332,13 +374,13 @@
       text-decoration: underline;
     }
 
-    #quoteNote1 > ul {
+    .quote-info > ul {
       display: none;
     }
-    #quoteNote1.v1 > .v1 {
+    .quote-info.v1 > .v1 {
       display: block;
     }
-    #quoteNote1.v2 > .v2 {
+    .quote-info.v2 > .v2 {
       display: block;
     }
   </style>
@@ -355,7 +397,12 @@
     var directionsService;
     var directionsRenderer;
     var geocoder;
-    
+        
+	  function clearField(fieldId) {
+      const field = document.getElementById(fieldId);
+      field.value = '';
+      field.focus();
+    }
 
     function fetchFlatRates() {
       fetch(`${GOOGLE_SHEETS_URL}?flatRates=true`)
@@ -586,139 +633,143 @@
         }
       });
     }
+
+    function calculatePerKmRate(distance) {
+      if (distance >= 700) return minimumPerKmRate;
+      var rateDecrease = (initialPerKmRate - minimumPerKmRate) * (distance / 700);
+      return initialPerKmRate - rateDecrease;
+    }
     
-    // Modified calculatePrice function with promo handling
-    async function calculatePrice(distanceValue, durationValue, type) {
-      if (type === "myFare") {
-        var baseRate = 6.00;
-        var initialPerKmRate = 3.80;
-        var minimumPerKmRate = 3.00;
-        var distanceInKm = distanceValue / 1000;
-        var durationInMin = durationValue / 60;
-        function calculatePerKmRate(distance) {
-          if (distance >= 700) return minimumPerKmRate;
-          var rateDecrease = (initialPerKmRate - minimumPerKmRate) * (distance / 700);
-          return initialPerKmRate - rateDecrease;
+    function calculatePriceTaxi(distanceValue, durationValue) {
+      var baseRate = 6.30;
+      var distanceInKm = distanceValue / 1000;
+      var durationInMin = durationValue / 60;
+      var perKmRate = 3.80;
+      var perMinRate = 0;
+      var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin) + 5 + Math.floor(distanceInKm / 50) * 5;
+      totalPrice = Math.ceil(totalPrice);
+
+      return { finalPrice: totalPrice.toFixed(2), promoApplied: false };
+    } 
+
+    function calculatePriceUberVan(distanceValue, durationValue) {
+      var baseRate = 8.00;
+      var distanceInKm = distanceValue / 1000;
+      var durationInMin = durationValue / 60;
+      var perKmRate = 3.60;
+      var perMinRate = 0.60;
+      var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
+      totalPrice = Math.ceil(totalPrice);
+      
+      return { finalPrice: totalPrice.toFixed(2), promoApplied: false };
+    }
+
+    async function calculatePriceMyFare(distanceValue, durationValue) {
+      var baseRate = 6.00;
+      var initialPerKmRate = 3.80;
+      var minimumPerKmRate = 3.00;
+      var distanceInKm = distanceValue / 1000;
+      var durationInMin = durationValue / 60;      
+      var perKmRate = calculatePerKmRate(distanceInKm);
+      var perMinRate = 0;
+      var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
+  
+      // Apply flat rates if possible        
+      const flatRatesRaw = localStorage.getItem(FLAT_RATES_KEY);
+      const flatRatesParsed = flatRatesRaw ? JSON.parse(flatRatesRaw) : [];
+
+      var pickupValue = document.getElementById("pickup").value.toLowerCase();
+      var dropoffValue = document.getElementById("destination").value.toLowerCase(); //{"location1":"lausanne","location2":"gva","amount":230}
+
+      const flatRate = flatRatesParsed.find(flatRate => {
+        const loc1 = flatRate.location1.toLowerCase();
+        const loc2 = flatRate.location2.toLowerCase();
+        const pickup = pickupValue.toLowerCase();
+        const dropoff = dropoffValue.toLowerCase();
+
+        return (pickup.includes(loc1) && dropoff.includes(loc2)) || (pickup.includes(loc2) && dropoff.includes(loc1))
+      }); 
+
+      if (flatRate) {
+        totalPrice = flatRate.amount;
+      }
+  
+      // Rounding adjustments to get the normal (non-discounted) price
+      var normalPrice;
+      if (totalPrice < 15) {
+        normalPrice = 15;
+      } else if (totalPrice < 80) {
+        normalPrice = Math.ceil(totalPrice / 5) * 5;
+      } else {
+        normalPrice = Math.floor(totalPrice / 10) * 10;
+      }
+  
+      let finalPrice = normalPrice;
+      let promoApplied = false;
+      let isPromoCodeApplicable = false;
+  
+      // Check for promo code and apply discount on the normal price (rounded down)
+      var promoInput = document.getElementById("promoCode").value.toLowerCase().trim();
+      let promoCode
+
+      if (promoInput !== "") {
+        try { //{"code":"gva5","lat1":"46.230577","lng1":"6.110426","radius1":3500,"lat2":"","lng2":"","radius2":"","multiplier":"0.95"}
+          const promoCodeResponse = await fetch(`${GOOGLE_SHEETS_URL}?checkPromo=${encodeURIComponent(promoInput)}`);
+          promoCode = await promoCodeResponse.json();
+        } catch (error) {
+          console.error("Error checking promo code:", error);
         }
-        var perKmRate = calculatePerKmRate(distanceInKm);
-        var perMinRate = 0;
-        var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
-    
-        // Apply flat rates if applicable        
-        const flatRatesRaw = localStorage.getItem(FLAT_RATES_KEY);
-        const flatRatesParsed = flatRatesRaw ? JSON.parse(flatRatesRaw) : [];
 
-        var pickupValue = document.getElementById("pickup").value.toLowerCase();
-        var dropoffValue = document.getElementById("destination").value.toLowerCase(); //{"location1":"lausanne","location2":"gva","amount":230}
+        if (promoCode) {
+          const originLocation = document[ORIGIN_LOCATION_KEY]
+          const destinationLocation = document[DESTINATION_LOCATION_KEY]
 
-        const flatRate = flatRatesParsed.find(flatRate => {
-          const loc1 = flatRate.location1.toLowerCase();
-          const loc2 = flatRate.location2.toLowerCase();
-          const pickup = pickupValue.toLowerCase();
-          const dropoff = dropoffValue.toLowerCase();
+          const isPromoTwoWay = promoCode.lat2 && promoCode.lng2 && promoCode.radius2;
 
-          return (pickup.includes(loc1) && dropoff.includes(loc2)) || (pickup.includes(loc2) && dropoff.includes(loc1))
-        }); 
-        if (flatRate) {
-          console.log("Flat rate applied", flatRate)
-          totalPrice = flatRate.amount;
-        }
-    
-        // Rounding adjustments to get the normal (non-discounted) price
-        var normalPrice;
-        if (totalPrice < 15) {
-          normalPrice = 15;
-        } else if (totalPrice < 80) {
-          normalPrice = Math.ceil(totalPrice / 5) * 5;
-        } else {
-          normalPrice = Math.floor(totalPrice / 10) * 10;
-        }
-    
-        let finalPrice = normalPrice;
-        let promoApplied = false;
-        let isPromoCodeApplicable = false;
-    
-        // Check for promo code and apply discount on the normal price (rounded down)
-        var promoInput = document.getElementById("promoCode").value.toLowerCase().trim();
-        let promoCode
+          const promoLocation1 = new google.maps.LatLng(promoCode.lat1, promoCode.lng1);
+          const promoLocation2 = isPromoTwoWay ? new google.maps.LatLng(promoCode.lat2, promoCode.lng2) : null;
 
-        if (promoInput !== "") {
-          try { //{"code":"gva5","lat1":"46.230577","lng1":"6.110426","radius1":3500,"lat2":"","lng2":"","radius2":"","multiplier":"0.95"}
-            const promoCodeResponse = await fetch(`${GOOGLE_SHEETS_URL}?checkPromo=${encodeURIComponent(promoInput)}`);
-            promoCode = await promoCodeResponse.json();
-          } catch (error) {
-            console.error("Error checking promo code:", error);
+          const radius1 = promoCode.radius1;
+          const radius2 = isPromoTwoWay ? promoCode.radius2 : null;
+
+          if (isPromoTwoWay) {
+            const originToLoc1 = google.maps.geometry.spherical.computeDistanceBetween(originLocation, promoLocation1) <= radius1;
+            const destinationToLoc2 = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, promoLocation2) <= radius2;
+
+            const originToLoc2 = google.maps.geometry.spherical.computeDistanceBetween(originLocation, promoLocation2) <= radius2;
+            const destinationToLoc1 = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, promoLocation1) <= radius1;
+
+            isPromoCodeApplicable = (originToLoc1 && destinationToLoc2) || (originToLoc2 && destinationToLoc1);
+          } else {
+            const originMatch = google.maps.geometry.spherical.computeDistanceBetween(originLocation, promoLocation1) <= radius1;
+            const destinationMatch = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, promoLocation1) <= radius1;
+
+            isPromoCodeApplicable = originMatch || destinationMatch;
           }
 
-          if (promoCode) {
-            const originLocation = document[ORIGIN_LOCATION_KEY]
-            const destinationLocation = document[DESTINATION_LOCATION_KEY]
-
-            const isPromoTwoWay = promoCode.lat2 && promoCode.lng2 && promoCode.radius2;
-
-            const promoLocation1 = new google.maps.LatLng(promoCode.lat1, promoCode.lng1);
-            const promoLocation2 = isPromoTwoWay ? new google.maps.LatLng(promoCode.lat2, promoCode.lng2) : null;
-
-            const radius1 = promoCode.radius1;
-            const radius2 = isPromoTwoWay ? promoCode.radius2 : null;
-
-            if (isPromoTwoWay) {
-              const originToLoc1 = google.maps.geometry.spherical.computeDistanceBetween(originLocation, promoLocation1) <= radius1;
-              const destinationToLoc2 = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, promoLocation2) <= radius2;
-
-              const originToLoc2 = google.maps.geometry.spherical.computeDistanceBetween(originLocation, promoLocation2) <= radius2;
-              const destinationToLoc1 = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, promoLocation1) <= radius1;
-
-              isPromoCodeApplicable = (originToLoc1 && destinationToLoc2) || (originToLoc2 && destinationToLoc1);
-            } else {
-              const originMatch = google.maps.geometry.spherical.computeDistanceBetween(originLocation, promoLocation1) <= radius1;
-              const destinationMatch = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, promoLocation1) <= radius1;
-
-              isPromoCodeApplicable = originMatch || destinationMatch;
-            }
-
-            if (isPromoCodeApplicable) {
-              finalPrice = Math.floor(normalPrice * promoCode.multiplier);
-              console.log("Promo code applied", promoCode)
-              promoApplied = true;
-            } else {
-              showPromoError("wrong-route");
-            }
+          if (isPromoCodeApplicable) {
+            finalPrice = Math.floor(normalPrice * promoCode.multiplier);
+            console.log("Promo code applied", promoCode)
+            promoApplied = true;
           } else {
-            showPromoError("invalid-code");
-          }      
-        }
-
-        return { finalPrice: finalPrice, normalPrice: normalPrice, promoApplied: promoApplied };
-      } else if (type === "taxi") {
-        var baseRate = 6.30;
-        var distanceInKm = distanceValue / 1000;
-        var durationInMin = durationValue / 60;
-        var perKmRate = 3.80;
-        var perMinRate = 0;
-        var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin) + 5 + Math.floor(distanceInKm / 50) * 5;
-        totalPrice = Math.ceil(totalPrice);
-        return { finalPrice: totalPrice.toFixed(2), promoApplied: false };
-      } else if (type === "uberVan") {
-        var baseRate = 8.00;
-        var distanceInKm = distanceValue / 1000;
-        var durationInMin = durationValue / 60;
-        var perKmRate = 3.60;
-        var perMinRate = 0.60;
-        var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
-        totalPrice = Math.ceil(totalPrice);
-        return { finalPrice: totalPrice.toFixed(2), promoApplied: false };
+            showPromoError("wrong-route");
+          }
+        } else {
+          showPromoError("invalid-code");
+        }      
       }
+
+      return { finalPrice: finalPrice, normalPrice: normalPrice, promoApplied: promoApplied };
     }
 
-    function selectQuoteNote1(type){
-      const quoteNote1 = document.getElementById("quoteNote1")
+    function selectQuoteInfo(type){
+      const quoteInfo = document.querySelector(".quote-info")
 
-      quoteNote1.classList.remove("v1", "v2")
-      quoteNote1.classList.add(type)
+      quoteInfo.classList.remove("v1", "v2")
+      quoteInfo.classList.add(type)
     }
     
-    function calculateDistances(origin, destination) {
+    async function calculateDistances(origin, destination) {
       var departureTime = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
       var request = {
         origin: origin,
@@ -726,57 +777,59 @@
         travelMode: google.maps.TravelMode.DRIVING,
         drivingOptions: { departureTime: departureTime, trafficModel: "optimistic" }
       };
-      
-      directionsService.route(request, async function(result, status) {
-        if (status === google.maps.DirectionsStatus.OK) {
-          directionsRenderer.setDirections(result);
-          var distance = result.routes[0].legs[0].distance.value;
-          var duration = result.routes[0].legs[0].duration.value;
-          var priceObj = await calculatePrice(distance, duration, "myFare");
-          // Store globally for later use (WhatsApp/Email)
-          window.currentFareObj = priceObj;
-    
-          var taxiPrice = await calculatePrice(distance, duration, "taxi").finalPrice;
-          var uberVanPrice = await calculatePrice(distance, duration, "uberVan").finalPrice;
-          var distanceText = result.routes[0].legs[0].distance.text;
-          var durationText = result.routes[0].legs[0].duration.text;
-    
-          document.getElementById("quoteTitle").innerText = getTranslatableText('quote-label');
-          document.getElementById("quoteSubtitle").innerText = getTranslatableText('mercedes-v');
-          quoteBox1Label = getTranslatableText('distance-label');
-          quoteBox2Label = getTranslatableText('duration-label');
-          quoteBox3Label = getTranslatableText('estimated-fare');
-          document.getElementById("quoteBox1").innerText = "~ " + distanceText;
-          document.getElementById("quoteBox2").innerText = "~ " + durationText;
-    
-          var displayPrice;
-          if (priceObj.promoApplied) {
-            displayPrice = "CHF " + priceObj.finalPrice + " <span style='text-decoration: line-through;color: red;'>CHF " + priceObj.normalPrice + "</span>";
-          } else {
-            displayPrice = "CHF " + priceObj.finalPrice;
-          }
-          document.getElementById("quoteBox3").innerHTML = displayPrice;
 
-          selectQuoteNote1("v1");
-          document.getElementById("taxi-price").textContent = taxiPrice;
-          document.getElementById("uber-van-price").textContent = uberVanPrice;
-    
-          document.getElementById("quote").classList.remove("hidden");
-          document.getElementById("map-canvas").style.display = "block";
-          document.querySelector(".quote-button").classList.remove("inactive");
-          document.querySelector(".quote-button").classList.add("active");
-          document.querySelector(".quote-button").innerText = getTranslatableText('update-quote');
-          document.querySelector(".reserve-button").classList.remove("hidden");
-          if (priceObj.finalPrice < 80) {
-            showGeneralError("below-minimum-fare");
-            document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-80');
+      const directionsResult = await new Promise((resolve, reject) => {
+        directionsService.route(request, (result, status) => {
+          if (status === google.maps.DirectionsStatus.OK) {
+            resolve(result);
+          } else {
+            reject("directions-request-failed");
           }
-        } else {
-          showGeneralError("directions-request-failed");
-        }
+        });
       });
+
+      directionsRenderer.setDirections(directionsResult);
+
+      const distance = directionsResult.routes[0].legs[0].distance.value;
+      const duration = directionsResult.routes[0].legs[0].duration.value;
+
+      const priceObj = await calculatePriceMyFare(distance, duration);
+      window.currentFareObj = priceObj;
+
+      const taxiPrice = calculatePriceTaxi(distance, duration).finalPrice;
+      const uberVanPrice = calculatePriceUberVan(distance, duration).finalPrice;
+      const distanceText = directionsResult.routes[0].legs[0].distance.text;
+      const durationText = directionsResult.routes[0].legs[0].duration.text;
+
+      document.getElementById("quoteTitle").innerText = getTranslatableText('quote-label');
+      document.getElementById("quoteSubtitle").innerText = getTranslatableText('mercedes-v');
+      quoteBox1Label = getTranslatableText('distance-label');
+      quoteBox2Label = getTranslatableText('duration-label');
+      quoteBox3Label = getTranslatableText('estimated-fare');
+      document.getElementById("quoteBox1").innerText = "~ " + distanceText;
+      document.getElementById("quoteBox2").innerText = "~ " + durationText;
+
+      document.getElementById("quoteBox3").innerHTML = priceObj.promoApplied 
+        ? `CHF ${priceObj.finalPrice} <span style='text-decoration: line-through;color: red;'>CHF ${priceObj.normalPrice}</span>`
+        : `CHF ${priceObj.finalPrice}`;
+
+      selectQuoteInfo("v1");
+      document.getElementById("taxi-price").textContent = taxiPrice;
+      document.getElementById("uber-van-price").textContent = uberVanPrice;
+
+      document.getElementById("quote").classList.remove("hidden");
+      document.getElementById("map-canvas").style.display = "block";
+      document.querySelector(".quote-button").classList.remove("inactive");
+      document.querySelector(".quote-button").classList.add("active");
+      document.querySelector(".quote-button").innerText = getTranslatableText('update-quote');
+      document.querySelector(".reserve-button").classList.remove("hidden");
+
+      if (priceObj.finalPrice < 80) {
+        showGeneralError("below-minimum-fare");
+        document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-80');
+      }
     }
-    
+
     function showPromoError(errorType) {
       var errorBoxPromo = document.getElementById("error-box-promo");
 
@@ -854,7 +907,7 @@
       document.getElementById("quoteBox2").innerText = `${kmIncludedTotal} ${getTranslatableText("qn9")}`;
       document.getElementById("quoteBox3").innerText = `CHF ${totalPrice}`;
       
-      selectQuoteNote1("v2");
+      selectQuoteInfo("v2");
       document.getElementById("km-included-per-hour").textContent = kmIncludedPerHour;
       document.getElementById("blacklane-total-price").textContent = blacklaneTotalPrice;
     
@@ -1247,9 +1300,9 @@
 <div id="google_translate_element"></div>
 
 <!-- Fixed Logo -->
-<div class="logo-container">
+<!-- <div class="logo-container">
   <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="Logo">
-</div>
+</div> -->
 
 <body>
   <div class="container">
@@ -1282,10 +1335,10 @@
         <div class="input-container">
           <label for="pickup">Pick-Up Location*</label>
           <input type="text" id="pickup" class="with-right-buttons" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" value="">
-          <button id="reverseButtonId" class="infield-button btn-reverse" type="button" tabindex="-1" onclick="reverseLocations()">&#x21C5;</button>
+          <button id="reverseButtonId" class="infield-button btn-reverse" type="button" tabindex="-1" onclick="reverseLocations()"><img src="img/reverse.svg" alt="Airplane" /></button>
           <!-- In-field buttons: Order from right (clear is rightmost) -->
-          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')">&#x2299;</button>
-          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('pickup')">&#x2708;</button>
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')"><img src="img/current-location.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('pickup')"><img src="img/airplane.svg" alt="Airplane" /></button>
           <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('pickup')">&times;</button>
         </div>
         <div class="error-message"></div>
@@ -1298,8 +1351,8 @@
           <label for="destination">Drop-off Location*</label>
           <input type="text" id="destination" class="with-right-buttons" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" value="">
           <!-- In-field buttons: Order from right -->
-          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')">&#x2299;</button>
-          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('destination')">&#x2708;</button>
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')"><img src="img/current-location.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('destination')"><img src="img/airplane.svg" alt="Airplane" /></button>
           <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('destination')">&times;</button>
         </div>
         <div class="error-message"></div>
@@ -1438,20 +1491,22 @@
           <h4 style="margin-bottom: 0;">Airport pickup details:</h4>
           <p style="font-size: 10px; font-style: italic;">Flight Number will be tracked by your chauffeur inside the arrivals hall</p>
           <div class="row">
-            <label for="flightNumber" style="flex: 1;">Flight Number*</label>
-            <label for="arrivalName" style="flex: 3;">Name for Pickup at Arrivals</label>
+            <label for="flightNumber">Flight Number*</label>
+            <label for="arrivalName"">Name for Pickup at Arrivals</label>
           </div>
           <div class="validation-field">
             <div class="row">
-              <div style="flex: 1;"><input type="text" id="flightNumber" name="flightNumber" placeholder="UA 956"></div>
-              <div class="button-group" style="flex: 3;" id="arrivalNameButtons">
-                <button type="button" style="width: 25%;" onclick="selectArrivalName('Company Logo')">Company Logo</button>
-                <button type="button" style="width: 25%;" onclick="selectArrivalName('My Name')">My Name</button>
-                <button type="button" style="width: 25%;" class="selected" onclick="selectArrivalName('LimoJazz Logo')">LimoJazz Logo</button>
+              <div>
+                <input type="text" id="flightNumber" name="flightNumber" placeholder="UA 956">
+                <div class="error-message"></div>
+              </div>
+              <div class="button-group arrival-name" id="arrivalNameButtons">
+                <button type="button" onclick="selectArrivalName('Company Logo')">Company Logo</button>
+                <button type="button" onclick="selectArrivalName('My Name')">My Name</button>
+                <button type="button" class="selected" onclick="selectArrivalName('LimoJazz Logo')">LimoJazz Logo</button>
               </div>
               <input type="hidden" id="arrivalName" name="arrivalName" value="LimoJazz Logo">
             </div>
-          <div class="error-message"></div>
         </div>
         </div>
         <div class="validation-field">
@@ -1554,8 +1609,8 @@
   <!-- Full-Screen Overlay Menu -->
   <nav class="overlay-menu">
     <ul>
-      <li><a href="https://limojazz.github.io/limojazz/index.html">Home</a></li>
-      <li><a href="https://limojazz.github.io/limojazz/reservation.html">Reservation</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="reservation.html">Reservation</a></li>
     </ul>
   </nav>
   

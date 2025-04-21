@@ -11,6 +11,13 @@ button {
   font-family: "Figtree", sans-serif !important;
 }
 
+input[type="date"],
+input[type="time"],
+button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 /* Number Input Arrows */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -27,6 +34,7 @@ input:focus {
 
 ul {
   list-style-type: none;
+  padding: 0;
 }
 
 /* Hide Google Translate top bar and fix spacing */
@@ -42,6 +50,17 @@ ul {
 }
 .VIpgJd-yAWNEb-hvhgNd {
   display: none !important;
+}
+font[class^="VIpgJd-"] {
+  all: unset !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  position: static !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: inline !important;
+  color: inherit !important;
+  font: inherit !important;
 }
 #goog-gt-vt {
   display: none !important;
@@ -76,10 +95,10 @@ ul {
 }
 
 #google_translate_element {
-  opacity: 0;
+  /* opacity: 0; */
   position: absolute;
-  top: -500px;
-  left: -500px;
+  /* top: -500px; */
+  /* left: -500px; */
 }
 
 /* Language Select Style */
@@ -232,15 +251,6 @@ footer {
   line-height: 24px;
 }
 
-@media (max-width: 525px) {
-  .footer-left-section span {
-    display: none;
-  }
-  .footer-left-section a {
-    font-size: 14px;
-  }
-}
-
 #book-now-button {
   position: absolute;
   left: 50%;
@@ -285,20 +295,28 @@ footer {
   transition: all 0.3s ease;
 }
 
-@media (max-width: 525px) {
-  .footer-right-section {
-    gap: 15px;
-  }
-}
-@media (max-width: 400px) {
-  .footer-right-section {
-    gap: 5px;
-  }
-}
-
 .overlay-menu a:hover,
 .hamburger i:hover,
 .footer-left-section a:hover,
 .footer-right-section .bottom-item a i:hover {
   color: #ffbd59;
+}
+
+@media (max-width: 850px) {
+  #book-now-button {
+    bottom: 100px;
+  }
+}
+@media (max-width: 750px) {
+  .footer-left-section {
+    display: none;
+  }
+  .footer-right-section {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .footer-right-section .bottom-item {
+    flex: 1;
+  }
 }

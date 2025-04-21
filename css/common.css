@@ -22,8 +22,12 @@ input[type="number"] {
 }
 
 input:focus {
-    outline: none;
-  }
+  outline: none;
+}
+
+ul {
+  list-style-type: none;
+}
 
 /* Hide Google Translate top bar and fix spacing */
 /* https://stackoverflow.com/questions/75471527/how-to-hide-google-translate-toolbar-popup */
@@ -228,6 +232,15 @@ footer {
   line-height: 24px;
 }
 
+@media (max-width: 525px) {
+  .footer-left-section span {
+    display: none;
+  }
+  .footer-left-section a {
+    font-size: 14px;
+  }
+}
+
 #book-now-button {
   position: absolute;
   left: 50%;
@@ -270,6 +283,17 @@ footer {
   font-size: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+@media (max-width: 525px) {
+  .footer-right-section {
+    gap: 15px;
+  }
+}
+@media (max-width: 400px) {
+  .footer-right-section {
+    gap: 5px;
+  }
 }
 
 .overlay-menu a:hover,

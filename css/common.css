@@ -68,6 +68,9 @@ font[class^="VIpgJd-"] {
 #goog-gt-tt {
   display: none !important;
 }
+body {
+  top: 0px !important;
+}
 
 /* Header (Top Bar) */
 .top-bar {
@@ -213,13 +216,19 @@ font[class^="VIpgJd-"] {
   text-align: right;
 }
 .overlay-menu ul li {
-  margin: 50px 50px;
+  margin: 50px 50px 50px 0;
 }
 .overlay-menu ul li a {
   text-decoration: none;
-  font-size: 50px;
+  font-size: 30px;
   color: #fff;
   cursor: pointer;
+}
+
+@media (min-width: 769px) {
+  .overlay-menu ul li a {
+    font-size: 50px;
+  }
 }
 
 /* Footer */

@@ -38,11 +38,10 @@
     .container {
       box-sizing: content-box;
       max-width: 600px;
-      margin: 150px auto 0;
-      padding: 0 20px;
+      margin: 0 auto;
+      padding: 150px 20px 100px;
       background-color: #000;
       border-radius: 8px;
-      padding-bottom: 100px;
     }
     h2 {
       text-align: center;
@@ -189,9 +188,6 @@
     }
     #airportFields .row>:nth-child(2) {
       flex: 3;
-    }
-    .arrival-name button {
-      /* width: 25%; */
     }
     @media (max-width: 550px) {
       .arrival-name {
@@ -382,6 +378,15 @@
     }
     .quote-info.v2 > .v2 {
       display: block;
+    }
+
+    .quoteBox1,
+    .quoteBox2,
+    .quoteBox3 {
+      display: flex;
+      align-items: center;   
+      justify-content: center; 
+      text-align: center;
     }
   </style>
   
@@ -635,6 +640,9 @@
     }
 
     function calculatePerKmRate(distance) {
+      var initialPerKmRate = 3.80;
+      var minimumPerKmRate = 3.00;
+
       if (distance >= 700) return minimumPerKmRate;
       var rateDecrease = (initialPerKmRate - minimumPerKmRate) * (distance / 700);
       return initialPerKmRate - rateDecrease;
@@ -666,8 +674,6 @@
 
     async function calculatePriceMyFare(distanceValue, durationValue) {
       var baseRate = 6.00;
-      var initialPerKmRate = 3.80;
-      var minimumPerKmRate = 3.00;
       var distanceInKm = distanceValue / 1000;
       var durationInMin = durationValue / 60;      
       var perKmRate = calculatePerKmRate(distanceInKm);
@@ -1286,6 +1292,10 @@
         <img src="https://flagcdn.com/w40/it.png" alt="IT" />
         <span>IT</span>
       </div>
+      <div class="language-select-option" data-value="ru">
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" />
+        <span>RU</span>
+      </div>
     </div>
   </div>
   
@@ -1396,7 +1406,7 @@
           <ul class="v1" style="list-style-type: disc; padding-left: 10px; margin-left: 0;">
             <li style="margin-bottom: 8px;">Quote subject to change based on service area or special events.</li>
             <li style="margin-bottom: 8px;">
-              Comparison: Estimated Taxi price: CHF <span id="taxi-price"></span>, Estimated UberVan price: CHF <span id="uber-van-price"></span>
+              Comparison: Estimated Taxi price: CHF&nbsp;<span id="taxi-price"></span>, Estimated UberVan price: CHF&nbsp;<span id="uber-van-price"></span>
             </li>
             <li style="margin-bottom: 8px;">Comparisons are provided for informational purposes only.</li>
           </ul>
@@ -1404,10 +1414,10 @@
           <ul class="v2" style="list-style-type: disc; padding-left: 10px; margin-left: 0;">
             <li style="margin-bottom: 8px;">Quote subject to change based on service area or special events.</li>
             <li style="margin-bottom: 8px;">
-              Includes <span id="km-included-per-hour"></span> km per booked hour; extra charges may apply.
+              Includes&nbsp;<span id="km-included-per-hour"></span> km per booked hour; extra charges may apply.
             </li>
             <li style="margin-bottom: 8px;">
-              Comparison: Estimated Blacklane price: CHF <span id="blacklane-total-price"></span>
+              Comparison: Estimated Blacklane price: CHF&nbsp;<span id="blacklane-total-price"></span>
             </li>
             <li style="margin-bottom: 8px;">Comparisons are provided for informational purposes only.</li>
           </ul>
@@ -1497,7 +1507,7 @@
           <div class="validation-field">
             <div class="row">
               <div>
-                <input type="text" id="flightNumber" name="flightNumber" placeholder="UA 956">
+                <input type="text" id="flightNumber" name="flightNumber" placeholder="UA 956" class="notranslate">
                 <div class="error-message"></div>
               </div>
               <div class="button-group arrival-name" id="arrivalNameButtons">
@@ -1564,7 +1574,6 @@
         <div id="distance-label">Distance</div>
         <div id="duration-label">Duration</div>
         <div id="hours-label">hours</div>
-        <div id="includes-label">Includes</div>
         <div id="estimated-fare">Estimated Fare</div>
 
         <div id="qn1">Quote subject to change based on service area or special events.</div>

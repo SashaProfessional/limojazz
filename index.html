@@ -107,6 +107,9 @@
       background-position: center;
       background-size: cover;
     }
+    body.no-parallax .parallax-section {
+        background-attachment: scroll;
+    }
     @media (max-width: 768px) {
       .parallax-section {
         height: calc(100vh - 120px);
@@ -205,6 +208,10 @@
       width: 100%;
       max-width: 800px;
     }
+    .tail{
+      height: 60px;
+      background-color: black;
+    }
   </style>
 </head>
 <body>
@@ -235,6 +242,10 @@
       <div class="language-select-option" data-value="it">
         <img src="https://flagcdn.com/w40/it.png" alt="IT" />
         <span>IT</span>
+      </div>
+      <div class="language-select-option" data-value="ru">
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" />
+        <span>RU</span>
       </div>
     </div>
   </div>
@@ -373,6 +384,8 @@
       </div>
     </div>
   </div>
+
+  <div class="tail"></div>
   
   <!-- JavaScript: Smooth Scroll & Cover Video Swap -->
   <script>
@@ -392,6 +405,11 @@
 	
 
   document.addEventListener('DOMContentLoaded', function() {
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    if (isSafari) {
+        document.body.classList.add("no-parallax"); // safari has issues with parallax
+    }
+
     const videoSource = document.getElementById('video-source');
     // Adjust the breakpoint if needed; here it's set to 768px.
     if (window.innerWidth < 768) {

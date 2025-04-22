@@ -145,7 +145,7 @@
     }
     .btn-reverse {
       right: 10px;
-      top: 85px;
+      top: 88px;
       z-index: 1;
     }
     .error .btn-reverse {
@@ -583,22 +583,31 @@
       }
     } 
     
-    /* Quote & Reserve Flow */
-    function calculateDistancesIfBothFilled() {
-      clearValidation1()
+    function validateForm1(){    
+      clearValidation1();
 
-      var origin = document.getElementById("pickup").value;
-      var destination = document.getElementById("destination").value;
+      const origin = document.getElementById("pickup").value;
+      const destination = document.getElementById("destination").value;
+      let result = true
 
       if (!origin) {
         setValidationError1('pickup', 'validation-enter-pickup-location');
+        result = false;
       }
 
       if (!destination) {
         setValidationError1('destination', 'validation-enter-destination-location');
+        result = false;
       }
 
-      if (origin && destination) {
+      return result;
+    }
+    
+    function calculateDistancesIfBothFilled() {
+      const origin = document.getElementById("pickup").value;
+      const destination = document.getElementById("destination").value;
+
+      if (validateForm1()) {
         toggleAirportFields();
         checkServicingArea(origin, destination);
       } 
@@ -759,7 +768,6 @@
 
           if (isPromoCodeApplicable) {
             finalPrice = Math.floor(normalPrice * promoCode.multiplier);
-            console.log("Promo code applied", promoCode)
             promoApplied = true;
           } else {
             showPromoError("wrong-route");
@@ -820,7 +828,7 @@
       document.getElementById("quoteBox2").innerText = "~ " + durationText;
 
       document.getElementById("quoteBox3").innerHTML = priceObj.promoApplied 
-        ? `CHF ${priceObj.finalPrice} <span style='text-decoration: line-through;color: red;'>CHF ${priceObj.normalPrice}</span>`
+        ? `CHF ${priceObj.finalPrice}&nbsp;<span style='text-decoration: line-through;color: red;'>CHF ${priceObj.normalPrice}</span>`
         : `CHF ${priceObj.finalPrice}`;
 
       selectQuoteInfo("v1");
@@ -1024,7 +1032,7 @@
       }
     } 
     
-    function validateFormFields() {            
+    function validateForm2() {            
       clearValidation2()
 
       const fullName = document.getElementById('name').value
@@ -1094,7 +1102,7 @@
     
     function generateWhatsAppLink(event, isError = false, errorType = "") {
       event.preventDefault();
-      if (!isError && !validateFormFields()) return;
+      if (!isError && !validateForm2()) return;
       const pickup = document.getElementById("pickup").value;
       const destination = document.getElementById("destination").value;
       const quoteBox1 = document.getElementById("quoteBox1").innerText;
@@ -1164,7 +1172,7 @@
     }
     
     function generateEmailMessage() {
-      if (!validateFormFields()) return;
+      if (!validateForm2()) return;
       const pickup = document.getElementById("pickup").value;
       const destination = document.getElementById("destination").value;
       const name = document.getElementById("name").value;

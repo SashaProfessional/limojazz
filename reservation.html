@@ -588,7 +588,9 @@
 
       const origin = document.getElementById("pickup").value;
       const destination = document.getElementById("destination").value;
-      const hasDestination = !document.getElementById("byTheHourButton")?.classList.contains("selected")
+      const numberOfDays = document.getElementById("numberOfDays").value;
+      const hoursPerDay = document.getElementById("HoursPerDay").value;
+      const isHourlyReservation = document.getElementById("byTheHourButton")?.classList.contains("selected")
       let result = true
 
       if (!origin) {
@@ -596,8 +598,18 @@
         result = false;
       }
 
-      if (!destination && hasDestination) {
+      if (!destination && !isHourlyReservation) {
         setValidationError1('destination', 'validation-enter-destination-location');
+        result = false;
+      }
+
+      if (!numberOfDays && isHourlyReservation) {
+        setValidationError1('numberOfDays', 'validation-enter-number-of-days');
+        result = false;
+      }
+
+      if (!hoursPerDay && isHourlyReservation) {
+        setValidationError1('HoursPerDay', 'validation-enter-hours-per-day');
         result = false;
       }
 
@@ -937,6 +949,23 @@
       document.querySelector(".reserve-button").classList.remove("hidden");
     }
     
+    function isAiroportSelected() {
+      const airportFields = document.getElementById("airportFields");
+      const pickupValue = document.getElementById("pickup").value.toLowerCase();
+      const dropoffValue = document.getElementById("destination").value.toLowerCase();
+      const returnSelected = document.getElementById("returnButton")?.classList.contains("selected");
+
+      return pickupValue.includes("gva") || (dropoffValue.includes("gva") && returnSelected)
+    }
+
+    function toggleAirportFields() {
+      if (isAiroportSelected()) {
+        airportFields.classList.remove("hidden");
+      } else {
+        airportFields.classList.add("hidden");
+      }
+    }
+    
     function selectTripType(type) {
       const oneWayButton = document.getElementById("oneWayButton");
       const returnButton = document.getElementById("returnButton");
@@ -951,18 +980,6 @@
         returnFields.classList.remove("hidden");
       }
       toggleAirportFields();
-    }
-    
-    function toggleAirportFields() {
-      const airportFields = document.getElementById("airportFields");
-      const pickupValue = document.getElementById("pickup").value.toLowerCase();
-      const dropoffValue = document.getElementById("destination").value.toLowerCase();
-      const returnSelected = document.getElementById("returnButton")?.classList.contains("selected");
-      if (pickupValue.includes("gva") || (dropoffValue.includes("gva") && returnSelected)) {
-        airportFields.classList.remove("hidden");
-      } else {
-        airportFields.classList.add("hidden");
-      }
     }
     
     function selectArrivalName(name) {
@@ -1085,7 +1102,7 @@
         }
       }
 
-      if(!flightNumber){
+      if(isAiroportSelected() && !flightNumber){
         setValidationError2('flightNumber', 'validation-enter-flight-number');
         result = false;
       }
@@ -1342,13 +1359,15 @@
       <!-- Hourly Fields -->
       <div id="byTheHourFields" class="hidden">
         <div class="row">
-          <div class="input-container" style="flex: 1;">
-            <label for="numberOfDays">Day(s)</label>
+          <div class="input-group input-container validation-field" style="flex: 1;">
+            <label for="numberOfDays">Day(s)*</label>
             <input type="number" id="numberOfDays" name="numberOfDays" min="1" max="30" value="1">
+            <div class="error-message"></div>
           </div>
-          <div class="input-container" style="flex: 1;">
-            <label for="HoursPerDay">Hour(s) (per Day)</label>
+          <div class="input-group input-container validation-field" style="flex: 1;">
+            <label for="HoursPerDay">Hour(s) (per Day)*</label>
             <input type="number" id="HoursPerDay" name="HoursPerDay" min="1" max="12" value="1">
+            <div class="error-message"></div>
           </div>
         </div>
       </div>
@@ -1570,6 +1589,8 @@
       <div style="display: none">
         <div id="validation-enter-pickup-location">Please enter pickup location</div>
         <div id="validation-enter-destination-location">Please enter dropoff location</div>
+        <div id="validation-enter-hours-per-day">Please enter hours per day</div>
+        <div id="validation-enter-number-of-days">Please enter number of days</div>
         <div id="validation-enter-full-name">Please enter full name</div>
         <div id="validation-enter-pickup-date">Please enter pickup date</div>
         <div id="validation-enter-pickup-time">Please enter pickup time</div>

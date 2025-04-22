@@ -588,6 +588,7 @@
 
       const origin = document.getElementById("pickup").value;
       const destination = document.getElementById("destination").value;
+      const hasDestination = !document.getElementById("byTheHourButton")?.classList.contains("selected")
       let result = true
 
       if (!origin) {
@@ -595,7 +596,7 @@
         result = false;
       }
 
-      if (!destination) {
+      if (!destination && hasDestination) {
         setValidationError1('destination', 'validation-enter-destination-location');
         result = false;
       }
@@ -607,10 +608,8 @@
       const origin = document.getElementById("pickup").value;
       const destination = document.getElementById("destination").value;
 
-      if (validateForm1()) {
-        toggleAirportFields();
-        checkServicingArea(origin, destination);
-      } 
+      toggleAirportFields();
+      checkServicingArea(origin, destination);
     }
     
     function checkServicingArea(origin, destination) {
@@ -897,11 +896,13 @@
       }
     }
 		
-    function calculateQuote() {
-      if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
-        calculateHourlyQuote();
-      } else {
-        calculateDistancesIfBothFilled();
+    function calculateQuote() {      
+      if (validateForm1()) {
+        if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
+          calculateHourlyQuote();
+        } else {
+          calculateDistancesIfBothFilled();
+        }
       }
     }
     

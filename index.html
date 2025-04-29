@@ -63,7 +63,7 @@
     #cover.video-loaded .cover-video { display: block; }
     .scroll-arrow {
       position: absolute;
-      bottom: 160px;
+      bottom: 70px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 2rem;
@@ -72,14 +72,47 @@
       animation: bounce 1.5s infinite;
       z-index: 3;
     }
-	@media screen and (max-width: 768px) {
-	.scroll-arrow {
-		bottom: 100px;
-	}
-	}
+    @media screen and (max-width: 925px) {
+      .scroll-arrow {
+        bottom: 160px;
+      }
+    }
+    @media screen and (max-width: 768px) {
+      .scroll-arrow {
+        bottom: 100px;
+      }
+    }
     @keyframes bounce {
       0%, 100% { transform: translate(-50%, 0); }
       50% { transform: translate(-50%, -10px); }
+    }
+
+    #book-now-button {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ffbd59;
+      color: #000;
+      padding: 10px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: 2px solid #ffbd59;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
+      border: 2px solid #ffbd59;
+    }
+
+    #book-now-button:hover {
+      background-color: #000;
+      color: #ffbd59;
+    }
+    @media (max-width: 925px) {
+      #book-now-button {
+        bottom: 100px;
+      }
     }
 
     /* NORMAL SECTIONS */
@@ -253,6 +286,14 @@
       <div class="language-select-option" data-value="ru">
         <img src="https://flagcdn.com/w40/ru.png" alt="RU" />
         <span>RU</span>
+      </div>
+      <div class="language-select-option" data-value="pt">
+        <img src="https://flagcdn.com/w40/pt.png" alt="PT" />
+        <span>PT</span>
+      </div>
+      <div class="language-select-option" data-value="es">
+        <img src="https://flagcdn.com/w40/es.png" alt="ES" />
+        <span>ES</span>
       </div>
     </div>
   </div>

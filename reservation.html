@@ -525,8 +525,8 @@
       var params = getQueryParams();
       var logoParam = params.logo; // e.g., ?logo=zermatt
       var logoMapping = {
-        "zermatt": "https://limojazz.github.io/limojazz/img/limojazz_zernatt_promo_250.gif",
-        "main": "https://limojazz.github.io/limojazz/img/limojazz.svg"
+        "zermatt": "img/limojazz_zernatt_promo_250.gif",
+        "main": "img/limojazz.svg"
         // add more mappings as needed
       };
       if (logoParam && logoMapping[logoParam]) {
@@ -1349,7 +1349,7 @@
 
 <!-- Fixed Logo -->
 <div class="logo-container">
-  <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="Logo">
+  <img src="img/limojazz.svg" alt="Logo" height="120" width="120">
 </div>
 
 <body>
@@ -1666,18 +1666,7 @@
   </nav>
   
   <script src="scripts/header.js"></script>
+  <script src="app.js"></script>
 
-  <!-- Service Worker Registration for PWA -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(function(registration) {
-          console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch(function(error) {
-          console.error('Service Worker registration failed:', error);
-        });
-    }
-  </script>
 </body>
 </html>

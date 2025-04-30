@@ -168,4 +168,4 @@ window.addEventListener("load", () => {
   document.body.appendChild(script);
 });
 
-console.log('v6')
+console.log('v7')

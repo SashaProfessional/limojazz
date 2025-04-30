@@ -1,13 +1,13 @@
 const CACHE_NAME = 'pwa-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/reservation.html',
-  '/css/common.css',
-  '/app.js',
-  '/scripts/header.js',
-  '/img/favicon/web-app-manifest-192x192.png',
-  '/img/favicon/web-app-manifest-512x512.png'
+  'limojazz/',
+  'limojazz/index.html',
+  'limojazz/reservation.html',
+  'limojazz/css/common.css',
+  'limojazz/app.js',
+  'limojazz/scripts/header.js',
+  'limojazz/img/favicon/web-app-manifest-192x192.png',
+  'limojazz/img/favicon/web-app-manifest-512x512.png'
 ];
 
 self.addEventListener('install', event => {

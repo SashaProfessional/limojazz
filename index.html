@@ -3,158 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LimoJazz - Elevating Your Journey</title>
-  <!-- External CSS Libraries -->
+  <meta name="theme-color" content="#000000" />
+  
+  <link rel="icon" type="image/png" href="img/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="img/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="LimoJazz" />
+  <link rel="manifest" href="img/favicon/site.webmanifest" />
+
+  <title>LimoJazz - Premium Limousine Service for Your Journey</title>
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <!-- <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
 
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/common.css">
+
   <style>
-    /* Global Reset & Base Styles */
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Figtree', sans-serif;
-    }
-    body, button {
-      font-family: 'Figtree', sans-serif;
-    }
-
-    /* Fixed Top Bar */
-    .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background-color: #000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      z-index: 300;
-    }
-    .top-bar .hamburger a,
-    .top-bar .social-icons a {
-      text-decoration: none;
-    }
-    .top-bar .hamburger i,
-    .top-bar .social-icons a i {
-      color: #fff;
-      font-size: 24px;
-      margin: 0 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    @media (max-width: 768px) {
-      .top-bar .social-icons {
-        display: none;
-      }
-    }
-
-    /* Fixed Logo */
-    .logo-container {
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 310;
-    }
-    .logo-container img {
+    html {      
       height: 100%;
     }
-
-    /* Mobile Bottom Bar */
-    .bottom-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background-color: #000;
-      z-index: 300;
-      display: none;
-    }
-    @media (max-width: 768px) {
-      .bottom-bar {
-        display: flex;
-      }
-    }
-    .bottom-bar .bottom-item {
-      flex: 1;
-      text-align: center;
-      padding: 3px 0;
-    }
-    .bottom-bar .bottom-item a {
-      text-decoration: none;
-    }
-    .bottom-bar .bottom-item a i {
-      color: #fff;
-      font-size: 24px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    /* Overlay Menu */
-
-/* Updated Overlay Menu */
-.overlay-menu {
-  position: fixed;
-  top: 0px;
-  right: 0;
-  padding-top: 150px;
-  padding-bottom: 150px;
-  background: #000;
-  transition: transform 0.5s ease;
-  z-index: 200;
-}
-
-@media (max-width: 768px) {
-  .overlay-menu {
-    width: 100%;
-	height: 100%;
-    transform: translateX(100%); /* Hidden off-screen to the right */
-  }
-  .overlay-menu.open {
-    transform: translateX(0); /* Slides in fully */
-  }
-}
-
-@media (min-width: 769px) {
-  .overlay-menu {
-    width: 100%;
-    height: 100%;
-    transform: translateX(100%); /* Start offscreen */
-  }
-  .overlay-menu.open {
-    transform: translateX(0); /* Slide in from the right */
-  }
-}
-
-
-
-
-    .overlay-menu ul {
-      list-style: none;
-      margin: 0;
-      text-align: right;
-    }
-    .overlay-menu ul li {
-      margin: 50px 50px;
-    }
-    .overlay-menu ul li a {
-      text-decoration: none;
-      font-size: 50px;
-      color: #fff;
-      cursor: pointer;
-    }
-
     /* COVER SECTION */
     #cover {
       position: relative;
@@ -192,7 +63,7 @@
     #cover.video-loaded .cover-video { display: block; }
     .scroll-arrow {
       position: absolute;
-      bottom: 160px;
+      bottom: 70px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 2rem;
@@ -201,14 +72,47 @@
       animation: bounce 1.5s infinite;
       z-index: 3;
     }
-	@media screen and (max-width: 768px) {
-	.scroll-arrow {
-		bottom: 100px;
-	}
-	}
+    @media screen and (max-width: 925px) {
+      .scroll-arrow {
+        bottom: 160px;
+      }
+    }
+    @media screen and (max-width: 768px) {
+      .scroll-arrow {
+        bottom: 100px;
+      }
+    }
     @keyframes bounce {
       0%, 100% { transform: translate(-50%, 0); }
       50% { transform: translate(-50%, -10px); }
+    }
+
+    #book-now-button {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ffbd59;
+      color: #000;
+      padding: 10px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: 2px solid #ffbd59;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
+      border: 2px solid #ffbd59;
+    }
+
+    #book-now-button:hover {
+      background-color: #000;
+      color: #ffbd59;
+    }
+    @media (max-width: 925px) {
+      #book-now-button {
+        bottom: 100px;
+      }
     }
 
     /* NORMAL SECTIONS */
@@ -218,7 +122,13 @@
       color: #fff;
       padding-top: 150px;
     }
-    .container { max-width: 1200px; margin: auto; }
+
+    .container { 
+      max-width: 1200px; 
+      margin: auto; 
+      text-align: center;
+    }
+
     h2 { font-size: 2rem; margin-bottom: 20px; text-align: center; }
     p { margin-bottom: 20px; font-size: 1rem; }
     ul li { margin-bottom: 10px; }
@@ -236,6 +146,9 @@
       height: calc(100vh - 60px);
       background-position: center;
       background-size: cover;
+    }
+    body.no-parallax .parallax-section {
+        background-attachment: scroll;
     }
     @media (max-width: 768px) {
       .parallax-section {
@@ -297,45 +210,12 @@
       letter-spacing: 1px;
       transition: background-color 0.3s;
     }
-    .btn:hover { background-color: #FFBD59; }
-
-    /* FOOTER */
-    footer {
-      background-color: #000;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
-    }
-
-    /* Global Hover Effects */
-    a:hover, a:hover i, button:hover {
-      color: #ffbd59 !important;
-    }
-    a { color: #fff; }
-
-    /* Hide Google Translate top bar and fix spacing */
-	/* https://stackoverflow.com/questions/75471527/how-to-hide-google-translate-toolbar-popup */
-    .VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; }
-    .VIpgJd-suEOdc VIpgJd-yAWNEb-L7lbkb { display: none !important; }
-    .VIpgJd-ZVi9od-aZ2wEe-wOHMyf { display: none !important; }
-    .VIpgJd-yAWNEb-hvhgNd { display: none !important; }
-    #goog-gt-vt { display: none !important; }
-    #goog-gt-tt { display: none !important; }
 	/*To remove the highlighting*/
 	.VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q{
 		background-color: unset !important;
 		box-shadow: none !important;
 	}
     body { top: 0 !important; }
-
-    /* Toggle Button Style */
-    #toggle-btn {
-      background: none;
-      border: none;
-      font-size: 20px;
-      color: white;
-      cursor: pointer;
-    }
 
     /* COVER Specific Styles */
     .cover {
@@ -368,99 +248,110 @@
       width: 100%;
       max-width: 800px;
     }
-	
-#fixed-book-now {
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 320;
-  background-color: #FFBD59;
-  color: #000;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-#fixed-book-now:hover {
-  box-shadow: 0 10px 14px rgba(0, 0, 0, 0.2);
-  transform: translateX(-50%) translateY(-2px);
-  background-color: #000;
-}
-
-
+    .tail{
+      height: 60px;
+      background-color: black;
+    }
   </style>
 </head>
 <body>
-  <!-- Fixed Top Bar -->
-<!-- Updated Top Bar -->
+<!-- Top Bar -->
 <header class="top-bar">
-  <div class="language-selector">
-    <button id="toggle-btn" class="notranslate" onclick="toggleLanguage()">FR</button>
-  </div>
-        <!-- Hidden Google Translate Element -->
-      <div id="google_translate_element" style="display: none;"></div>
-  <div class="right-section" style="display: flex; align-items: center;">
-    <div class="social-icons">
-      <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
-      <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
-      <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
-      <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank"><i class="fas fa-address-card"></i></a>
-      <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
+  <div class="language-select-wrapper notranslate">
+    <div class="language-select-trigger" data-value="en">
+      <img src="https://flagcdn.com/w40/gb.png" alt="EN" />
+      <span>EN</span>
     </div>
+    <div class="language-select-options">
+      <div class="language-select-option" data-value="en">
+        <img src="https://flagcdn.com/w40/gb.png" alt="EN" />
+        <span>EN</span>
+      </div>
+      <div class="language-select-option" data-value="fr">
+        <img src="https://flagcdn.com/w40/fr.png" alt="FR" />
+        <span>FR</span>
+      </div>
+      <div class="language-select-option" data-value="de">
+        <img src="https://flagcdn.com/w40/de.png" alt="DE" />
+        <span>DE</span>
+      </div>
+      <div class="language-select-option" data-value="zh-CN">
+        <img src="https://flagcdn.com/w40/cn.png" alt="CH" />
+        <span>CH</span>
+      </div>
+      <div class="language-select-option" data-value="it">
+        <img src="https://flagcdn.com/w40/it.png" alt="IT" />
+        <span>IT</span>
+      </div>
+      <div class="language-select-option" data-value="ru">
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" />
+        <span>RU</span>
+      </div>
+      <div class="language-select-option" data-value="pt">
+        <img src="https://flagcdn.com/w40/pt.png" alt="PT" />
+        <span>PT</span>
+      </div>
+      <div class="language-select-option" data-value="es">
+        <img src="https://flagcdn.com/w40/es.png" alt="ES" />
+        <span>ES</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="right-section" style="display: flex; align-items: center;">
     <div class="hamburger" style="margin-left: 15px;">
       <a href="#"><i class="fas fa-bars"></i></a>
     </div>
   </div>
 </header>
 
+<!-- Hidden Google Translate Element -->
+<div id="google_translate_element"></div>
 
-  <!-- Fixed Logo -->
-  <div class="logo-container">
-    <img src="https://limojazz.github.io/limojazz/img/limojazz.svg" alt="Logo">
-  </div>
+<!-- Fixed Logo -->
+<div class="logo-container">
+  <img src="img/limojazz.svg" alt="Logo" height="120" width="120">
+</div>
 
-  <!-- Mobile Bottom Bar -->
-  <footer class="bottom-bar">
-    <div class="bottom-item">
-      <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
+  <!-- Bottom Bar -->
+  <footer >
+    <div class="footer-left-section">
+      <div><span>Phone: </span><a href="tel:+41788230803">+41 78 823 08 03</a></div>
+      <div><span>Email: </span><a href="mailto:reservation@limojazz.ch">reservation@limojazz.ch</a></div>
     </div>
-    <div class="bottom-item">
-      <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
-    </div>
-    <div class="bottom-item">
-      <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
-    </div>
-    <div class="bottom-item">
-      <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank"><i class="fas fa-address-card"></i></a>
-    </div>
-    <div class="bottom-item">
-      <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
+
+    <a id="book-now-button" href="reservation.html" class="btn">Book Now!</a>
+
+    <div class="footer-right-section">
+      <div class="bottom-item">
+        <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank"><i class="fas fa-address-card"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
+      </div>
     </div>
   </footer>
-
-
-<!-- fixed book button -->
-<div>
-  <a id="fixed-book-now" href="https://limojazz.github.io/limojazz/reservation.html" class="btn">Book Now!</a>
-</div>
 
 
   <!-- Full-Screen Overlay Menu -->
   <nav class="overlay-menu">
     <ul>
-      <li><a href="https://limojazz.github.io/limojazz/index.html">Home</a></li>
-      <li><a href="https://limojazz.github.io/limojazz/reservation.html">Reservation</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="reservation.html">Reservation</a></li>
     </ul>
   </nav>
 
+  <script src="scripts/header.js"></script>
+  <script src="app.js"></script>
 
 <!-- COVER SECTION -->
 <section class="cover" id="cover">
@@ -513,9 +404,9 @@
         <h2>On-Board Comfort &amp; Amenities</h2>
         <p>Every ride with LimoJazz is designed for maximum comfort and convenience:</p>
         <ul style="text-align: left; display: inline-block;">
-          <li><i class="fas fa-check"></i> WiFi on board – Stay connected.</li>
-          <li><i class="fas fa-check"></i> Bottled water – Complimentary.</li>
-          <li><i class="fas fa-check"></i> Child seats available – Request during booking.</li>
+          <li><i class="fas fa-check"></i>&nbsp;&nbsp;WiFi on board – Stay connected.</li>
+          <li><i class="fas fa-check"></i>&nbsp;&nbsp;Bottled water – Complimentary.</li>
+          <li><i class="fas fa-check"></i>&nbsp;&nbsp;Child seats available – Request during booking.</li>
         </ul>
       </div>
     </div>
@@ -543,36 +434,10 @@
     </div>
   </div>
 
-  <!-- NORMAL SECTION: Contact -->
-  <section class="normal" id="contact">
-    <div class="container">
-      <h2>Contact Us</h2>
-      <p>Phone: <a href="tel:+41788230803">+41 78 823 08 03</a></p>
-      <p>Email: <a href="mailto:reservation@limojazz.ch">reservation@limojazz.ch</a></p>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <p>&copy; 2025 LimoJazz. All Rights Reserved.</p>
-  </footer>
-
-  <!-- JavaScript: Menu Toggle, Smooth Scroll & Cover Video Swap -->
+  <div class="tail"></div>
+  
+  <!-- JavaScript: Smooth Scroll & Cover Video Swap -->
   <script>
-    // Toggle Overlay Menu on Hamburger Click
-    const overlayMenu = document.querySelector('.overlay-menu');
-    const hamburgerIcon = document.querySelector('.top-bar .hamburger a');
-    hamburgerIcon.addEventListener('click', function(e) {
-      e.preventDefault();
-      overlayMenu.classList.toggle('open');
-      const iconEl = hamburgerIcon.querySelector('i');
-      if (overlayMenu.classList.contains('open')) {
-        iconEl.classList.replace('fa-bars', 'fa-times');
-      } else {
-        iconEl.classList.replace('fa-times', 'fa-bars');
-      }
-    });
-
     // Smooth Scroll for Scroll Arrow
     document.querySelector('.scroll-arrow a').addEventListener('click', function(e) {
       e.preventDefault();
@@ -586,38 +451,14 @@
         document.getElementById('cover').classList.add('video-loaded');
       });
     }
-
-    // Initialize Google Translate
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,fr',
-        autoDisplay: false
-      }, 'google_translate_element');
-    }
-
-    // Language Toggle Functionality
-    let currentLanguage = 'en';
-    function toggleLanguage() {
-      const combo = document.querySelector('.goog-te-combo');
-      if (!combo) return; // Widget not ready
-      if (currentLanguage === 'en') {
-        combo.value = 'fr';
-        combo.dispatchEvent(new Event('change'));
-        currentLanguage = 'fr';
-        document.getElementById('toggle-btn').innerText = 'EN';
-      } else {
-        combo.value = 'en';
-        // Dispatch event twice for proper reset
-        combo.dispatchEvent(new Event('change'));
-        combo.dispatchEvent(new Event('change'));
-        currentLanguage = 'en';
-        document.getElementById('toggle-btn').innerText = 'FR';
-      }
-    }
 	
 
   document.addEventListener('DOMContentLoaded', function() {
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    if (isSafari) {
+        document.body.classList.add("no-parallax"); // safari has issues with parallax
+    }
+
     const videoSource = document.getElementById('video-source');
     // Adjust the breakpoint if needed; here it's set to 768px.
     if (window.innerWidth < 768) {

@@ -1,17 +1,17 @@
 {
   "name": "LimoJazz",
   "short_name": "LimoJazz",
-  "start_url": "/limojazz/reservation.html",
-  "scope": "/limojazz/",
+  "start_url": "/reservation.html",
+  "scope": "/",
   "icons": [
     {
-      "src": "/limojazz/img/favicon/web-app-manifest-192x192.png",
+      "src": "/img/favicon/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/limojazz/img/favicon/web-app-manifest-512x512.png",
+      "src": "/img/favicon/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

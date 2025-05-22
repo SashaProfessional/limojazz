@@ -463,10 +463,10 @@
     // Adjust the breakpoint if needed; here it's set to 768px.
     if (window.innerWidth < 768) {
       // Mobile: load the vertical video
-      videoSource.src = 'https://limojazz.github.io/limojazz/vid/cover_vid_v.mp4';
+      videoSource.src = './vid/cover_vid_v.mp4';
     } else {
       // Desktop: load the horizontal video
-      videoSource.src = 'https://limojazz.github.io/limojazz/vid/cover_vid_h.mp4';
+      videoSource.src = './vid/cover_vid_h.mp4';
     }
     document.getElementById('cover-video').load();
   });

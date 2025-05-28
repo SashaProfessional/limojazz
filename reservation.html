@@ -854,7 +854,7 @@
       const distanceText = directionsResult.routes[0].legs[0].distance.text;
       const durationText = directionsResult.routes[0].legs[0].duration.text;
 
-      document.getElementById("quoteTitle").innerText = getTranslatableText('quote-label');
+      document.getElementById("quoteTitle").innerText = getTranslatableText('price-estimation');
       document.getElementById("quoteSubtitle").innerText = getTranslatableText('mercedes-v');
       quoteBox1Label = getTranslatableText('distance-label');
       quoteBox2Label = getTranslatableText('duration-label');
@@ -872,7 +872,7 @@
       document.getElementById("map-canvas").style.display = "block";
       document.querySelector(".quote-button").classList.remove("inactive");
       document.querySelector(".quote-button").classList.add("active");
-      document.querySelector(".quote-button").innerText = getTranslatableText('update-quote');
+      document.querySelector(".quote-button").innerText = getTranslatableText('price-estimation');
       document.querySelector(".reserve-button").classList.remove("hidden");
 
       if (priceObj.isBelowMinimumPrice) {
@@ -963,7 +963,7 @@
       document.getElementById("quote").classList.remove("hidden");
       document.querySelector(".quote-button").classList.remove("inactive");
       document.querySelector(".quote-button").classList.add("active");
-      document.querySelector(".quote-button").innerText = "Update Quote";
+      document.querySelector(".quote-button").innerText = getTranslatableText('price-estimation');
       document.querySelector(".reserve-button").classList.remove("hidden");      
       document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-quantity') + ` CHF ${totalPrice}`;
     }
@@ -1374,7 +1374,7 @@
 
 <body>
   <div class="container">
-    <h2>Quote instantly!</h2>
+    <h2>Price estimation instantly!</h2>
     <h3>Reserve in less than a minute!</h3>
     
     <form id="reservationForm" onsubmit="generateWhatsAppLink(event)">
@@ -1449,14 +1449,14 @@
           <p>This promo code cannot be applied to the selected route and will be ignored.</p>
         </div>
       </div>
-      <button type="button" class="quote-button inactive" onclick="calculateQuote()">Quote</button>
+      <button type="button" class="quote-button inactive" onclick="calculateQuote()">Price estimation</button>
       
       <!-- Map -->
       <div id="map-canvas"></div>
       
       <!-- Quote Info -->
       <div class="quote-info hidden" id="quote">
-        <h3 id="quoteTitle">Quote</h3>
+        <h3 id="quoteTitle">Price estimation</h3>
         <h4 id="quoteSubtitle"></h4>
         <div class="row">
           <div class="quoteBox1" id="quoteBox1"></div>
@@ -1623,7 +1623,7 @@
         <div id="validation-return-before-pick-date">Return date cannot be before the first date</div>
 
         <div id="reserve-for-quantity">Reserve for</div>
-        <div id="quote-label">Quote</div>
+        <div id="price-estimation">Price estimation</div>
         <div id="mercedes-v">Mercedes V-Class (up to 6 passengers and 5 large suitcases)</div>
         <div id="distance-label">Distance</div>
         <div id="duration-label">Duration</div>
@@ -1638,7 +1638,6 @@
 
         <div id="company-logo">Company Logo</div>
         <div id="limo-jazz-logo">LimoJazz Logo</div>
-        <div id="update-quote">Update Quote</div>
 
         <div id="promo-applied-successfully">Promo code discount applied successfully: </div>
       </div>

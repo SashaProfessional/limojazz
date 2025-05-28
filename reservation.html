@@ -246,6 +246,16 @@
       display: flex;
       gap: 10px;
     }
+
+    #promo-applied-message {
+      display: none;
+      color: #4CAF50;
+      line-height: 20px;
+    }
+    #promo-applied-message.visible {
+      display: block;
+    }
+
     /* Info Boxes */
     #error-box-promo, #error-box-general, #error-box-fieldCheck {
       background-color: #f8d7da;
@@ -283,6 +293,9 @@
     }
     #error-box-general.below-minimum-fare > .below-minimum-fare {
       display: block;
+    }
+    #error-box-general.below-minimum-fare {
+      background-color: #fff3cd;
     }
     #error-box-general.geocode-destination-failed > .geocode-destination-failed {
       display: block;
@@ -376,12 +389,25 @@
 
     .quote-info > ul {
       display: none;
+      list-style-type: disc;
+      padding-left: 10px;
+      margin-left: 0;
+    }
+    .quote-info > li {
+      margin-bottom: 8px;
     }
     .quote-info.v1 > .v1 {
       display: block;
     }
     .quote-info.v2 > .v2 {
       display: block;
+    }
+    
+    .quote-info .below-minimum-message {
+      display: none;
+    }
+    .quote-info.below-minimum .below-minimum-message {
+      display: list-item;
     }
 
     .quoteBox1,
@@ -403,6 +429,7 @@
     const ORIGIN_LOCATION_KEY = "ORIGIN_LOCATION_KEY";
     const DESTINATION_LOCATION_KEY = "DESTINATION_LOCATION_KEY";
     const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwXRuQqruECMrFbqcUKAVF_rOKMvXXuYwLZjiSlB9TiidCRISiAT3JhdY7DuZ1UoeFq/exec"
+    const MINIMUM_PRICE = 80
     var directionsService;
     var directionsRenderer;
     var geocoder;
@@ -671,38 +698,18 @@
       var rateDecrease = (initialPerKmRate - minimumPerKmRate) * (distance / 700);
       return initialPerKmRate - rateDecrease;
     }
-    
-    function calculatePriceTaxi(distanceValue, durationValue) {
-      var baseRate = 6.30;
-      var distanceInKm = distanceValue / 1000;
-      var durationInMin = durationValue / 60;
-      var perKmRate = 3.80;
-      var perMinRate = 0;
-      var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin) + 5 + Math.floor(distanceInKm / 50) * 5;
-      totalPrice = Math.ceil(totalPrice);
 
-      return { finalPrice: totalPrice.toFixed(2), promoApplied: false };
-    } 
-
-    function calculatePriceUberVan(distanceValue, durationValue) {
-      var baseRate = 8.00;
-      var distanceInKm = distanceValue / 1000;
-      var durationInMin = durationValue / 60;
-      var perKmRate = 3.60;
-      var perMinRate = 0.60;
-      var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
-      totalPrice = Math.ceil(totalPrice);
-      
-      return { finalPrice: totalPrice.toFixed(2), promoApplied: false };
-    }
-
-    async function calculatePriceMyFare(distanceValue, durationValue) {
+    async function calculatePrice(distanceValue, durationValue) {
       var baseRate = 6.00;
       var distanceInKm = distanceValue / 1000;
       var durationInMin = durationValue / 60;      
       var perKmRate = calculatePerKmRate(distanceInKm);
       var perMinRate = 0;
       var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
+      var normalPrice;
+      let isBelowMinimumPrice
+
+      selectPromoAppliedMessage(false);
   
       // Apply flat rates if possible        
       const flatRatesRaw = localStorage.getItem(FLAT_RATES_KEY);
@@ -724,14 +731,12 @@
         totalPrice = flatRate.amount;
       }
   
-      // Rounding adjustments to get the normal (non-discounted) price
-      var normalPrice;
-      if (totalPrice < 15) {
-        normalPrice = 15;
-      } else if (totalPrice < 80) {
-        normalPrice = Math.ceil(totalPrice / 5) * 5;
+      if (totalPrice < MINIMUM_PRICE) {
+        normalPrice = MINIMUM_PRICE;
+        isBelowMinimumPrice = true
       } else {
         normalPrice = Math.floor(totalPrice / 10) * 10;
+        isBelowMinimumPrice = false
       }
   
       let finalPrice = normalPrice;
@@ -779,6 +784,11 @@
 
           if (isPromoCodeApplicable) {
             finalPrice = Math.floor(normalPrice * promoCode.multiplier);
+
+            const discount = (1 - promoCode.multiplier) * 100;
+            const discountFixed = Math.round(discount * 100) / 100;
+
+            selectPromoAppliedMessage(true, discountFixed)
             promoApplied = true;
           } else {
             showPromoError("wrong-route");
@@ -788,14 +798,30 @@
         }      
       }
 
-      return { finalPrice: finalPrice, normalPrice: normalPrice, promoApplied: promoApplied };
+      return { finalPrice, normalPrice, promoApplied, isBelowMinimumPrice };
     }
 
-    function selectQuoteInfo(type){
+    function selectQuoteInfo(type, isBelowMinimumPrice){
       const quoteInfo = document.querySelector(".quote-info")
 
-      quoteInfo.classList.remove("v1", "v2")
+      quoteInfo.classList.remove("v1", "v2", "below-minimum")
       quoteInfo.classList.add(type)
+
+      if (isBelowMinimumPrice) {        
+        quoteInfo.classList.add("below-minimum")
+      }
+    }
+    
+    function selectPromoAppliedMessage(isApplied, value){
+      const promoAppliedMessage = document.querySelector("#promo-applied-message")
+      const successText = document.querySelector("#promo-applied-successfully")
+
+      promoAppliedMessage.classList.remove("visible")
+
+      if (isApplied && successText && value) {        
+        promoAppliedMessage.classList.add("visible");
+        promoAppliedMessage.textContent = successText.textContent + value + '%'
+      }
     }
     
     async function calculateDistances(origin, destination) {
@@ -822,11 +848,9 @@
       const distance = directionsResult.routes[0].legs[0].distance.value;
       const duration = directionsResult.routes[0].legs[0].duration.value;
 
-      const priceObj = await calculatePriceMyFare(distance, duration);
+      const priceObj = await calculatePrice(distance, duration);
       window.currentFareObj = priceObj;
 
-      const taxiPrice = calculatePriceTaxi(distance, duration).finalPrice;
-      const uberVanPrice = calculatePriceUberVan(distance, duration).finalPrice;
       const distanceText = directionsResult.routes[0].legs[0].distance.text;
       const durationText = directionsResult.routes[0].legs[0].duration.text;
 
@@ -842,9 +866,7 @@
         ? `CHF ${priceObj.finalPrice}&nbsp;<span style='text-decoration: line-through;color: red;'>CHF ${priceObj.normalPrice}</span>`
         : `CHF ${priceObj.finalPrice}`;
 
-      selectQuoteInfo("v1");
-      document.getElementById("taxi-price").textContent = taxiPrice;
-      document.getElementById("uber-van-price").textContent = uberVanPrice;
+      selectQuoteInfo("v1", priceObj.isBelowMinimumPrice);
 
       document.getElementById("quote").classList.remove("hidden");
       document.getElementById("map-canvas").style.display = "block";
@@ -853,10 +875,11 @@
       document.querySelector(".quote-button").innerText = getTranslatableText('update-quote');
       document.querySelector(".reserve-button").classList.remove("hidden");
 
-      if (priceObj.finalPrice < 80) {
+      if (priceObj.isBelowMinimumPrice) {
         showGeneralError("below-minimum-fare");
-        document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-80');
       }
+      
+      document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-quantity') + ` CHF ${priceObj.finalPrice}`;
     }
 
     function showPromoError(errorType) {
@@ -871,10 +894,6 @@
 
       errorBoxGeneral.classList.remove("outside-servising-area", "below-minimum-fare", "geocode-destination-failed", "geocode-origin-failed", "directions-request-failed")
       errorBoxGeneral.classList.add('error', errorType)
-
-      if (errorType === "below-minimum-fare") {
-        document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-80');
-      }
     }
     
     function selectRideType(type) {
@@ -904,7 +923,8 @@
         document.getElementById('quote').classList.add('hidden');
         document.querySelector(".reserve-button").classList.add("hidden");
         document.getElementById('oneWayReturnButtons').classList.add('hidden');
-        document.getElementById('reserveFields').classList.add('hidden');				
+        document.getElementById('reserveFields').classList.add('hidden');		
+        selectPromoAppliedMessage(false)
       }
     }
 		
@@ -927,26 +947,25 @@
       const kmIncludedPerHour = 20;
       const kmIncludedTotal = numberOfHours * kmIncludedPerHour;
       const blacklanePricePerHour = 130;
-      let blacklaneTotalPrice = numberOfHours > 2 ? blacklanePricePerHour * numberOfHours : 260;
     
       document.getElementById("quoteTitle").innerText = getTranslatableText("qn5");
       document.getElementById("quoteSubtitle").innerText = getTranslatableText('mercedes-v');
       quoteBox1Label = getTranslatableText("qn6")
       quoteBox2Label = getTranslatableText("qn7")
-      quoteBox3Label = getTranslatableText("qn8")
+      quoteBox3Label = getTranslatableText("estimated-fare")
       document.getElementById("quoteBox1").innerText = `${numberOfHours} ${getTranslatableText("hours-label")}`;
       document.getElementById("quoteBox2").innerText = `${kmIncludedTotal} ${getTranslatableText("qn9")}`;
       document.getElementById("quoteBox3").innerText = `CHF ${totalPrice}`;
       
       selectQuoteInfo("v2");
       document.getElementById("km-included-per-hour").textContent = kmIncludedPerHour;
-      document.getElementById("blacklane-total-price").textContent = blacklaneTotalPrice;
     
       document.getElementById("quote").classList.remove("hidden");
       document.querySelector(".quote-button").classList.remove("inactive");
       document.querySelector(".quote-button").classList.add("active");
       document.querySelector(".quote-button").innerText = "Update Quote";
-      document.querySelector(".reserve-button").classList.remove("hidden");
+      document.querySelector(".reserve-button").classList.remove("hidden");      
+      document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-quantity') + ` CHF ${totalPrice}`;
     }
     
     function isAiroportSelected() {
@@ -1126,7 +1145,7 @@
       const quoteBox1 = document.getElementById("quoteBox1").innerText;
       const quoteBox2 = document.getElementById("quoteBox2").innerText;
       var quoteBox3Text;
-      if (window.currentFareObj && window.currentFareObj.promoApplied) {
+      if (document.getElementById("singleRideButton")?.classList.contains("selected") && window.currentFareObj?.promoApplied) {
         quoteBox3Text = "CHF " + window.currentFareObj.finalPrice + " (was CHF " + window.currentFareObj.normalPrice + ")";
       } else {
         quoteBox3Text = document.getElementById("quoteBox3").innerText;
@@ -1207,7 +1226,7 @@
       const promoCode = document.getElementById("promoCode").value;
       const subject = `${date} ${name}`;
       let quoteBox3Text;
-      if (window.currentFareObj && window.currentFareObj.promoApplied) {
+      if (document.getElementById("singleRideButton")?.classList.contains("selected") && window.currentFareObj?.promoApplied) {
         quoteBox3Text = "CHF " + window.currentFareObj.finalPrice + " (was CHF " + window.currentFareObj.normalPrice + ")";
       } else {
         quoteBox3Text = document.getElementById("quoteBox3").innerText;
@@ -1235,6 +1254,7 @@
       emailBody += `${quoteBox2Label}: ${document.getElementById("quoteBox2").innerText}\n`;
       emailBody += `${quoteBox3Label}: ${quoteBox3Text}${document.getElementById("returnButton").classList.contains("selected") ? " (per way)" : ""}\n`;
       if (message) emailBody += `Additional Information: ${message}\n`;
+      if (promoCode) emailBody += `*Promo Code:* ${promoCode}\n`;
       openExternalLink(`mailto:reservation@limojazz.ch?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`);
     }
     
@@ -1409,16 +1429,17 @@
       </div>
       
       <!-- Revised Promo Code + Reverse Button using arrivalName strategy -->
-        <div class="input-group">
-          <div class="input-container">
-            <label for="promoCode">Promo Code</label>
-            <input type="text" id="promoCode" name="promoCode" placeholder="Enter promo code" value="">
-            <button type="button" class="infield-button btn-clear" tabindex="-1" onclick="document.getElementById('promoCode').value=''">&times;</button>
-          </div>
-          <small class="promo-note">
-            Follow us on <a href="https://www.instagram.com/limojazz.ch" tabindex="-1" target="_blank">Instagram</a> and <a href="https://www.facebook.com/limojazz" tabindex="-1" target="_blank">Facebook</a> for exclusive deals and insider promos!
-          </small>
+      <div class="input-group">
+        <div class="input-container">
+          <label for="promoCode">Promo Code</label>
+          <input type="text" id="promoCode" name="promoCode" placeholder="Enter promo code" value="">
+          <button type="button" class="infield-button btn-clear" tabindex="-1" onclick="document.getElementById('promoCode').value=''">&times;</button>
         </div>
+        <div id="promo-applied-message"></div>
+        <small class="promo-note">
+          Follow us on <a href="https://www.instagram.com/limojazz.ch" tabindex="-1" target="_blank">Instagram</a> and <a href="https://www.facebook.com/limojazz" tabindex="-1" target="_blank">Facebook</a> for exclusive deals and insider promos!
+        </small>
+      </div>
       
       <div id="error-box-promo">
         <div class="invalid-code">
@@ -1442,27 +1463,18 @@
           <div class="quoteBox2" id="quoteBox2"></div>
           <div class="quoteBox3" id="quoteBox3"></div>
         </div>
-        <p id="quoteNote1">
-          <ul class="v1" style="list-style-type: disc; padding-left: 10px; margin-left: 0;">
-            <li style="margin-bottom: 8px;">Quote subject to change based on service area or special events.</li>
-            <li style="margin-bottom: 8px;">
-              Comparison: Estimated Taxi price: CHF&nbsp;<span id="taxi-price"></span>, Estimated UberVan price: CHF&nbsp;<span id="uber-van-price"></span>
-            </li>
-            <li style="margin-bottom: 8px;">Comparisons are provided for informational purposes only.</li>
+        <p>
+          <ul class="v1">
+            <li>Quote subject to change based on service area or special events.</li>
+            <li class="below-minimum-message">Note: This short reservation falls under our minimum rate, helping us maintain top-quality service.</li>
+            <li class="below-minimum-message">Did you know that for rides over 20 km, our rates are often unbeatable. Follow us on social media for special promos and exclusive offers!</li>
           </ul>
           
-          <ul class="v2" style="list-style-type: disc; padding-left: 10px; margin-left: 0;">
-            <li style="margin-bottom: 8px;">Quote subject to change based on service area or special events.</li>
-            <li style="margin-bottom: 8px;">
-              Includes&nbsp;<span id="km-included-per-hour"></span> km per booked hour; extra charges may apply.
-            </li>
-            <li style="margin-bottom: 8px;">
-              Comparison: Estimated Blacklane price: CHF&nbsp;<span id="blacklane-total-price"></span>
-            </li>
-            <li style="margin-bottom: 8px;">Comparisons are provided for informational purposes only.</li>
+          <ul class="v2">
+            <li>Quote subject to change based on service area or special events.</li>
+            <li>Includes&nbsp;<span id="km-included-per-hour"></span> km per booked hour; extra charges may apply.</li>
           </ul>
         </p>
-        <p id="quoteNote2"></p>
       </div>
       <div id="error-box-general">
         <div class="error-box outside-servising-area">
@@ -1610,7 +1622,7 @@
         <div id="validation-date-in-past">Date cannot be in the past</div>
         <div id="validation-return-before-pick-date">Return date cannot be before the first date</div>
 
-        <div id="reserve-for-80">Reserve for CHF 80</div>
+        <div id="reserve-for-quantity">Reserve for</div>
         <div id="quote-label">Quote</div>
         <div id="mercedes-v">Mercedes V-Class (up to 6 passengers and 5 large suitcases)</div>
         <div id="distance-label">Distance</div>
@@ -1622,12 +1634,13 @@
         <div id="qn5">Chauffeur at disposal Quote</div>
         <div id="qn6">Number of Hours</div>
         <div id="qn7">Kilometers incl.</div>
-        <div id="qn8">Estimated Fare</div>
         <div id="qn9">km included</div>
 
         <div id="company-logo">Company Logo</div>
         <div id="limo-jazz-logo">LimoJazz Logo</div>
         <div id="update-quote">Update Quote</div>
+
+        <div id="promo-applied-successfully">Promo code discount applied successfully: </div>
       </div>
     </form>
   </div>

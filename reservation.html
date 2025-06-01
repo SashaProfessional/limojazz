@@ -402,13 +402,6 @@
     .quote-info.v2 > .v2 {
       display: block;
     }
-    
-    .quote-info .below-minimum-message {
-      display: none;
-    }
-    .quote-info.below-minimum .below-minimum-message {
-      display: list-item;
-    }
 
     .quoteBox1,
     .quoteBox2,
@@ -801,15 +794,11 @@
       return { finalPrice, normalPrice, promoApplied, isBelowMinimumPrice };
     }
 
-    function selectQuoteInfo(type, isBelowMinimumPrice){
+    function selectQuoteInfo(type){
       const quoteInfo = document.querySelector(".quote-info")
 
-      quoteInfo.classList.remove("v1", "v2", "below-minimum")
+      quoteInfo.classList.remove("v1", "v2")
       quoteInfo.classList.add(type)
-
-      if (isBelowMinimumPrice) {        
-        quoteInfo.classList.add("below-minimum")
-      }
     }
     
     function selectPromoAppliedMessage(isApplied, value){
@@ -866,7 +855,7 @@
         ? `CHF ${priceObj.finalPrice}&nbsp;<span style='text-decoration: line-through;color: red;'>CHF ${priceObj.normalPrice}</span>`
         : `CHF ${priceObj.finalPrice}`;
 
-      selectQuoteInfo("v1", priceObj.isBelowMinimumPrice);
+      selectQuoteInfo("v1");
 
       document.getElementById("quote").classList.remove("hidden");
       document.getElementById("map-canvas").style.display = "block";
@@ -878,8 +867,6 @@
       if (priceObj.isBelowMinimumPrice) {
         showGeneralError("below-minimum-fare");
       }
-      
-      document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-quantity') + ` CHF ${priceObj.finalPrice}`;
     }
 
     function showPromoError(errorType) {
@@ -965,7 +952,6 @@
       document.querySelector(".quote-button").classList.add("active");
       document.querySelector(".quote-button").innerText = getTranslatableText('price-estimation');
       document.querySelector(".reserve-button").classList.remove("hidden");      
-      document.querySelector(".reserve-button").innerText = getTranslatableText('reserve-for-quantity') + ` CHF ${totalPrice}`;
     }
     
     function isAiroportSelected() {
@@ -1466,8 +1452,6 @@
         <p>
           <ul class="v1">
             <li>Quote subject to change based on service area or special events.</li>
-            <li class="below-minimum-message">Note: This short reservation falls under our minimum rate, helping us maintain top-quality service.</li>
-            <li class="below-minimum-message">Did you know that for rides over 20 km, our rates are often unbeatable. Follow us on social media for special promos and exclusive offers!</li>
           </ul>
           
           <ul class="v2">
@@ -1487,8 +1471,8 @@
         </div>
 
         <div class="error-box below-minimum-fare">
-          <h3>Quote below the Minimum Reservation fare</h3>
-          <p>Our minimum reservation rate is CHF 80. Please call us for urgent rides or note that the price will be adjusted to CHF 80.</p>
+          <p><b>Note:</b> This short reservation falls under our minimum rate, helping us maintain top-quality service.</p>
+          <p>Did you know that for rides over 20 km, our rates are often unbeatable. Follow us on social media for special promos and exclusive offers!</p>
         </div>
 
         <div class="error-box geocode-destination-failed">

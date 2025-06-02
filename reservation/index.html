@@ -10,20 +10,20 @@
 
   <title>Reserve a Car with LimoJazz - Quote & Booking Service</title>
   
-  <link rel="icon" type="image/png" href="img/favicon/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="img/favicon/favicon.svg" />
-  <link rel="shortcut icon" href="img/favicon/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" href="/img/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/img/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="/img/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-title" content="LimoJazz" />
-  <link rel="manifest" href="img/favicon/site.webmanifest" />
+  <link rel="manifest" href="/img/favicon/site.webmanifest" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" /> -->
   <!-- <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/common.css">
 
   <style>
     /* A universal reset for all elements (including inputs) update */
@@ -172,8 +172,8 @@
       background-color: #ffbd59;
       color: black;
     }
-    button[type="submit"] {
-      background-color: #4CAF50;
+    .button-group button.whatsapp {
+      background-color: #4CAF50 !important;
       font-weight: bold;
     }
     button[type="resetForm"] {
@@ -532,6 +532,12 @@
       });
       return params;
     }
+
+    function turnOffDefaultSubmit() {
+      document.getElementById('reservationForm').addEventListener('submit', function(event){
+        event.preventDefault();
+      })
+    }
     
     function prefillFieldsFromQuery() {
       var params = getQueryParams();
@@ -545,8 +551,8 @@
       var params = getQueryParams();
       var logoParam = params.logo; // e.g., ?logo=zermatt
       var logoMapping = {
-        "zermatt": "img/limojazz_zernatt_promo_250.gif",
-        "main": "img/limojazz.svg"
+        "zermatt": "/img/limojazz_zernatt_promo_250.gif",
+        "main": "/img/limojazz.svg"
         // add more mappings as needed
       };
       if (logoParam && logoMapping[logoParam]) {
@@ -1293,11 +1299,13 @@
     
     window.addEventListener("load", function () {
       initialize();
+      turnOffDefaultSubmit();
       prefillFieldsFromQuery();
       updateLogoFromURL(); // update logo based on URL param
       document.getElementById("oneWayButton").click(); // default to one way
       fetchFlatRates()
 
+      console.log('reservation\\index.html')
     });
   </script>
 </head>
@@ -1359,7 +1367,7 @@
 
 <!-- Fixed Logo -->
 <div class="logo-container">
-  <img src="img/limojazz.svg" alt="Logo" height="120" width="120">
+  <img src="/img/limojazz.svg" alt="Logo" height="120" width="120">
 </div>
 
 <body>
@@ -1367,7 +1375,7 @@
     <h2>Price estimation instantly!</h2>
     <h3>Reserve in less than a minute!</h3>
     
-    <form id="reservationForm" onsubmit="generateWhatsAppLink(event)">
+    <form id="reservationForm">
       <!-- Standard vs. Hourly Reservation Buttons -->
       <div class="button-group">
         <button type="button" id="singleRideButton" class="selected" onclick="selectRideType('singleRide')"> Standard Reservation</button>
@@ -1395,10 +1403,10 @@
         <div class="input-container">
           <label for="pickup">Pick-Up Location*</label>
           <input type="text" id="pickup" class="with-right-buttons" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" value="">
-          <button id="reverseButtonId" class="infield-button btn-reverse" type="button" tabindex="-1" onclick="reverseLocations()"><img src="img/reverse.svg" alt="Airplane" /></button>
+          <button id="reverseButtonId" class="infield-button btn-reverse" type="button" tabindex="-1" onclick="reverseLocations()"><img src="/img/reverse.svg" alt="Airplane" /></button>
           <!-- In-field buttons: Order from right (clear is rightmost) -->
-          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')"><img src="img/current-location.svg" alt="Airplane" /></button>
-          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('pickup')"><img src="img/airplane.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')"><img src="/img/current-location.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('pickup')"><img src="/img/airplane.svg" alt="Airplane" /></button>
           <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('pickup')">&times;</button>
         </div>
         <div class="error-message"></div>
@@ -1411,8 +1419,8 @@
           <label for="destination">Drop-off Location*</label>
           <input type="text" id="destination" class="with-right-buttons" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" value="">
           <!-- In-field buttons: Order from right -->
-          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')"><img src="img/current-location.svg" alt="Airplane" /></button>
-          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('destination')"><img src="img/airplane.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')"><img src="/img/current-location.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('destination')"><img src="/img/airplane.svg" alt="Airplane" /></button>
           <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('destination')">&times;</button>
         </div>
         <div class="error-message"></div>
@@ -1469,7 +1477,7 @@
           <h3>Ride outside our servicing area</h3>
           <p><i>Please describe your needs further via WhatsApp or call us and we’ll try to help.</i></p>
           <div class="button-group">
-            <button style="width: 50%;" class="whatsapp-button" onclick="generateWhatsAppLink(event, true)">Contact us via WhatsApp</button>
+            <button type="button" style="width: 50%;" class="whatsapp-button" onclick="generateWhatsAppLink(event, true)">Contact us via WhatsApp</button>
             <a href="tel:+41788230803" target="_blank" style="width: 50%;">Call us +41 78 823 08 03</a>
           </div>
         </div>
@@ -1665,9 +1673,9 @@
     </ul>
   </nav>
   
-  <script src="scripts/header.js"></script>
-  <script src="scripts/hamburger-menu.js"></script>
-  <script src="app.js"></script>
+  <script src="/scripts/header.js"></script>
+  <script src="/scripts/hamburger-menu.js"></script>
+  <script src="/app.js"></script>
 
 </body>
 </html>

@@ -2,6 +2,6 @@
   "redirects": [
     { "source": "/add-contact", "destination": "/", "permanent": false },
     { "source": "/vcard", "destination": "/", "permanent": false }
-    { "source": "/zermatt20", "destination": "/reservation/index.html", "permanent": false }
+    { "source": "/zermatt20", "destination": "/", "permanent": false }
   ]
 }

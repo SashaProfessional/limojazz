@@ -18,6 +18,25 @@ const SUPPORTED_LANGUAGES = {
   de: ["de", "de-de", "de-at", "de-li", "de-ch"],
   "zh-CN": ["zh", "zh-hk", "zh-cn", "zh-tw", "zh-hans"],
   it: ["it", "it-it", "it-ch"],
+  ar: [
+    "ar",
+    "ar-sa",
+    "ar-ae",
+    "ar-kw",
+    "ar-qa",
+    "ar-bh",
+    "ar-om",
+    "ar-ye",
+    "ar-jo",
+    "ar-lb",
+    "ar-sy",
+    "ar-ma",
+    "ar-tn",
+    "ar-dz",
+    "ar-ly",
+    "ar-iq",
+    "ar-eg",
+  ],
 };
 
 function getPreviouslySelectedLanguage() {
@@ -74,7 +93,6 @@ function getSupportedSystemLanguage() {
     navigator.language || navigator.userLanguage,
   ];
   const normalizedLangs = browserLangs.map((lang) => lang.toLowerCase());
-  // console.log("getSupportedSystemLanguage normalizedLangs:", normalizedLangs);
 
   for (const lang of normalizedLangs) {
     for (const [key, aliases] of Object.entries(SUPPORTED_LANGUAGES)) {
@@ -98,7 +116,7 @@ function googleTranslateElementInit() {
   new google.translate.TranslateElement(
     {
       pageLanguage: DEFAULT_LANGUAGE,
-      includedLanguages: "en,fr,de,zh-CN,it,ru,pt,es",
+      includedLanguages: "en,fr,de,zh-CN,it,ru,pt,es,ar",
       autoDisplay: false,
     },
     "google_translate_element"
@@ -167,5 +185,3 @@ window.addEventListener("load", () => {
     "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
   document.body.appendChild(script);
 });
-
-console.log('v12')

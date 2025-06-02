@@ -172,8 +172,8 @@
       background-color: #ffbd59;
       color: black;
     }
-    button[type="submit"] {
-      background-color: #4CAF50;
+    .button-group button.whatsapp {
+      background-color: #4CAF50 !important;
       font-weight: bold;
     }
     button[type="resetForm"] {
@@ -531,6 +531,12 @@
         }
       });
       return params;
+    }
+
+    function turnOffDefaultSubmit() {
+      document.getElementById('reservationForm').addEventListener('submit', function(event){
+        event.preventDefault();
+      })
     }
     
     function prefillFieldsFromQuery() {
@@ -1293,11 +1299,11 @@
     
     window.addEventListener("load", function () {
       initialize();
+      turnOffDefaultSubmit();
       prefillFieldsFromQuery();
       updateLogoFromURL(); // update logo based on URL param
       document.getElementById("oneWayButton").click(); // default to one way
       fetchFlatRates()
-
     });
   </script>
 </head>
@@ -1336,9 +1342,9 @@
         <img src="https://flagcdn.com/w40/pt.png" alt="PT" />
         <span>PT</span>
       </div>
-      <div class="language-select-option" data-value="es">
-        <img src="https://flagcdn.com/w40/es.png" alt="ES" />
-        <span>ES</span>
+      <div class="language-select-option" data-value="ar">
+        <img src="https://flagcdn.com/w40/sa.png" alt="AR" />
+        <span>AR</span>
       </div>
     </div>
   </div>
@@ -1363,7 +1369,7 @@
     <h2>Price estimation instantly!</h2>
     <h3>Reserve in less than a minute!</h3>
     
-    <form id="reservationForm" onsubmit="generateWhatsAppLink(event)">
+    <form id="reservationForm">
       <!-- Standard vs. Hourly Reservation Buttons -->
       <div class="button-group">
         <button type="button" id="singleRideButton" class="selected" onclick="selectRideType('singleRide')"> Standard Reservation</button>
@@ -1465,7 +1471,7 @@
           <h3>Ride outside our servicing area</h3>
           <p><i>Please describe your needs further via WhatsApp or call us and we’ll try to help.</i></p>
           <div class="button-group">
-            <button style="width: 50%;" class="whatsapp-button" onclick="generateWhatsAppLink(event, true)">Contact us via WhatsApp</button>
+            <button type="button" style="width: 50%;" class="whatsapp-button" onclick="generateWhatsAppLink(event, true,2)">Contact us via WhatsApp</button>
             <a href="tel:+41788230803" target="_blank" style="width: 50%;">Call us +41 78 823 08 03</a>
           </div>
         </div>
@@ -1583,7 +1589,7 @@
         <textarea id="message" name="message" rows="5" placeholder="I am traveling with a 3 yrs old. Do you have a child seat available?"></textarea>
         <div id="error-box-fieldCheck"></div>
         <div class="button-group">
-          <button type="submit" onclick="generateWhatsAppLink(event)">Submit via WhatsApp</button>
+          <button type="button" class="whatsapp" onclick="generateWhatsAppLink(event)">Submit via WhatsApp</button>
           <button type="button" onclick="generateEmailMessage()">Submit via Email</button>
           <button type="resetForm" onclick="customResetAllExcept()">Reset Form</button>
         </div>

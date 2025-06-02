@@ -97,7 +97,6 @@ function getSupportedSystemLanguage() {
   for (const lang of normalizedLangs) {
     for (const [key, aliases] of Object.entries(SUPPORTED_LANGUAGES)) {
       if (aliases.includes(lang)) {
-        // console.log("system language identified:", key, lang);
         return key;
       }
     }

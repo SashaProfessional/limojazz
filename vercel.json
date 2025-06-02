@@ -12,7 +12,7 @@
     },
     {
       "source": "/zermatt20",
-      "destination": "/reservation?pickup=Geneva%20Airport%20%28GVA%29&destination=Zermatt&promoCode=zermatt20",
+      "destination": "/reservation?pickup=Geneva%20Airport%20%2528GVA%2529&destination=Zermatt&promoCode=zermatt20",
       "permanent": false
     }
   ]

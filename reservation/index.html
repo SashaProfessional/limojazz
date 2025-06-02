@@ -1,1 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
+  <title>Reserve a Car with LimoJazz - Quote & Booking Service</title>
+  
+  <link rel="icon" type="image/png" href="img/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="img/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="LimoJazz" />
+  <link rel="manifest" href="img/favicon/site.webmanifest" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" /> -->
+  <!-- <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/common.css">
+
+  <style>
+    /* A universal reset for all elements (including inputs) update */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+    /* Base Styles */
+    body {
+      background-color: #000;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      box-sizing: content-box;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 150px 20px 100px;
+      background-color: #000;
+      border-radius: 8px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: normal;
+      font-size: 16px;
+    }
+    p {
+      margin: 0 0 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    /* Adjust inputs to have extra right padding for in-field buttons */
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #555;
+      color: #fff;
+      min-height: 37px;
+    }
+    .with-right-buttons {
+      padding-right: 120px;  /* extra space for three buttons */
+    }
+    /* Input container for in-field buttons */
+    .input-group {
+      margin-bottom: 15px;
+    }
+    .input-container {
+      position: relative;
+    }
+    .input-group .error-message {
+      color: red;
+      line-height: 20px;
+      display: none;
+    }
+    .input-group.error .error-message  {
+      display: block;
+    }
+    .input-group.error input {
+      border-color: red;
+    }
+
+    /* In-field buttons styling */
+    .infield-button {
+      padding: 0;              
+      position: absolute;
+      top: 59%;
+      transform: translateY(-50%);
+      background-color: gray;
+      border: none;
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    /* Order from right: Clear, then Geneva, then Current.
+       When reading left-to-right inside the field the order becomes:
+       Current location, Geneva Airport, then Clear field button. */
+    .btn-clear {
+      right: 10px;
+      font-size: 30px;
+    }
+    .btn-airport {
+      right: 50px;
+    }
+    .btn-airport img,
+    .btn-reverse img {
+      height: 20px;
+      width: 20px;
+      transform: rotate(90deg);
+    }
+    .btn-reverse:not(:hover) img,
+    .btn-airport:not(:hover) img,
+    .btn-current:not(:hover) img {
+      filter: invert(1);
+    }
+    .btn-current {
+      right: 90px;
+    }
+    .btn-current img {
+      height: 20px;
+      width: 20px;
+    }
+    .btn-reverse {
+      right: 10px;
+      top: 88px;
+      z-index: 1;
+    }
+    .error .btn-reverse {
+      top: 95px;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .button-group button, .button-group a {
+      flex: 1;
+      padding: 10px;
+      background-color: gray;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .button-group button.selected {
+      background-color: #ffbd59;
+      color: black;
+    }
+    button[type="submit"] {
+      background-color: #4CAF50;
+      font-weight: bold;
+    }
+    button[type="resetForm"] {
+      background-color: #f44336;
+      font-weight: bold;
+    }
+    button[type="button"] {
+      background-color: gray;
+    }
+    button:hover, .button-group a:hover {
+      background-color: #fff;
+      color: black;
+    }
+    #airportFields .row>:first-child {
+      flex: 1;
+    }
+    #airportFields .row>:nth-child(2) {
+      flex: 3;
+    }
+    @media (max-width: 550px) {
+      .arrival-name {
+        flex-direction: column;
+        width: 50%;
+      }
+      .arrival-name button {
+        width: 100%;
+      }
+      #airportFields .row>:first-child {
+        flex: 1;
+      }
+      #airportFields .row>:nth-child(2) {
+        flex: 1;
+      }
+    }
+    .quote-button, .reserve-button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .quote-button.inactive, .reserve-button.inactive {
+      background-color: #ffbd59;
+      color: black;
+    }
+    .quote-button.active {
+      background-color: #ffbd59;
+      color: black;
+    }
+    .quote-button:hover {
+      background-color: #fff;
+      color: black;
+    }
+    .reserve-button.active {
+      background-color: #fff;
+      color: black;
+    }
+    .reserve-button:hover {
+      background-color: #fff;
+      color: black;
+    }
+    /* Utility */
+    .hidden {
+      display: none;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    #promo-applied-message {
+      display: none;
+      color: #4CAF50;
+      line-height: 20px;
+    }
+    #promo-applied-message.visible {
+      display: block;
+    }
+
+    /* Info Boxes */
+    #error-box-promo, #error-box-general, #error-box-fieldCheck {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      display: none;
+    }
+    #error-box-promo h3, #error-box-general h3, #error-box-fieldCheck h3 {
+      margin: 0 0 5px;
+    }
+    #error-box-general, #error-box-promo {
+      display: none;
+    }
+    #error-box-general > div,
+    #error-box-promo > div {
+      display: none;
+    }
+    #error-box-general.error,
+    #error-box-promo.error {
+      display: block;
+    }
+
+    #error-box-promo.invalid-code > .invalid-code {
+      display: block;
+    }
+    #error-box-promo.wrong-route > .wrong-route {
+      display: block;
+    }
+    
+    #error-box-general.outside-servising-area > .outside-servising-area {
+      display: block;
+    }
+    #error-box-general.below-minimum-fare > .below-minimum-fare {
+      display: block;
+    }
+    #error-box-general.below-minimum-fare {
+      background-color: #fff3cd;
+    }
+    #error-box-general.geocode-destination-failed > .geocode-destination-failed {
+      display: block;
+    }
+    #error-box-general.geocode-origin-failed > .geocode-origin-failed {
+      display: block;
+    }
+    #error-box-general.directions-request-failed > .directions-request-failed {
+      display: block;
+    }
+
+    /* validation of form 2 */
+    .validation-field .error-message {
+      color: red;
+      display: none;
+    }
+    .validation-field.error input {
+      margin-bottom: 0;
+      border-color: red;    
+    
+    }
+    .validation-field.error .error-message {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    /* Quote Info */
+    .quote-info {
+      margin-top: 20px;
+      background-color: #444;
+      padding: 10px 20px;
+      border-radius: 8px;
+    }
+    .quote-info h3 {
+      text-align: left;
+      margin-bottom: 5px;
+    }
+    .quote-info h4 {
+      text-align: left;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-style: italic;
+    }
+    .quote-info .row {
+      display: flex;
+      gap: 10px;
+    }
+    .quote-info .row > div {
+      flex: 1;
+      padding: 10px;
+      border-radius: 4px;
+      text-align: center;
+      background-color: #fff;
+      color: black;
+    }
+    .quoteBox3 {
+      background-color: #ffbd59;
+      font-weight: bold;
+    }
+    .quote-info p {
+      text-align: left;
+      font-size: 12px;
+      font-style: italic;
+    }
+    /* Map Canvas */
+    #map-canvas {
+      height: 400px;
+      width: 100%;
+      display: none;
+      margin-top: 20px;
+    }
+    /* Promo Note & Header Note */
+    .promo-note {
+      font-size: 12px;
+      font-style: italic;
+      color: #ccc;
+    }
+    .promo-note a {
+      color: #ccc;
+      text-decoration: underline;
+    }
+    .header-note {
+      font-size: 12px;
+      font-style: italic;
+      color: #ccc;
+    }
+    .header-note a {
+      color: #ccc;
+      text-decoration: underline;
+    }
+
+    .quote-info > ul {
+      display: none;
+      list-style-type: disc;
+      padding-left: 10px;
+      margin-left: 0;
+    }
+    .quote-info > li {
+      margin-bottom: 8px;
+    }
+    .quote-info.v1 > .v1 {
+      display: block;
+    }
+    .quote-info.v2 > .v2 {
+      display: block;
+    }
+
+    .quoteBox1,
+    .quoteBox2,
+    .quoteBox3 {
+      display: flex;
+      align-items: center;   
+      justify-content: center; 
+      text-align: center;
+    }
+  </style>
+  
+  <!-- Google Maps & jQuery -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQTVdPl8r1EZbhFURs2_BUvpNmEad9jdQ&libraries=places,geometry"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  
+  <script type="text/javascript">
+    const FLAT_RATES_KEY = "FLAT_RATES_KEY";
+    const ORIGIN_LOCATION_KEY = "ORIGIN_LOCATION_KEY";
+    const DESTINATION_LOCATION_KEY = "DESTINATION_LOCATION_KEY";
+    const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwXRuQqruECMrFbqcUKAVF_rOKMvXXuYwLZjiSlB9TiidCRISiAT3JhdY7DuZ1UoeFq/exec"
+    const MINIMUM_PRICE = 80
+    var directionsService;
+    var directionsRenderer;
+    var geocoder;
+        
+	  function clearField(fieldId) {
+      const field = document.getElementById(fieldId);
+      field.value = '';
+      field.focus();
+    }
+
+    function fetchFlatRates() {
+      fetch(`${GOOGLE_SHEETS_URL}?flatRates=true`)
+        .then(response => response.json())
+        .then(data => {
+          localStorage.setItem(FLAT_RATES_KEY, JSON.stringify(data));
+        })
+        .catch(error => console.error("Error fetching flat rates:", error));
+    }
+    
+    /* WhatsApp & External Link Handling */
+    function openExternalLink(url) {
+      if (url.startsWith("https://wa.me")) {
+        openWhatsAppLink(url);
+      } else {
+        if (navigator.userAgent.includes("Instagram")) {
+          window.location.href = url;
+        } else {
+          window.open(url, "_blank");
+        }
+      }
+    }
+    
+    function openWhatsAppLink(url) {
+      var urlObj = new URL(url);
+      var textParam = urlObj.searchParams.get("text") || "";
+      var phone = "+41788230803";
+      var newUrl = "";
+      if (navigator.userAgent.match(/Android/i)) {
+        newUrl = "intent://send?phone=" + encodeURIComponent(phone) +
+                 "&text=" + encodeURIComponent(textParam) +
+                 "#Intent;scheme=whatsapp;package=com.whatsapp;end";
+      } else {
+        newUrl = "whatsapp://send?phone=" + encodeURIComponent(phone) +
+                 "&text=" + encodeURIComponent(textParam);
+      }
+      window.location.href = newUrl;
+    }
+    
+    /* Google Maps Initialization */
+    function initialize() {
+      var inputOrigin = document.getElementById("pickup");
+      var inputDestination = document.getElementById("destination");
+      var nyon = new google.maps.LatLng(46.3833, 6.2396);
+      var radius = 200 * 1000; // 200 km
+      var sw = google.maps.geometry.spherical.computeOffset(nyon, radius, 225);
+      var ne = google.maps.geometry.spherical.computeOffset(nyon, radius, 45);
+      var nyonBounds = new google.maps.LatLngBounds(sw, ne);
+      var options = { bounds: nyonBounds, fields: ["address_components", "geometry", "name"] };
+      new google.maps.places.Autocomplete(inputOrigin, options);
+      new google.maps.places.Autocomplete(inputDestination, options);
+      
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({
+        map: null,
+        suppressMarkers: true,
+        polylineOptions: { strokeColor: "#ffbd59" }
+      });
+      geocoder = new google.maps.Geocoder();
+      var mapOptions = {
+        center: nyon,
+        zoom: 10,
+        styles: [
+          { elementType: "geometry", stylers: [{ color: "#212121" }] },
+          { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+          { elementType: "labels.text.stroke", stylers: [{ color: "#212121" }] },
+          { featureType: "administrative", elementType: "geometry", stylers: [{ color: "#757575" }] },
+          { featureType: "administrative.country", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+          { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
+          { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#bdbdbd" }] },
+          { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+          { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#181818" }] },
+          { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+          { featureType: "poi.park", elementType: "labels.text.stroke", stylers: [{ color: "#1b1b1b" }] },
+          { featureType: "road", elementType: "geometry.fill", stylers: [{ color: "#2c2c2c" }] },
+          { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#8a8a8a" }] },
+          { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#373737" }] },
+          { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#3c3c3c" }] },
+          { featureType: "road.highway.controlled_access", elementType: "geometry", stylers: [{ color: "#4e4e4e" }] },
+          { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+          { featureType: "transit", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+          { featureType: "water", elementType: "geometry", stylers: [{ color: "#000000" }] },
+          { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#3d3d3d" }] }
+        ]
+      };
+      var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+      directionsRenderer.setMap(map);
+    }
+    
+    function getQueryParams() {
+      var params = {};
+      window.location.search.substr(1).split("&").forEach(function(item) {
+        var parts = item.split("=");
+        if(parts[0]) {
+          params[parts[0]] = decodeURIComponent(parts[1]);
+        }
+      });
+      return params;
+    }
+    
+    function prefillFieldsFromQuery() {
+      var params = getQueryParams();
+      if (params.pickup) document.getElementById("pickup").value = params.pickup;
+      if (params.destination) document.getElementById("destination").value = params.destination;
+      if (params.promoCode) document.getElementById("promoCode").value = params.promoCode;
+    }
+    
+    // New function: update logo based on URL parameter
+    function updateLogoFromURL() {
+      var params = getQueryParams();
+      var logoParam = params.logo; // e.g., ?logo=zermatt
+      var logoMapping = {
+        "zermatt": "img/limojazz_zernatt_promo_250.gif",
+        "main": "img/limojazz.svg"
+        // add more mappings as needed
+      };
+      if (logoParam && logoMapping[logoParam]) {
+        var logoImg = document.querySelector("#logo-container img");
+        if (logoImg) {
+          logoImg.src = logoMapping[logoParam];
+        }
+      }
+    }
+    
+    /* Reverse Pickup & Destination */
+    function reverseLocations() {
+      var pickupElem = document.getElementById("pickup");
+      var destinationElem = document.getElementById("destination");
+      var temp = pickupElem.value;
+      pickupElem.value = destinationElem.value;
+      destinationElem.value = temp;
+    }
+
+    function getTranslatableText(id){
+      return document.getElementById(id)?.textContent || ''
+    }
+    
+    function clearValidation1() {
+      const inputGroups = document.querySelectorAll('.input-group.error');
+      const errorBoxGeneral = document.getElementById('error-box-general');      
+      const errorBoxPromo = document.getElementById("error-box-promo");
+
+      inputGroups.forEach(group => {
+        group.classList.remove('error');
+      });
+      if(errorBoxGeneral){
+        errorBoxGeneral.classList.remove('error');
+      }
+      if(errorBoxPromo){
+        errorBoxPromo.classList.remove('error');
+      }
+    }
+
+    function setValidationError1(inputId, messageSourceId) {
+      const inputEl = document.getElementById(inputId);
+      if (!inputEl) return;
+
+      const inputGroup = inputEl.closest('.input-group');
+      if (!inputGroup) return;
+
+      inputGroup.classList.add('error');
+
+      const messageEl = inputGroup.querySelector('.error-message');
+      const sourceMessage = getTranslatableText(messageSourceId);
+
+      if (messageEl) {
+        messageEl.textContent = sourceMessage;
+      }
+    } 
+    
+    function validateForm1(){    
+      clearValidation1();
+
+      const origin = document.getElementById("pickup").value;
+      const destination = document.getElementById("destination").value;
+      const numberOfDays = document.getElementById("numberOfDays").value;
+      const hoursPerDay = document.getElementById("HoursPerDay").value;
+      const isHourlyReservation = document.getElementById("byTheHourButton")?.classList.contains("selected")
+      let result = true
+
+      if (!origin) {
+        setValidationError1('pickup', 'validation-enter-pickup-location');
+        result = false;
+      }
+
+      if (!destination && !isHourlyReservation) {
+        setValidationError1('destination', 'validation-enter-destination-location');
+        result = false;
+      }
+
+      if (!numberOfDays && isHourlyReservation) {
+        setValidationError1('numberOfDays', 'validation-enter-number-of-days');
+        result = false;
+      }
+
+      if (!hoursPerDay && isHourlyReservation) {
+        setValidationError1('HoursPerDay', 'validation-enter-hours-per-day');
+        result = false;
+      }
+
+      return result;
+    }
+    
+    function calculateDistancesIfBothFilled() {
+      const origin = document.getElementById("pickup").value;
+      const destination = document.getElementById("destination").value;
+
+      toggleAirportFields();
+      checkServicingArea(origin, destination);
+    }
+    
+    function checkServicingArea(origin, destination) {
+      const serviceCenter = new google.maps.LatLng(46.3833, 6.2396);
+      const MIN_RADIUS = 50000;
+      const MAX_RADIUS = 500000;
+
+      geocoder.geocode({ address: origin }, function(results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+          var originLocation = results[0].geometry.location;
+
+          geocoder.geocode({ address: destination }, function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+              var destinationLocation = results[0].geometry.location;
+              var distanceToOrigin = google.maps.geometry.spherical.computeDistanceBetween(serviceCenter, originLocation);
+              var distanceToDestination = google.maps.geometry.spherical.computeDistanceBetween(serviceCenter, destinationLocation);
+              var totalDistance = google.maps.geometry.spherical.computeDistanceBetween(originLocation, destinationLocation);
+              var serviceRadius = Math.min(Math.max(MIN_RADIUS, totalDistance / 2), MAX_RADIUS);
+
+              document[ORIGIN_LOCATION_KEY] = originLocation;
+              document[DESTINATION_LOCATION_KEY] = destinationLocation;
+
+              if (distanceToOrigin > serviceRadius && distanceToDestination > serviceRadius) {
+                showGeneralError("outside-servising-area");
+                document.getElementById("map-canvas").style.display = "none";
+                document.getElementById("reserveFields").classList.add("hidden");
+                document.querySelector(".reserve-button").classList.add("hidden");
+              } else {                
+                document.getElementById('quote').classList.remove('hidden');
+                calculateDistances(origin, destination);
+              }
+            } else {
+              showGeneralError("geocode-destination-failed");
+            }
+          });
+        } else {
+          showGeneralError("geocode-origin-failed");
+        }
+      });
+    }
+
+    function calculatePerKmRate(distance) {
+      var initialPerKmRate = 3.80;
+      var minimumPerKmRate = 3.00;
+
+      if (distance >= 700) return minimumPerKmRate;
+      var rateDecrease = (initialPerKmRate - minimumPerKmRate) * (distance / 700);
+      return initialPerKmRate - rateDecrease;
+    }
+
+    async function calculatePrice(distanceValue, durationValue) {
+      var baseRate = 6.00;
+      var distanceInKm = distanceValue / 1000;
+      var durationInMin = durationValue / 60;      
+      var perKmRate = calculatePerKmRate(distanceInKm);
+      var perMinRate = 0;
+      var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
+      var normalPrice;
+      let isBelowMinimumPrice
+
+      selectPromoAppliedMessage(false);
+  
+      // Apply flat rates if possible        
+      const flatRatesRaw = localStorage.getItem(FLAT_RATES_KEY);
+      const flatRatesParsed = flatRatesRaw ? JSON.parse(flatRatesRaw) : [];
+
+      var pickupValue = document.getElementById("pickup").value.toLowerCase();
+      var dropoffValue = document.getElementById("destination").value.toLowerCase(); //{"location1":"lausanne","location2":"gva","amount":230}
+
+      const flatRate = flatRatesParsed.find(flatRate => {
+        const loc1 = flatRate.location1.toLowerCase();
+        const loc2 = flatRate.location2.toLowerCase();
+        const pickup = pickupValue.toLowerCase();
+        const dropoff = dropoffValue.toLowerCase();
+
+        return (pickup.includes(loc1) && dropoff.includes(loc2)) || (pickup.includes(loc2) && dropoff.includes(loc1))
+      }); 
+
+      if (flatRate) {
+        totalPrice = flatRate.amount;
+      }
+  
+      if (totalPrice < MINIMUM_PRICE) {
+        normalPrice = MINIMUM_PRICE;
+        isBelowMinimumPrice = true
+      } else {
+        normalPrice = Math.floor(totalPrice / 10) * 10;
+        isBelowMinimumPrice = false
+      }
+  
+      let finalPrice = normalPrice;
+      let promoApplied = false;
+      let isPromoCodeApplicable = false;
+  
+      // Check for promo code and apply discount on the normal price (rounded down)
+      var promoInput = document.getElementById("promoCode").value.toLowerCase().trim();
+      let promoCode
+
+      if (promoInput !== "") {
+        try { //{"code":"gva5","lat1":"46.230577","lng1":"6.110426","radius1":3500,"lat2":"","lng2":"","radius2":"","multiplier":"0.95"}
+          const promoCodeResponse = await fetch(`${GOOGLE_SHEETS_URL}?checkPromo=${encodeURIComponent(promoInput)}`);
+          promoCode = await promoCodeResponse.json();
+        } catch (error) {
+          console.error("Error checking promo code:", error);
+        }
+
+        if (promoCode) {
+          const originLocation = document[ORIGIN_LOCATION_KEY]
+          const destinationLocation = document[DESTINATION_LOCATION_KEY]
+
+          const isPromoTwoWay = promoCode.lat2 && promoCode.lng2 && promoCode.radius2;
+
+          const promoLocation1 = new google.maps.LatLng(promoCode.lat1, promoCode.lng1);
+          const promoLocation2 = isPromoTwoWay ? new google.maps.LatLng(promoCode.lat2, promoCode.lng2) : null;
+
+          const radius1 = promoCode.radius1;
+          const radius2 = isPromoTwoWay ? promoCode.radius2 : null;
+
+          if (isPromoTwoWay) {
+            const originToLoc1 = google.maps.geometry.spherical.computeDistanceBetween(originLocation, promoLocation1) <= radius1;
+            const destinationToLoc2 = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, promoLocation2) <= radius2;
+
+            const originToLoc2 = google.maps.geometry.spherical.computeDistanceBetween(originLocation, promoLocation2) <= radius2;
+            const destinationToLoc1 = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, promoLocation1) <= radius1;
+
+            isPromoCodeApplicable = (originToLoc1 && destinationToLoc2) || (originToLoc2 && destinationToLoc1);
+          } else {
+            const originMatch = google.maps.geometry.spherical.computeDistanceBetween(originLocation, promoLocation1) <= radius1;
+            const destinationMatch = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, promoLocation1) <= radius1;
+
+            isPromoCodeApplicable = originMatch || destinationMatch;
+          }
+
+          if (isPromoCodeApplicable) {
+            finalPrice = Math.floor(normalPrice * promoCode.multiplier);
+
+            const discount = (1 - promoCode.multiplier) * 100;
+            const discountFixed = Math.round(discount * 100) / 100;
+
+            selectPromoAppliedMessage(true, discountFixed)
+            promoApplied = true;
+          } else {
+            showPromoError("wrong-route");
+          }
+        } else {
+          showPromoError("invalid-code");
+        }      
+      }
+
+      return { finalPrice, normalPrice, promoApplied, isBelowMinimumPrice };
+    }
+
+    function selectQuoteInfo(type){
+      const quoteInfo = document.querySelector(".quote-info")
+
+      quoteInfo.classList.remove("v1", "v2")
+      quoteInfo.classList.add(type)
+    }
+    
+    function selectPromoAppliedMessage(isApplied, value){
+      const promoAppliedMessage = document.querySelector("#promo-applied-message")
+      const successText = document.querySelector("#promo-applied-successfully")
+
+      promoAppliedMessage.classList.remove("visible")
+
+      if (isApplied && successText && value) {        
+        promoAppliedMessage.classList.add("visible");
+        promoAppliedMessage.textContent = successText.textContent + value + '%'
+      }
+    }
+    
+    async function calculateDistances(origin, destination) {
+      var departureTime = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+      var request = {
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+        drivingOptions: { departureTime: departureTime, trafficModel: "optimistic" }
+      };
+
+      const directionsResult = await new Promise((resolve, reject) => {
+        directionsService.route(request, (result, status) => {
+          if (status === google.maps.DirectionsStatus.OK) {
+            resolve(result);
+          } else {
+            reject("directions-request-failed");
+          }
+        });
+      });
+
+      directionsRenderer.setDirections(directionsResult);
+
+      const distance = directionsResult.routes[0].legs[0].distance.value;
+      const duration = directionsResult.routes[0].legs[0].duration.value;
+
+      const priceObj = await calculatePrice(distance, duration);
+      window.currentFareObj = priceObj;
+
+      const distanceText = directionsResult.routes[0].legs[0].distance.text;
+      const durationText = directionsResult.routes[0].legs[0].duration.text;
+
+      document.getElementById("quoteTitle").innerText = getTranslatableText('price-estimation');
+      document.getElementById("quoteSubtitle").innerText = getTranslatableText('mercedes-v');
+      quoteBox1Label = getTranslatableText('distance-label');
+      quoteBox2Label = getTranslatableText('duration-label');
+      quoteBox3Label = getTranslatableText('estimated-fare');
+      document.getElementById("quoteBox1").innerText = "~ " + distanceText;
+      document.getElementById("quoteBox2").innerText = "~ " + durationText;
+
+      document.getElementById("quoteBox3").innerHTML = priceObj.promoApplied 
+        ? `CHF ${priceObj.finalPrice}&nbsp;<span style='text-decoration: line-through;color: red;'>CHF ${priceObj.normalPrice}</span>`
+        : `CHF ${priceObj.finalPrice}`;
+
+      selectQuoteInfo("v1");
+
+      document.getElementById("quote").classList.remove("hidden");
+      document.getElementById("map-canvas").style.display = "block";
+      document.querySelector(".quote-button").classList.remove("inactive");
+      document.querySelector(".quote-button").classList.add("active");
+      document.querySelector(".quote-button").innerText = getTranslatableText('price-estimation');
+      document.querySelector(".reserve-button").classList.remove("hidden");
+
+      if (priceObj.isBelowMinimumPrice) {
+        showGeneralError("below-minimum-fare");
+      }
+    }
+
+    function showPromoError(errorType) {
+      var errorBoxPromo = document.getElementById("error-box-promo");
+
+      errorBoxPromo.classList.remove("invalid-code", "wrong-route")
+      errorBoxPromo.classList.add('error', errorType)
+    }
+    
+    function showGeneralError(errorType) {
+      var errorBoxGeneral = document.getElementById("error-box-general");
+
+      errorBoxGeneral.classList.remove("outside-servising-area", "below-minimum-fare", "geocode-destination-failed", "geocode-origin-failed", "directions-request-failed")
+      errorBoxGeneral.classList.add('error', errorType)
+    }
+    
+    function selectRideType(type) {
+      const singleRideButton = document.getElementById('singleRideButton');
+      const byTheHourButton = document.getElementById('byTheHourButton');
+      const byTheHourFields = document.getElementById('byTheHourFields');
+      const dropoffLocationContainer = document.getElementById('dropoffLocationContainer');
+    
+      if (type === 'singleRide') {
+        singleRideButton.classList.add('selected');
+        byTheHourButton.classList.remove('selected');
+        byTheHourFields.classList.add('hidden');
+        dropoffLocationContainer.classList.remove('hidden');
+        document.getElementById('map-canvas').style.display = 'none';
+        document.getElementById('reverseButtonId').classList.remove("hidden");
+        document.getElementById('quote').classList.add('hidden');
+        document.querySelector(".reserve-button").classList.add("hidden");
+        document.getElementById('oneWayReturnButtons').classList.remove('hidden');
+        document.getElementById('reserveFields').classList.add('hidden');
+      } else {
+        singleRideButton.classList.remove('selected');
+        byTheHourButton.classList.add('selected');
+        byTheHourFields.classList.remove('hidden');
+        dropoffLocationContainer.classList.add('hidden');
+        document.getElementById('map-canvas').style.display = 'none';
+        document.getElementById('reverseButtonId').classList.add("hidden");
+        document.getElementById('quote').classList.add('hidden');
+        document.querySelector(".reserve-button").classList.add("hidden");
+        document.getElementById('oneWayReturnButtons').classList.add('hidden');
+        document.getElementById('reserveFields').classList.add('hidden');		
+        selectPromoAppliedMessage(false)
+      }
+    }
+		
+    function calculateQuote() {      
+      if (validateForm1()) {
+        if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
+          calculateHourlyQuote();
+        } else {
+          calculateDistancesIfBothFilled();
+        }
+      }
+    }
+    
+    function calculateHourlyQuote() {
+      const numberOfDays = parseInt(document.getElementById("numberOfDays").value, 10);
+      const hoursPerDay = parseInt(document.getElementById("HoursPerDay").value, 10);
+      const numberOfHours = numberOfDays * hoursPerDay;
+      let pricePerHour = numberOfHours > 10 ? 100 : 120 - (2 * (numberOfHours - 1));
+      const totalPrice = numberOfHours * pricePerHour;
+      const kmIncludedPerHour = 20;
+      const kmIncludedTotal = numberOfHours * kmIncludedPerHour;
+      const blacklanePricePerHour = 130;
+    
+      document.getElementById("quoteTitle").innerText = getTranslatableText("qn5");
+      document.getElementById("quoteSubtitle").innerText = getTranslatableText('mercedes-v');
+      quoteBox1Label = getTranslatableText("qn6")
+      quoteBox2Label = getTranslatableText("qn7")
+      quoteBox3Label = getTranslatableText("estimated-fare")
+      document.getElementById("quoteBox1").innerText = `${numberOfHours} ${getTranslatableText("hours-label")}`;
+      document.getElementById("quoteBox2").innerText = `${kmIncludedTotal} ${getTranslatableText("qn9")}`;
+      document.getElementById("quoteBox3").innerText = `CHF ${totalPrice}`;
+      
+      selectQuoteInfo("v2");
+      document.getElementById("km-included-per-hour").textContent = kmIncludedPerHour;
+    
+      document.getElementById("quote").classList.remove("hidden");
+      document.querySelector(".quote-button").classList.remove("inactive");
+      document.querySelector(".quote-button").classList.add("active");
+      document.querySelector(".quote-button").innerText = getTranslatableText('price-estimation');
+      document.querySelector(".reserve-button").classList.remove("hidden");      
+    }
+    
+    function isAiroportSelected() {
+      const airportFields = document.getElementById("airportFields");
+      const pickupValue = document.getElementById("pickup").value.toLowerCase();
+      const dropoffValue = document.getElementById("destination").value.toLowerCase();
+      const returnSelected = document.getElementById("returnButton")?.classList.contains("selected");
+
+      return pickupValue.includes("gva") || (dropoffValue.includes("gva") && returnSelected)
+    }
+
+    function toggleAirportFields() {
+      if (isAiroportSelected()) {
+        airportFields.classList.remove("hidden");
+      } else {
+        airportFields.classList.add("hidden");
+      }
+    }
+    
+    function selectTripType(type) {
+      const oneWayButton = document.getElementById("oneWayButton");
+      const returnButton = document.getElementById("returnButton");
+      const returnFields = document.getElementById("returnFields");
+      oneWayButton.classList.remove("selected");
+      returnButton.classList.remove("selected");
+      if (type === "oneWay") {
+        oneWayButton.classList.add("selected");
+        returnFields.classList.add("hidden");
+      } else {
+        returnButton.classList.add("selected");
+        returnFields.classList.remove("hidden");
+      }
+      toggleAirportFields();
+    }
+    
+    function selectArrivalName(name) {
+      const buttons = document.getElementById("arrivalNameButtons").getElementsByTagName("button");
+      const arrivalNameInput = document.getElementById("arrivalName");
+      for (let button of buttons) { button.classList.remove("selected"); }
+      if (name === "Company Logo") {
+        arrivalNameInput.value = getTranslatableText('company-logo');
+        buttons[0].classList.add("selected");
+      } else if (name === "My Name") {
+        arrivalNameInput.value = document.getElementById("name").value;
+        buttons[1].classList.add("selected");
+      } else {
+        arrivalNameInput.value = getTranslatableText('limo-jazz-logo');
+        buttons[2].classList.add("selected");
+      }
+    }
+    
+    function selectPassengerCount(count) {
+      const buttons = document.getElementById("passengerButtons").getElementsByTagName("button");
+      for (let button of buttons) { button.classList.remove("selected"); }
+      buttons[count - 1].classList.add("selected");
+    }
+    
+    function selectSuitcaseCount(count) {
+      const buttons = document.getElementById("suitcaseButtons").getElementsByTagName("button");
+      for (let button of buttons) { button.classList.remove("selected"); }
+      buttons[count].classList.add("selected");
+    }
+    
+    function toggleReserveFields() {
+      const reserveButton = document.querySelector(".reserve-button");
+      const reserveFields = document.getElementById("reserveFields");
+      toggleAirportFields();
+      if (reserveFields.classList.contains("hidden")) {
+        reserveFields.classList.remove("hidden");
+        reserveButton.classList.add("active");
+        reserveButton.classList.remove("inactive");
+      } else {
+        reserveFields.classList.add("hidden");
+        reserveButton.classList.add("inactive");
+        reserveButton.classList.remove("active");
+      }
+    }
+    
+    function clearValidation2() {
+      const validationFields = document.querySelectorAll('.validation-field.error');
+
+      validationFields.forEach(group => {
+        group.classList.remove('error');
+      });
+    }
+
+    function setValidationError2(inputId, messageSourceId) {
+      const inputEl = document.getElementById(inputId);
+      if (!inputEl) return;
+
+      const inputGroup = inputEl.closest('.validation-field');
+      if (!inputGroup) return;
+
+      inputGroup.classList.add('error');
+
+      const messageEl = inputGroup.querySelector('.error-message');
+      const sourceMessage = getTranslatableText(messageSourceId);
+
+      if (messageEl) {
+        messageEl.textContent = sourceMessage;
+      }
+    } 
+    
+    function validateForm2() {            
+      clearValidation2()
+
+      const fullName = document.getElementById('name').value
+      const pickUpDate = document.getElementById('date').value
+      const pickupTime = document.getElementById('pickupTime').value
+      const returnDate = document.getElementById('returnDate').value
+      const returnTime = document.getElementById('returnTime').value
+      const flightNumber = document.getElementById('flightNumber').value
+      const passengers = document.querySelector('#passengerButtons .selected')
+      const suitcases = document.querySelector('#suitcaseButtons .selected')
+      
+      const isReturn = document.getElementById("returnButton")?.classList.contains("selected")
+      const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+      let result = true
+
+      if(!fullName){
+        setValidationError2('name', 'validation-enter-full-name');
+        result = false;
+      }
+
+      if(!pickUpDate){
+        setValidationError2('date', 'validation-enter-pickup-date');
+        result = false;
+      } else if(new Date(pickUpDate) < todayDate){
+        setValidationError2('date', 'validation-date-in-past');
+        result = false;
+      }
+
+      if(!pickupTime){
+        setValidationError2('pickupTime', 'validation-enter-pickup-time');
+        result = false;
+      }
+
+      if(isReturn){
+        if(!returnDate){
+          setValidationError2('returnDate', 'validation-enter-return-date');
+          result = false;
+        } else if(new Date(returnDate) < todayDate){
+          setValidationError2('returnDate', 'validation-date-in-past');
+          result = false;
+        } else if(new Date(returnDate) < new Date(pickUpDate)){
+          setValidationError2('returnDate', 'validation-return-before-pick-date');
+          result = false;
+        }
+
+        if(!returnTime){
+          setValidationError2('returnTime', 'validation-enter-return-time');
+          result = false;
+        }
+      }
+
+      if(isAiroportSelected() && !flightNumber){
+        setValidationError2('flightNumber', 'validation-enter-flight-number');
+        result = false;
+      }
+      if(!passengers){
+        setValidationError2('passengers', 'validation-enter-passengers');
+        result = false;
+      }
+      if(!suitcases){
+        setValidationError2('suitcases', 'validation-enter-suitcases');
+        result = false;
+      }
+
+      return result;
+    }
+    
+    function generateWhatsAppLink(event, isError = false, errorType = "") {
+      event.preventDefault();
+      if (!isError && !validateForm2()) return;
+      const pickup = document.getElementById("pickup").value;
+      const destination = document.getElementById("destination").value;
+      const quoteBox1 = document.getElementById("quoteBox1").innerText;
+      const quoteBox2 = document.getElementById("quoteBox2").innerText;
+      var quoteBox3Text;
+      if (document.getElementById("singleRideButton")?.classList.contains("selected") && window.currentFareObj?.promoApplied) {
+        quoteBox3Text = "CHF " + window.currentFareObj.finalPrice + " (was CHF " + window.currentFareObj.normalPrice + ")";
+      } else {
+        quoteBox3Text = document.getElementById("quoteBox3").innerText;
+      }
+      if (errorType === "outside") {
+        let whatsappMessage = "*OUTSIDE SERVICING AREA:*\n\n";
+        whatsappMessage += `*Pick-Up Location:* ${pickup}\n`;
+        whatsappMessage += `*Drop-off Location:* ${destination}\n\n`;
+        whatsappMessage += `_Please describe your needs further and we’ll try to help._`;
+        openExternalLink(`https://wa.me/+41788230803?text=${encodeURIComponent(whatsappMessage)}`);
+      } else if (errorType === "below80") {
+        let whatsappMessage = "*URGENT REQUEST:*\n\n";
+        whatsappMessage += `Are you available for the following ride now?\n\n`;
+        whatsappMessage += `*Pickup Location:* ${pickup}\n`;
+        whatsappMessage += `*Dropoff Location:* ${destination}\n`;
+        whatsappMessage += `*${quoteBox1Label}:* ${quoteBox1}\n`;
+        whatsappMessage += `*${quoteBox2Label}:* ${quoteBox2}\n`;
+        whatsappMessage += `*${quoteBox3Label}:* ${quoteBox3Text}\n`;
+        openExternalLink(`https://wa.me/+41788230803?text=${encodeURIComponent(whatsappMessage)}`);
+      } else {
+        const name = document.getElementById("name").value;
+        const company = document.getElementById("company").value;
+        const date = document.getElementById("date").value;
+        const pickupTime = document.getElementById("pickupTime").value;
+        const returnDate = document.getElementById("returnDate").value;
+        const returnTime = document.getElementById("returnTime").value;
+        const flightNumber = document.getElementById("flightNumber").value;
+        const arrivalName = document.getElementById("arrivalName").value;
+        const passengers = document.querySelector("#passengerButtons .selected")?.innerText;
+        const suitcases = document.querySelector("#suitcaseButtons .selected")?.innerText;
+        const message = document.getElementById("message").value;
+        const promoCode = document.getElementById("promoCode").value;
+        const subject = `${date} ${name}`;
+        let whatsappMessage = "*RESERVATION REQUEST:*\n\n";
+        whatsappMessage += `*Pick-Up Location:* ${pickup}\n`;
+        whatsappMessage += `*Drop-off Location:* ${destination}\n`;
+        whatsappMessage += `*Full Name:* ${name}\n`;
+        if (company) whatsappMessage += `*Company Name:* ${company}\n`;
+        whatsappMessage += `*Date & Time:* ${date} ${pickupTime}\n`;
+        if (returnDate && returnTime) whatsappMessage += `*Return Date & Time:* ${returnDate} ${returnTime}\n`;
+        if (flightNumber) whatsappMessage += `*Flight Number:* ${flightNumber}\n`;
+        if (!document.getElementById("airportFields").classList.contains("hidden") && arrivalName) {
+          whatsappMessage += `*Name for Pickup at Arrivals:* ${arrivalName}\n`;
+        }
+        whatsappMessage += `*Number of Passengers:* ${passengers}\n`;
+        whatsappMessage += `*Number of Large Suitcases:* ${suitcases}\n\n`;
+        whatsappMessage += `*QUOTE:*\n`;
+        if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
+          const numberOfDays = parseInt(document.getElementById("numberOfDays").value, 10);
+          const hoursPerDay = parseInt(document.getElementById("HoursPerDay").value, 10);
+          whatsappMessage += `*Number of Days:* ${numberOfDays}\n`;
+          whatsappMessage += `*Hours per Day:* ${hoursPerDay}\n`;
+        }
+        whatsappMessage += `*${quoteBox1Label}:* ${quoteBox1}\n`;
+        whatsappMessage += `*${quoteBox2Label}:* ${quoteBox2}\n`;
+        whatsappMessage += `*${quoteBox3Label}:* ${quoteBox3Text}${document.getElementById("returnButton").classList.contains("selected") ? " (per way)" : ""}\n`;
+        if (message) whatsappMessage += `*Additional Information:* ${message}\n`;
+        if (promoCode) whatsappMessage += `*Promo Code:* ${promoCode}\n`;
+        openExternalLink(`https://wa.me/+41788230803?text=${encodeURIComponent(whatsappMessage)}`);
+      }
+    }
+    
+    function generateEmailMessage() {
+      if (!validateForm2()) return;
+      const pickup = document.getElementById("pickup").value;
+      const destination = document.getElementById("destination").value;
+      const name = document.getElementById("name").value;
+      const company = document.getElementById("company").value;
+      const date = document.getElementById("date").value;
+      const pickupTime = document.getElementById("pickupTime").value;
+      const returnDate = document.getElementById("returnDate").value;
+      const returnTime = document.getElementById("returnTime").value;
+      const flightNumber = document.getElementById("flightNumber").value;
+      const arrivalName = document.getElementById("arrivalName").value;
+      const passengers = document.querySelector("#passengerButtons .selected")?.innerText;
+      const suitcases = document.querySelector("#suitcaseButtons .selected")?.innerText;
+      const message = document.getElementById("message").value;
+      const promoCode = document.getElementById("promoCode").value;
+      const subject = `${date} ${name}`;
+      let quoteBox3Text;
+      if (document.getElementById("singleRideButton")?.classList.contains("selected") && window.currentFareObj?.promoApplied) {
+        quoteBox3Text = "CHF " + window.currentFareObj.finalPrice + " (was CHF " + window.currentFareObj.normalPrice + ")";
+      } else {
+        quoteBox3Text = document.getElementById("quoteBox3").innerText;
+      }
+      let emailBody = "Reservation Request:\n\n";
+      emailBody += `Pick-Up Location: ${pickup}\n`;
+      emailBody += `Drop-off Location: ${destination}\n`;
+      emailBody += `Full Name: ${name}\n`;
+      if (company) emailBody += `Company Name: ${company}\n`;
+      emailBody += `Date & Time: ${date} ${pickupTime}\n`;
+      if (returnDate && returnTime) emailBody += `Return Date & Time: ${returnDate} ${returnTime}\n`;
+      if (flightNumber) emailBody += `Flight Number: ${flightNumber}\n`;
+      if (!document.getElementById("airportFields").classList.contains("hidden") && arrivalName) {
+        emailBody += `Name for Pickup at Arrivals: ${arrivalName}\n`;
+      }
+      emailBody += `Number of Passengers: ${passengers}\n`;
+      emailBody += `Number of Large Suitcases: ${suitcases}\n\nQUOTE:\n`;
+      if (document.getElementById("byTheHourButton")?.classList.contains("selected")) {
+        const numberOfDays = parseInt(document.getElementById("numberOfDays").value, 10);
+        const hoursPerDay = parseInt(document.getElementById("HoursPerDay").value, 10);
+        emailBody += `Number of Days: ${numberOfDays}\n`;
+        emailBody += `Hours per Day: ${hoursPerDay}\n`;
+      }
+      emailBody += `${quoteBox1Label}: ${document.getElementById("quoteBox1").innerText}\n`;
+      emailBody += `${quoteBox2Label}: ${document.getElementById("quoteBox2").innerText}\n`;
+      emailBody += `${quoteBox3Label}: ${quoteBox3Text}${document.getElementById("returnButton").classList.contains("selected") ? " (per way)" : ""}\n`;
+      if (message) emailBody += `Additional Information: ${message}\n`;
+      if (promoCode) emailBody += `*Promo Code:* ${promoCode}\n`;
+      openExternalLink(`mailto:reservation@limojazz.ch?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`);
+    }
+    
+    function customResetAllExcept() {
+      const pickupVal = document.getElementById("pickup").value;
+      const dropoffVal = document.getElementById("destination").value;
+      const promoVal = document.getElementById("promoCode").value;
+      document.getElementById("reservationForm").reset();
+      document.getElementById("pickup").value = pickupVal;
+      document.getElementById("destination").value = dropoffVal;
+      document.getElementById("promoCode").value = promoVal;
+    }
+    
+    /* New Functions for In-Field Location Buttons */
+    var currentLocationAddress = sessionStorage.getItem("currentLocationAddress") || "";
+    function setFieldToAirport(fieldId) {
+      document.getElementById(fieldId).value = "Geneva Airport (GVA)";
+    }
+    function setFieldToCurrentLocation(fieldId) {
+      if (currentLocationAddress) {
+        document.getElementById(fieldId).value = currentLocationAddress;
+        return;
+      }
+      document.getElementById(fieldId).value = "Current location loading, please wait...";
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            geocoder.geocode({ location: latLng }, function(results, status) {
+              if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+                currentLocationAddress = results[0].formatted_address;
+                sessionStorage.setItem("currentLocationAddress", currentLocationAddress);
+                document.getElementById(fieldId).value = currentLocationAddress;
+              } else {
+                alert("Could not determine current location");
+                document.getElementById(fieldId).value = "";
+              }
+            });
+          },
+          function(error) {
+            alert("Error getting location: " + error.message);
+            document.getElementById(fieldId).value = "";
+          }
+        );
+      } else {
+        alert("Geolocation is not supported by this browser.");
+        document.getElementById(fieldId).value = "";
+      }
+    }
+    
+    window.addEventListener("load", function () {
+      initialize();
+      prefillFieldsFromQuery();
+      updateLogoFromURL(); // update logo based on URL param
+      document.getElementById("oneWayButton").click(); // default to one way
+      fetchFlatRates()
+
+    });
+  </script>
+</head>
+<header class="top-bar">
+  <div class="language-select-wrapper notranslate">
+    <div class="language-select-trigger" data-value="en">
+      <img src="https://flagcdn.com/w40/gb.png" alt="EN" />
+      <span>EN</span>
+    </div>
+    <div class="language-select-options">
+      <div class="language-select-option" data-value="en">
+        <img src="https://flagcdn.com/w40/gb.png" alt="EN" />
+        <span>EN</span>
+      </div>
+      <div class="language-select-option" data-value="fr">
+        <img src="https://flagcdn.com/w40/fr.png" alt="FR" />
+        <span>FR</span>
+      </div>
+      <div class="language-select-option" data-value="de">
+        <img src="https://flagcdn.com/w40/de.png" alt="DE" />
+        <span>DE</span>
+      </div>
+      <div class="language-select-option" data-value="zh-CN">
+        <img src="https://flagcdn.com/w40/cn.png" alt="CH" />
+        <span>CH</span>
+      </div>
+      <div class="language-select-option" data-value="it">
+        <img src="https://flagcdn.com/w40/it.png" alt="IT" />
+        <span>IT</span>
+      </div>
+      <div class="language-select-option" data-value="ru">
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" />
+        <span>RU</span>
+      </div>
+      <div class="language-select-option" data-value="pt">
+        <img src="https://flagcdn.com/w40/pt.png" alt="PT" />
+        <span>PT</span>
+      </div>
+      <div class="language-select-option" data-value="es">
+        <img src="https://flagcdn.com/w40/es.png" alt="ES" />
+        <span>ES</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="right-section" style="display: flex; align-items: center;">
+    <div class="hamburger" style="margin-left: 15px;">
+      <a href="#"><i class="fas fa-bars"></i></a>
+    </div>
+  </div>
+</header>
+
+<!-- Hidden Google Translate Element -->
+<div id="google_translate_element"></div>
+
+<!-- Fixed Logo -->
+<div class="logo-container">
+  <img src="img/limojazz.svg" alt="Logo" height="120" width="120">
+</div>
+
+<body>
+  <div class="container">
+    <h2>Price estimation instantly!</h2>
+    <h3>Reserve in less than a minute!</h3>
+    
+    <form id="reservationForm" onsubmit="generateWhatsAppLink(event)">
+      <!-- Standard vs. Hourly Reservation Buttons -->
+      <div class="button-group">
+        <button type="button" id="singleRideButton" class="selected" onclick="selectRideType('singleRide')"> Standard Reservation</button>
+        <button type="button" id="byTheHourButton" onclick="selectRideType('byTheHour')">Hourly Reservation</button>
+      </div>
+      
+      <!-- Hourly Fields -->
+      <div id="byTheHourFields" class="hidden">
+        <div class="row">
+          <div class="input-group input-container validation-field" style="flex: 1;">
+            <label for="numberOfDays">Day(s)*</label>
+            <input type="number" id="numberOfDays" name="numberOfDays" min="1" max="30" value="1">
+            <div class="error-message"></div>
+          </div>
+          <div class="input-group input-container validation-field" style="flex: 1;">
+            <label for="HoursPerDay">Hour(s) (per Day)*</label>
+            <input type="number" id="HoursPerDay" name="HoursPerDay" min="1" max="12" value="1">
+            <div class="error-message"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Pick-Up Field with In-Field Buttons -->
+      <div class="input-group">
+        <div class="input-container">
+          <label for="pickup">Pick-Up Location*</label>
+          <input type="text" id="pickup" class="with-right-buttons" name="pickup" placeholder="Geneva Airport (GVA), Switzerland" value="">
+          <button id="reverseButtonId" class="infield-button btn-reverse" type="button" tabindex="-1" onclick="reverseLocations()"><img src="img/reverse.svg" alt="Airplane" /></button>
+          <!-- In-field buttons: Order from right (clear is rightmost) -->
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('pickup')"><img src="img/current-location.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('pickup')"><img src="img/airplane.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('pickup')">&times;</button>
+        </div>
+        <div class="error-message"></div>
+      </div>
+
+      
+      <!-- Drop-off Field with In-Field Buttons -->
+      <div class="input-group" id="dropoffLocationContainer">
+        <div class="input-container">
+          <label for="destination">Drop-off Location*</label>
+          <input type="text" id="destination" class="with-right-buttons" name="destination" placeholder="Victoria-Jungfrau Grand Hotel & Spa, Interlaken, Switzerland" value="">
+          <!-- In-field buttons: Order from right -->
+          <button type="button" class="infield-button btn-current" tabindex="-1" title="Current Location" onclick="setFieldToCurrentLocation('destination')"><img src="img/current-location.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-airport" tabindex="-1" title="Geneva Airport (GVA)" onclick="setFieldToAirport('destination')"><img src="img/airplane.svg" alt="Airplane" /></button>
+          <button type="button" class="infield-button btn-clear" tabindex="-1" title="Clear" onclick="clearField('destination')">&times;</button>
+        </div>
+        <div class="error-message"></div>
+      </div>
+      
+      <!-- Revised Promo Code + Reverse Button using arrivalName strategy -->
+      <div class="input-group">
+        <div class="input-container">
+          <label for="promoCode">Promo Code</label>
+          <input type="text" id="promoCode" name="promoCode" placeholder="Enter promo code" value="">
+          <button type="button" class="infield-button btn-clear" tabindex="-1" onclick="document.getElementById('promoCode').value=''">&times;</button>
+        </div>
+        <div id="promo-applied-message"></div>
+        <small class="promo-note">
+          Follow us on <a href="https://www.instagram.com/limojazz.ch" tabindex="-1" target="_blank">Instagram</a> and <a href="https://www.facebook.com/limojazz" tabindex="-1" target="_blank">Facebook</a> for exclusive deals and insider promos!
+        </small>
+      </div>
+      
+      <div id="error-box-promo">
+        <div class="invalid-code">
+          <p>The promo code entered is not valid. It will be ignored.</p>
+        </div>
+        <div class="wrong-route">
+          <p>This promo code cannot be applied to the selected route and will be ignored.</p>
+        </div>
+      </div>
+      <button type="button" class="quote-button inactive" onclick="calculateQuote()">Price estimation</button>
+      
+      <!-- Map -->
+      <div id="map-canvas"></div>
+      
+      <!-- Quote Info -->
+      <div class="quote-info hidden" id="quote">
+        <h3 id="quoteTitle">Price estimation</h3>
+        <h4 id="quoteSubtitle"></h4>
+        <div class="row">
+          <div class="quoteBox1" id="quoteBox1"></div>
+          <div class="quoteBox2" id="quoteBox2"></div>
+          <div class="quoteBox3" id="quoteBox3"></div>
+        </div>
+        <p>
+          <ul class="v1">
+            <li>Quote subject to change based on service area or special events.</li>
+          </ul>
+          
+          <ul class="v2">
+            <li>Quote subject to change based on service area or special events.</li>
+            <li>Includes&nbsp;<span id="km-included-per-hour"></span> km per booked hour; extra charges may apply.</li>
+          </ul>
+        </p>
+      </div>
+      <div id="error-box-general">
+        <div class="error-box outside-servising-area">
+          <h3>Ride outside our servicing area</h3>
+          <p><i>Please describe your needs further via WhatsApp or call us and we’ll try to help.</i></p>
+          <div class="button-group">
+            <button style="width: 50%;" class="whatsapp-button" onclick="generateWhatsAppLink(event, true)">Contact us via WhatsApp</button>
+            <a href="tel:+41788230803" target="_blank" style="width: 50%;">Call us +41 78 823 08 03</a>
+          </div>
+        </div>
+
+        <div class="error-box below-minimum-fare">
+          <p><b>Note:</b> This short reservation falls under our minimum rate, helping us maintain top-quality service.</p>
+          <p>Did you know that for rides over 20 km, our rates are often unbeatable. Follow us on social media for special promos and exclusive offers!</p>
+        </div>
+
+        <div class="error-box geocode-destination-failed">
+          <h3>Geocode for destination failed</h3>
+        </div>
+
+        <div class="error-box geocode-origin-failed">
+          <h3>Geocode for origin failed</h3>
+        </div>
+        <div class="error-box directions-request-failed">
+          <h3>Directions request failed</h3>
+        </div>
+      </div>
+      
+      <!-- Reserve Button -->
+      <button type="button" class="reserve-button inactive hidden" onclick="toggleReserveFields()">Reserve</button>
+      
+      <!-- Reserve Fields -->
+      <div id="reserveFields" class="hidden">
+        <div class="button-group" id="oneWayReturnButtons">
+          <button type="button" style="width: 50%;" id="oneWayButton" onclick="selectTripType('oneWay')">One Way</button>
+          <button type="button" style="width: 50%;" id="returnButton" onclick="selectTripType('return')">Return</button>
+        </div>
+        <div class="row">
+          <div class="validation-field" style="flex: 1;">
+            <label for="name">Full Name*</label>
+            <input type="text" id="name" name="name" placeholder="Firstname Lastname">
+            <div class="error-message"></div>
+          </div>
+          <div style="flex: 1;">
+            <label for="company">Company Name</label>
+            <input type="text" id="company" name="company" placeholder="Company Name">
+          </div>
+        </div>
+        
+        <label>Date & Time*</label>
+        <div class="row">
+          <div class="validation-field" style="flex: 1;">
+            <input type="date" id="date" name="date">
+            <div class="error-message"></div>
+          </div>
+          <div class="validation-field" style="flex: 1;">
+            <input type="time" id="pickupTime" name="time">
+            <div class="error-message"></div>
+          </div>
+        </div>
+
+        <div id="returnFields" class="hidden">
+          <label>Return Date & Time*</label>
+          <div class="row">
+            <div class="validation-field" style="flex: 1;">
+              <input type="date" id="returnDate" name="returnDate">
+              <div class="error-message"></div>
+            </div>
+            <div class="validation-field" style="flex: 1;">
+              <input type="time" id="returnTime" name="returnTime">
+              <div class="error-message"></div>
+            </div>
+          </div>
+        </div>
+        <div id="airportFields" class="hidden">
+          <h4 style="margin-bottom: 0;">Airport pickup details:</h4>
+          <p style="font-size: 10px; font-style: italic;">Flight Number will be tracked by your chauffeur inside the arrivals hall</p>
+          <div class="row">
+            <label for="flightNumber">Flight Number*</label>
+            <label for="arrivalName"">Name for Pickup at Arrivals</label>
+          </div>
+          <div class="validation-field">
+            <div class="row">
+              <div>
+                <input type="text" id="flightNumber" name="flightNumber" placeholder="UA 956" class="notranslate">
+                <div class="error-message"></div>
+              </div>
+              <div class="button-group arrival-name" id="arrivalNameButtons">
+                <button type="button" onclick="selectArrivalName('Company Logo')">Company Logo</button>
+                <button type="button" onclick="selectArrivalName('My Name')">My Name</button>
+                <button type="button" class="selected" onclick="selectArrivalName('LimoJazz Logo')">LimoJazz Logo</button>
+              </div>
+              <input type="hidden" id="arrivalName" name="arrivalName" value="LimoJazz Logo">
+            </div>
+        </div>
+        </div>
+        <div class="validation-field">
+          <label>Number of Passengers*</label>
+          <div class="button-group" id="passengerButtons">
+            <button type="button" onclick="selectPassengerCount(1)">1</button>
+            <button type="button" onclick="selectPassengerCount(2)">2</button>
+            <button type="button" onclick="selectPassengerCount(3)">3</button>
+            <button type="button" onclick="selectPassengerCount(4)">4</button>
+            <button type="button" onclick="selectPassengerCount(5)">5</button>
+            <button type="button" onclick="selectPassengerCount(6)">6</button>
+          </div>
+          <div id="passengers" class="error-message"></div>
+        </div>
+        <div class="validation-field">
+          <label>Number of Large Suitcases*</label>
+          <div class="button-group" id="suitcaseButtons">
+            <button type="button" onclick="selectSuitcaseCount(0)">0</button>
+            <button type="button" onclick="selectSuitcaseCount(1)">1</button>
+            <button type="button" onclick="selectSuitcaseCount(2)">2</button>
+            <button type="button" onclick="selectSuitcaseCount(3)">3</button>
+            <button type="button" onclick="selectSuitcaseCount(4)">4</button>
+            <button type="button" onclick="selectSuitcaseCount(5)">5</button>
+          </div>
+          <div id="suitcases" class="error-message"></div>
+        </div>
+        <label for="message">Additional Information</label>
+        <textarea id="message" name="message" rows="5" placeholder="I am traveling with a 3 yrs old. Do you have a child seat available?"></textarea>
+        <div id="error-box-fieldCheck"></div>
+        <div class="button-group">
+          <button type="submit" onclick="generateWhatsAppLink(event)">Submit via WhatsApp</button>
+          <button type="button" onclick="generateEmailMessage()">Submit via Email</button>
+          <button type="resetForm" onclick="customResetAllExcept()">Reset Form</button>
+        </div>
+      </div>
+
+      <!-- Text nodes for Google Translate -->
+      <div style="display: none">
+        <div id="validation-enter-pickup-location">Please enter pickup location</div>
+        <div id="validation-enter-destination-location">Please enter dropoff location</div>
+        <div id="validation-enter-hours-per-day">Please enter hours per day</div>
+        <div id="validation-enter-number-of-days">Please enter number of days</div>
+        <div id="validation-enter-full-name">Please enter full name</div>
+        <div id="validation-enter-pickup-date">Please enter pickup date</div>
+        <div id="validation-enter-pickup-time">Please enter pickup time</div>
+        <div id="validation-enter-return-date">Please enter return date</div>
+        <div id="validation-enter-return-time">Please enter return time</div>
+        <div id="validation-enter-flight-number">Please enter flight number</div>
+        <div id="validation-enter-passengers">Please enter number of passengers</div>
+        <div id="validation-enter-suitcases">Please enter number of suitcases</div>
+        <div id="validation-date-in-past">Date cannot be in the past</div>
+        <div id="validation-return-before-pick-date">Return date cannot be before the first date</div>
+
+        <div id="reserve-for-quantity">Reserve for</div>
+        <div id="price-estimation">Price estimation</div>
+        <div id="mercedes-v">Mercedes V-Class (up to 6 passengers and 5 large suitcases)</div>
+        <div id="distance-label">Distance</div>
+        <div id="duration-label">Duration</div>
+        <div id="hours-label">hours</div>
+        <div id="estimated-fare">Estimated Fare</div>
+
+        <div id="qn1">Quote subject to change based on service area or special events.</div>
+        <div id="qn5">Chauffeur at disposal Quote</div>
+        <div id="qn6">Number of Hours</div>
+        <div id="qn7">Kilometers incl.</div>
+        <div id="qn9">km included</div>
+
+        <div id="company-logo">Company Logo</div>
+        <div id="limo-jazz-logo">LimoJazz Logo</div>
+
+        <div id="promo-applied-successfully">Promo code discount applied successfully: </div>
+      </div>
+    </form>
+  </div>
+  
+  <footer>
+    <div class="footer-left-section">
+      <div><span>Phone: </span><a href="tel:+41788230803">+41 78 823 08 03</a></div>
+      <div><span>Email: </span><a href="mailto:reservation@limojazz.ch">reservation@limojazz.ch</a></div>
+    </div>
+
+    <div class="footer-right-section">
+      <div class="bottom-item">
+        <a href="https://www.facebook.com/limojazz" target="_blank"><i class="fab fa-facebook"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="https://www.instagram.com/limojazz.ch" target="_blank"><i class="fab fa-instagram"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="https://wa.me/+41788230803" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="https://drive.google.com/uc?export=download&id=1iXYaksnXOtVasW-ITL57dtWF2q0MVQvj" download target="_blank"><i class="fas fa-address-card"></i></a>
+      </div>
+      <div class="bottom-item">
+        <a href="tel:+41788230803" target="_blank"><i class="fas fa-phone-square-alt"></i></a>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Full-Screen Overlay Menu -->
+  <nav class="overlay-menu">
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="reservation.html">Reservation</a></li>
+    </ul>
+  </nav>
+  
+  <script src="scripts/header.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>

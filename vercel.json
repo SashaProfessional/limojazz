@@ -12,7 +12,7 @@
     },
     {
       "source": "/zermatt20",
-      "destination": "/reservation",
+      "destination": "/reservation?pickup=Geneva",
       "permanent": false
     }
   ]

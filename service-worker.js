@@ -1,10 +1,11 @@
-const CACHE_NAME = 'pwa-cache-v2';
+const CACHE_NAME = 'pwa-cache-v3';
 const urlsToCache = [
   '/',
   '/reservation',
   '/css/common.css',
   '/app.js',
   '/scripts/header.js',
+  '/scripts/hamburger-menu.js',
   '/img/favicon/web-app-manifest-192x192.png',
   '/img/favicon/web-app-manifest-512x512.png'
 ];

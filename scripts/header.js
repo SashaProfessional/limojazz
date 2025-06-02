@@ -143,29 +143,21 @@ function googleTranslateElementInit() {
 }
 
 const options = document.querySelector(".language-select-options");
-const allOptions = document.querySelectorAll(".language-select-option");
-const overlayMenu = document.querySelector(".overlay-menu");
-const hamburgerIcon = document.querySelector(".top-bar .hamburger a");
-const trigger = document.querySelector(".language-select-trigger");
+const allLanguageOptions = document.querySelectorAll(".language-select-option");
+const languageTrigger = document.querySelector(".language-select-trigger");
 
-hamburgerIcon.addEventListener("click", function (e) {
-  e.preventDefault();
-  overlayMenu.classList.toggle("open");
-  const iconEl = hamburgerIcon.querySelector("i");
-  if (overlayMenu.classList.contains("open")) {
-    iconEl.classList.replace("fa-bars", "fa-times");
-  } else {
-    iconEl.classList.replace("fa-times", "fa-bars");
-  }
-});
+if (languageTrigger) {
+  languageTrigger.addEventListener("click", () => {
+    options.style.display =
+      options.style.display === "block" ? "none" : "block";
+  });
+}
 
-trigger.addEventListener("click", () => {
-  options.style.display = options.style.display === "block" ? "none" : "block";
-});
-
-allOptions.forEach((option) => {
-  option.addEventListener("click", () => translatePageWithGoogle(option));
-});
+if (allLanguageOptions?.length) {
+  allLanguageOptions.forEach((option) => {
+    option.addEventListener("click", () => translatePageWithGoogle(option));
+  });
+}
 
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".language-select-wrapper")) {

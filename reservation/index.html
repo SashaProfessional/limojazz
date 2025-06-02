@@ -532,12 +532,6 @@
       });
       return params;
     }
-
-    function turnOffDefaultSubmit() {
-      document.getElementById('reservationForm').addEventListener('submit', function(event){
-        event.preventDefault();
-      })
-    }
     
     function prefillFieldsFromQuery() {
       var params = getQueryParams();
@@ -1251,15 +1245,45 @@
     }
     
     function customResetAllExcept() {
-      const pickupVal = document.getElementById("pickup").value;
-      const dropoffVal = document.getElementById("destination").value;
-      const promoVal = document.getElementById("promoCode").value;
-      document.getElementById("reservationForm").reset();
-      document.getElementById("pickup").value = pickupVal;
-      document.getElementById("destination").value = dropoffVal;
-      document.getElementById("promoCode").value = promoVal;
+      const nameInput = document.getElementById("name");;
+      const companyInput = document.getElementById("company");
+      const dateInput = document.getElementById("date");
+      const pickupTimeInput = document.getElementById("pickupTime");
+      const returnDateInput = document.getElementById("returnDate");
+      const returnTimeInput = document.getElementById("returnTime");
+      const flightNumberInput = document.getElementById("flightNumber");
+      const arrivalNameInput = document.getElementById("arrivalName");
+      const messageInput = document.getElementById("message");
+
+      if (nameInput) {
+        nameInput.value = '';
+      }
+      if (companyInput) {
+        companyInput.value = '';
+      }
+      if (dateInput) {
+        dateInput.value = '';
+      }
+      if (pickupTimeInput) {
+        pickupTimeInput.value = '';
+      }
+      if (returnDateInput) {
+        returnDateInput.value = '';
+      }
+      if (returnTimeInput) {
+        returnTimeInput.value = '';
+      }
+      if (flightNumberInput) {
+        flightNumberInput.value = '';
+      }
+      if (arrivalNameInput) {
+        arrivalNameInput.value = '';
+      }
+      if (messageInput) {
+        messageInput.value = '';
+      }
     }
-    
+
     /* New Functions for In-Field Location Buttons */
     var currentLocationAddress = sessionStorage.getItem("currentLocationAddress") || "";
     function setFieldToAirport(fieldId) {
@@ -1299,7 +1323,6 @@
     
     window.addEventListener("load", function () {
       initialize();
-      turnOffDefaultSubmit();
       prefillFieldsFromQuery();
       updateLogoFromURL(); // update logo based on URL param
       document.getElementById("oneWayButton").click(); // default to one way
@@ -1375,7 +1398,7 @@
     <h2>Price estimation instantly!</h2>
     <h3>Reserve in less than a minute!</h3>
     
-    <form id="reservationForm">
+    <div id="reservationForm">
       <!-- Standard vs. Hourly Reservation Buttons -->
       <div class="button-group">
         <button type="button" id="singleRideButton" class="selected" onclick="selectRideType('singleRide')"> Standard Reservation</button>
@@ -1595,7 +1618,7 @@
         <textarea id="message" name="message" rows="5" placeholder="I am traveling with a 3 yrs old. Do you have a child seat available?"></textarea>
         <div id="error-box-fieldCheck"></div>
         <div class="button-group">
-          <button type="submit" onclick="generateWhatsAppLink(event)">Submit via WhatsApp</button>
+          <button type="submit" class="whatsapp" onclick="generateWhatsAppLink(event)">Submit via WhatsApp</button>
           <button type="button" onclick="generateEmailMessage()">Submit via Email</button>
           <button type="resetForm" onclick="customResetAllExcept()">Reset Form</button>
         </div>
@@ -1637,7 +1660,7 @@
 
         <div id="promo-applied-successfully">Promo code discount applied successfully: </div>
       </div>
-    </form>
+    </div>
   </div>
   
   <footer>

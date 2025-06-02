@@ -1,7 +1,7 @@
 {
   "name": "LimoJazz",
   "short_name": "LimoJazz",
-  "start_url": "/reservation.html",
+  "start_url": "/reservation",
   "scope": "/",
   "icons": [
     {

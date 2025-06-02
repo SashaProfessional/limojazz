@@ -1,8 +1,7 @@
 const CACHE_NAME = 'pwa-cache-v2';
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/reservation.html',
+  '/reservation',
   '/css/common.css',
   '/app.js',
   '/scripts/header.js',

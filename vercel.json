@@ -1,0 +1,19 @@
+{
+  "redirects": [
+    {
+      "source": "/add-contact",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/vcard",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/zermatt20",
+      "destination": "/reservation?pickup=Geneva%20Airport&destination=Zermatt&promoCode=zermatt20",
+      "permanent": false
+    }
+  ]
+}

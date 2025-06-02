@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/add-contact", "destination": "/", "permanent": false },
+    { "source": "/vcard", "destination": "/", "permanent": false }
+  ]
+}

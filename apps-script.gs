@@ -18,15 +18,31 @@ function doGet(e) {
 
 function getFlatRates() {
   const sheet = SpreadsheetApp.getActive().getSheetByName("Flat Rates");
-  const data = sheet.getRange("A2:C30").getValues();
+  const data = sheet.getRange("A1:K50").getValues();
+  const flatRates = []
 
-  return data
-    .filter(row => row[0] && row[1] && row[2])
-    .map(row => ({
-      location1: row[0],
-      location2: row[1],
-      amount: row[2],
-    }));
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const [amount, , lat1, lng1, radius1, , lat2, lng2, radius2, isActive] = row;
+
+    if (
+      isActive === true &&
+      lat1 && lng1 && radius1 &&
+      lat2 && lng2 && radius2 
+    ) {
+      flatRates.push({
+        amount: amount,
+        lat1: lat1,
+        lng1: lng1,
+        radius1: radius1,
+        lat2: lat2,
+        lng2: lng2,
+        radius2: radius2,
+      });
+    }
+  }
+
+  return flatRates
 }
 
 function checkPromoCode(code) {

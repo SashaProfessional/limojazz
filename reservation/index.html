@@ -427,7 +427,7 @@
     const FLAT_RATES_KEY = "FLAT_RATES_KEY";
     const ORIGIN_LOCATION_KEY = "ORIGIN_LOCATION_KEY";
     const DESTINATION_LOCATION_KEY = "DESTINATION_LOCATION_KEY";
-    const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwXRuQqruECMrFbqcUKAVF_rOKMvXXuYwLZjiSlB9TiidCRISiAT3JhdY7DuZ1UoeFq/exec"
+    const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxaLzitVgtIeYZ_NqJJXaeMqe6NSP5zY2PM-28CMKCaV0LCX6BAPWpszbLm8UtIl9k/exec"
     const MINIMUM_PRICE = 80
     var directionsService;
     var directionsRenderer;
@@ -441,6 +441,8 @@
     }
 
     function fetchFlatRates() {
+      localStorage.removeItem(FLAT_RATES_KEY);
+      
       fetch(`${GOOGLE_SHEETS_URL}?flatRates=true`)
         .then(response => response.json())
         .then(data => {
@@ -721,6 +723,9 @@
     }
 
     async function calculatePrice(distance, duration) {
+      const originLocation = document[ORIGIN_LOCATION_KEY]
+      const destinationLocation = document[DESTINATION_LOCATION_KEY]
+
       var baseRate = 6.00;  
       var perKmRate = calculatePerKmRate(distance);
       var perMinRate = 0;
@@ -735,16 +740,24 @@
       const flatRatesParsed = flatRatesRaw ? JSON.parse(flatRatesRaw) : [];
 
       var pickupValue = document.getElementById("pickup").value.toLowerCase();
-      var dropoffValue = document.getElementById("destination").value.toLowerCase(); //{"location1":"lausanne","location2":"gva","amount":230}
+      var dropoffValue = document.getElementById("destination").value.toLowerCase();
 
-      const flatRate = flatRatesParsed.find(flatRate => {
-        const loc1 = flatRate.location1.toLowerCase();
-        const loc2 = flatRate.location2.toLowerCase();
-        const pickup = pickupValue.toLowerCase();
-        const dropoff = dropoffValue.toLowerCase();
+      const flatRate = flatRatesParsed.find(fr => { // { "amount": 90, "lat1": "46.230577", "lng1": "6.110426", "radius1": 1000, "lat2": "46.384347", "lng2": "6.236043", "radius2": 1000 }
+        const frLocation1 = new google.maps.LatLng(fr.lat1, fr.lng1);
+        const frLocation2 = new google.maps.LatLng(fr.lat2, fr.lng2);
 
-        return (pickup.includes(loc1) && dropoff.includes(loc2)) || (pickup.includes(loc2) && dropoff.includes(loc1))
+        const radius1 = fr.radius1;
+        const radius2 = fr.radius2;
+
+        const originToLoc1 = google.maps.geometry.spherical.computeDistanceBetween(originLocation, frLocation1) <= radius1;
+        const destinationToLoc2 = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, frLocation2) <= radius2;
+
+        const originToLoc2 = google.maps.geometry.spherical.computeDistanceBetween(originLocation, frLocation2) <= radius2;
+        const destinationToLoc1 = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, frLocation1) <= radius1;
+
+        return (originToLoc1 && destinationToLoc2) || (originToLoc2 && destinationToLoc1);
       }); 
+      console.log('used flat rate:', flatRate) // TODO: remove after demo
 
       if (flatRate) {
         totalPrice = flatRate.amount;
@@ -775,9 +788,6 @@
         }
 
         if (promoCode) {
-          const originLocation = document[ORIGIN_LOCATION_KEY]
-          const destinationLocation = document[DESTINATION_LOCATION_KEY]
-
           const isPromoTwoWay = promoCode.lat2 && promoCode.lng2 && promoCode.radius2;
 
           const promoLocation1 = new google.maps.LatLng(promoCode.lat1, promoCode.lng1);

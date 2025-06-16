@@ -756,8 +756,7 @@
         const destinationToLoc1 = google.maps.geometry.spherical.computeDistanceBetween(destinationLocation, frLocation1) <= radius1;
 
         return (originToLoc1 && destinationToLoc2) || (originToLoc2 && destinationToLoc1);
-      }); 
-      console.log('used flat rate:', flatRate) // TODO: remove after demo
+      });
 
       if (flatRate) {
         totalPrice = flatRate.amount;

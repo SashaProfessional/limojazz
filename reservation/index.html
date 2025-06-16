@@ -411,6 +411,12 @@
       justify-content: center; 
       text-align: center;
     }
+
+    #reservationForm:not(.show-price-compare) {
+      .price-compare {
+        display: none;
+      }
+    }
   </style>
   
   <!-- Google Maps & jQuery -->
@@ -426,6 +432,7 @@
     var directionsService;
     var directionsRenderer;
     var geocoder;
+    let comparePrices = false
         
 	  function clearField(fieldId) {
       const field = document.getElementById(fieldId);
@@ -522,7 +529,7 @@
       directionsRenderer.setMap(map);
     }
     
-    function getQueryParams() {
+    function getQueryParams() { //TODO: research if we need it and replace with new URLSearchParams(window.location.search)
       var params = {};
       window.location.search.substr(1).split("&").forEach(function(item) {
         var parts = item.split("=");
@@ -533,11 +540,14 @@
       return params;
     }
     
-    function prefillFieldsFromQuery() {
-      var params = getQueryParams();
-      if (params.pickup) document.getElementById("pickup").value = params.pickup;
-      if (params.destination) document.getElementById("destination").value = params.destination;
-      if (params.promoCode) document.getElementById("promoCode").value = params.promoCode;
+    function prefillFromUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+
+      if (params.has('pickup')) document.getElementById("pickup").value = params.get('pickup');
+      if (params.has('destination')) document.getElementById("destination").value = params.get('destination');
+      if (params.has('promoCode')) document.getElementById("promoCode").value = params.get('promoCode');
+
+      if (params.has('compare-prices')) document.getElementById("reservationForm").classList.add('show-price-compare');
     }
     
     // New function: update logo based on URL parameter
@@ -691,14 +701,30 @@
       var rateDecrease = (initialPerKmRate - minimumPerKmRate) * (distance / 700);
       return initialPerKmRate - rateDecrease;
     }
+    
+    function calculatePriceTaxi(distance, duration) {
+      const baseRate = 6.30;
+      const perKmRate = 3.80;
+      const perMinRate = 0;
+      const totalPrice = baseRate + (perKmRate * distance) + (perMinRate * duration) + 5 + Math.floor(distance / 50) * 5;
 
-    async function calculatePrice(distanceValue, durationValue) {
-      var baseRate = 6.00;
-      var distanceInKm = distanceValue / 1000;
-      var durationInMin = durationValue / 60;      
-      var perKmRate = calculatePerKmRate(distanceInKm);
+      return Math.ceil(totalPrice).toFixed(2);
+    } 
+
+    function calculatePriceUberVan(distance, duration) {
+      const baseRate = 8.00;
+      const perKmRate = 3.60;
+      const perMinRate = 0.60;
+      const totalPrice = baseRate + (perKmRate * distance) + (perMinRate * duration);
+      
+      return Math.ceil(totalPrice).toFixed(2);
+    }
+
+    async function calculatePrice(distance, duration) {
+      var baseRate = 6.00;  
+      var perKmRate = calculatePerKmRate(distance);
       var perMinRate = 0;
-      var totalPrice = baseRate + (perKmRate * distanceInKm) + (perMinRate * durationInMin);
+      var totalPrice = baseRate + (perKmRate * distance) + (perMinRate * duration);
       var normalPrice;
       let isBelowMinimumPrice
 
@@ -836,9 +862,15 @@
 
       const distance = directionsResult.routes[0].legs[0].distance.value;
       const duration = directionsResult.routes[0].legs[0].duration.value;
+      
+      const distanceInKm = distance / 1000;
+      const durationInMin = duration / 60;      
 
-      const priceObj = await calculatePrice(distance, duration);
-      window.currentFareObj = priceObj;
+      const ourPriceResult = await calculatePrice(distanceInKm, durationInMin);
+      const taxiPrice = calculatePriceTaxi(distanceInKm, durationInMin);
+      const uberVanPrice = calculatePriceUberVan(distanceInKm, durationInMin);
+
+      window.currentFareObj = ourPriceResult;
 
       const distanceText = directionsResult.routes[0].legs[0].distance.text;
       const durationText = directionsResult.routes[0].legs[0].duration.text;
@@ -851,11 +883,13 @@
       document.getElementById("quoteBox1").innerText = "~ " + distanceText;
       document.getElementById("quoteBox2").innerText = "~ " + durationText;
 
-      document.getElementById("quoteBox3").innerHTML = priceObj.promoApplied 
-        ? `CHF ${priceObj.finalPrice}&nbsp;<span style='text-decoration: line-through;color: red;'>CHF ${priceObj.normalPrice}</span>`
-        : `CHF ${priceObj.finalPrice}`;
+      document.getElementById("quoteBox3").innerHTML = ourPriceResult.promoApplied 
+        ? `CHF ${ourPriceResult.finalPrice}&nbsp;<span style='text-decoration: line-through;color: red;'>CHF ${ourPriceResult.normalPrice}</span>`
+        : `CHF ${ourPriceResult.finalPrice}`;
 
       selectQuoteInfo("v1");
+      document.getElementById("taxi-price").textContent = taxiPrice;
+      document.getElementById("uber-van-price").textContent = uberVanPrice;
 
       document.getElementById("quote").classList.remove("hidden");
       document.getElementById("map-canvas").style.display = "block";
@@ -864,7 +898,7 @@
       document.querySelector(".quote-button").innerText = getTranslatableText('price-estimation');
       document.querySelector(".reserve-button").classList.remove("hidden");
 
-      if (priceObj.isBelowMinimumPrice) {
+      if (ourPriceResult.isBelowMinimumPrice) {
         showGeneralError("below-minimum-fare");
       }
     }
@@ -933,7 +967,7 @@
       const totalPrice = numberOfHours * pricePerHour;
       const kmIncludedPerHour = 20;
       const kmIncludedTotal = numberOfHours * kmIncludedPerHour;
-      const blacklanePricePerHour = 130;
+      const blacklaneTotalPrice = numberOfHours > 2 ? 130 * numberOfHours : 260;
     
       document.getElementById("quoteTitle").innerText = getTranslatableText("qn5");
       document.getElementById("quoteSubtitle").innerText = getTranslatableText('mercedes-v');
@@ -946,6 +980,7 @@
       
       selectQuoteInfo("v2");
       document.getElementById("km-included-per-hour").textContent = kmIncludedPerHour;
+      document.getElementById("blacklane-price").textContent = blacklaneTotalPrice;
     
       document.getElementById("quote").classList.remove("hidden");
       document.querySelector(".quote-button").classList.remove("inactive");
@@ -1323,7 +1358,7 @@
     
     window.addEventListener("load", function () {
       initialize();
-      prefillFieldsFromQuery();
+      prefillFromUrlParams();
       updateLogoFromURL(); // update logo based on URL param
       document.getElementById("oneWayButton").click(); // default to one way
       fetchFlatRates();
@@ -1485,11 +1520,14 @@
         <p>
           <ul class="v1">
             <li>Quote subject to change based on service area or special events.</li>
+            <li class="price-compare">Comparison: Estimated Taxi price: CHF&nbsp;<span id="taxi-price"></span></li>
+            <li class="price-compare">Comparison: Estimated UberVan price: CHF&nbsp;<span id="uber-van-price"></span></li>
           </ul>
           
           <ul class="v2">
             <li>Quote subject to change based on service area or special events.</li>
             <li>Includes&nbsp;<span id="km-included-per-hour"></span> km per booked hour; extra charges may apply.</li>
+            <li class="price-compare">Comparison: Estimated Blacklane price: CHF&nbsp;<span id="blacklane-price"></span></li>
           </ul>
         </p>
       </div>
